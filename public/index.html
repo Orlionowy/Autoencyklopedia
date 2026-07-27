@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AutoEncyclopedia 2026 - Find Out If a Car Is a Bargain or a Money Pit</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --sky:#0ea5e9;--sky-d:#0284c7;--sky-deep:#0369a1;
+  --navy:#0c1a3a;--navy2:#0f2554;
+  --aqua:#22d3ee;--aqua2:#67e8f9;
+  --off:#f0f9ff;
+  --gray:#64748b;--gray2:#94a3b8;--gray3:#e2e8f0;
+  --gold:#f59e0b;--ok:#10b981;--err:#ef4444;--warn:#f59e0b;
+  --shadow:0 4px 24px rgba(14,165,233,.13);
+  --t:.2s cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--off);color:#1e293b;overflow-x:hidden;}
+header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:999;box-shadow:0 2px 20px rgba(0,0,0,.35);height:60px;border-bottom:2px solid var(--sky);gap:8px;}
+.logo{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#fff;cursor:pointer;letter-spacing:1px;white-space:nowrap;display:flex;align-items:center;gap:7px;}
+.logo span{color:var(--aqua);}
+.logo-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--sky),var(--aqua));border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hnav{display:flex;gap:4px;align-items:center;}
+.nav-btn{background:none;border:none;color:rgba(255,255,255,.7);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;cursor:pointer;padding:7px 10px;border-radius:4px;transition:var(--t);white-space:nowrap;}
+.nav-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
+.hright{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.uw{position:relative;}
+.uavt{width:34px;height:34px;border-radius:50%;cursor:pointer;object-fit:cover;}
+.umenu{display:none;position:absolute;right:0;top:42px;background:var(--navy2);border:1px solid rgba(255,255,255,.1);border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.4);min-width:180px;overflow:hidden;z-index:2000;}
+.umenu.open{display:block;animation:sd .2s ease;}
+@keyframes sd{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.umenu a{display:flex;align-items:center;gap:9px;padding:12px 16px;font-size:11px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.85);border-bottom:1px solid rgba(255,255,255,.06);transition:var(--t);}
+.umenu a:hover{background:rgba(14,165,233,.15);color:var(--aqua);}
+.umenu a.lo{border:none;color:#f87171;}
+.umenu a.lo:hover{background:rgba(239,68,68,.1);}
+.cbar{background:var(--navy2);display:flex;justify-content:center;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(255,255,255,.07);}
+.cbar::-webkit-scrollbar{display:none;}
+.ctab{display:flex;align-items:center;gap:7px;padding:13px 18px;cursor:pointer;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:rgba(255,255,255,.5);border-bottom:3px solid transparent;transition:var(--t);white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;}
+.ctab:hover,.ctab.active{color:var(--aqua);border-bottom-color:var(--aqua);}
+.ctab i{font-size:15px;}
+.hero{position:relative;height:300px;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+.hbg{position:absolute;inset:0;background-size:cover;background-position:center;transition:background-image .5s;}
+.hov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,26,58,.5) 0%,rgba(12,26,58,.88) 100%);}
+.hcon{position:relative;z-index:1;padding:0 16px;}
+.hero h1{font-family:'Rajdhani',sans-serif;font-size:clamp(22px,5vw,46px);font-weight:700;color:#fff;letter-spacing:2px;line-height:1.2;}
+.hero p{color:var(--aqua2);font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;margin-top:6px;}
+.hstats{display:flex;gap:24px;margin-top:18px;justify-content:center;flex-wrap:wrap;}
+.hstat strong{display:block;font-size:22px;font-weight:800;color:var(--aqua);font-family:'Rajdhani',sans-serif;}
+.hstat span{font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px;}
+.swrap{width:94%;max-width:860px;margin:-26px auto 30px;position:relative;z-index:10;}
+.scard{background:#fff;border-radius:12px;padding:18px 20px;box-shadow:0 8px 28px rgba(14,165,233,.14);border:1px solid var(--gray3);margin-bottom:10px;}
+.slabel{font-size:9px;font-weight:800;color:var(--sky-deep);text-transform:uppercase;letter-spacing:1.4px;display:block;margin-bottom:7px;}
+.srow{display:flex;gap:8px;}
+.sinp{flex:1;padding:11px 14px;border:1.5px solid var(--gray3);border-radius:8px;font-size:13px;font-weight:500;outline:none;font-family:'Inter',sans-serif;transition:var(--t);min-width:0;}
+.sinp:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(14,165,233,.1);}
+.sbtn{background:var(--navy);color:#fff;border:none;padding:0 18px;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer;white-space:nowrap;transition:var(--t);}
+.sbtn:hover{background:var(--sky-d);}
+.ldrop{background:#fff;border:1px solid var(--gray3);border-radius:8px;max-height:230px;overflow-y:auto;display:none;box-shadow:0 8px 28px rgba(0,0,0,.1);margin-top:4px;}
+.litem{padding:10px 14px;cursor:pointer;font-size:12px;font-weight:500;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:9px;transition:var(--t);}
+.litem:hover{background:#f0f9ff;color:var(--sky-d);}
+.litem i{font-size:11px;color:var(--sky);width:14px;flex-shrink:0;}
+.qtags{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.qtag{background:var(--off);border:1.5px solid var(--sky);color:var(--sky-d);border-radius:20px;padding:4px 11px;font-size:10px;font-weight:700;cursor:pointer;transition:var(--t);font-family:'Inter',sans-serif;}
+.qtag:hover{background:var(--sky);color:#fff;}
+.qlabel{font-size:10px;color:var(--gray);font-weight:600;}
+.wrap{width:94%;max-width:1280px;margin:0 auto 90px;}
+.fbar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+.finp{padding:9px 13px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;font-weight:600;outline:none;font-family:'Inter',sans-serif;transition:var(--t);min-width:0;flex:1;}
+.finp:focus{border-color:var(--sky);}
+.fsel{padding:9px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;font-weight:600;outline:none;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+.card{background:#fff;border-radius:11px;border:1px solid var(--gray3);overflow:hidden;cursor:pointer;transition:var(--t);}
+.card:hover{transform:translateY(-3px);border-color:var(--sky);box-shadow:var(--shadow);}
+.cthumb{height:110px;background:linear-gradient(135deg,var(--navy2),var(--sky-deep));overflow:hidden;position:relative;}
+.cthumb img{width:100%;height:100%;object-fit:contain;object-position:center;transition:transform .4s;}
+.card:hover .cthumb img{transform:scale(1.07);}
+.cph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.cph i{font-size:36px;color:rgba(255,255,255,.2);}
+.cbody{padding:12px 14px;}
+.cbody h3{font-size:11px;font-weight:800;text-transform:uppercase;color:#0f172a;letter-spacing:.4px;line-height:1.3;}
+.cbody p{font-size:10px;color:var(--gray);margin-top:3px;}
+.star{color:var(--gold);}
+.view{display:none;}
+.view.active{display:block;animation:fu .3s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.bbtn{display:inline-flex;align-items:center;gap:6px;color:var(--sky);font-weight:700;font-size:10px;text-transform:uppercase;cursor:pointer;margin-bottom:18px;padding:7px 12px;border-radius:6px;background:rgba(14,165,233,.07);border:none;transition:var(--t);}
+.bbtn:hover{background:rgba(14,165,233,.18);}
+.rimg{width:100%;max-height:250px;object-fit:contain;border-radius:12px;margin-bottom:20px;box-shadow:0 6px 24px rgba(0,0,0,.14);}
+.rph{width:100%;height:180px;border-radius:12px;margin-bottom:20px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--navy2),var(--sky-deep));}
+.rph i{font-size:56px;color:rgba(255,255,255,.2);}
+.rhdr{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+.rhdr h1{font-family:'Rajdhani',sans-serif;font-size:clamp(20px,4vw,32px);font-weight:700;color:var(--navy);}
+.rhdr .years{color:var(--sky);font-weight:700;font-size:11px;margin-top:3px;}
+.r2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:680px){.r2col{grid-template-columns:1fr;}}
+.panel{background:#fff;border-radius:11px;padding:18px;border:1px solid var(--gray3);box-shadow:0 2px 10px rgba(0,0,0,.04);margin-bottom:14px;}
+.panel h3{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--sky-deep);display:flex;align-items:center;gap:7px;margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--gray3);}
+.panel h3 i{font-size:12px;color:var(--sky);}
+.trow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:12px;gap:8px;}
+.trow:last-child{border:none;}
+.trow strong{font-size:9px;text-transform:uppercase;color:var(--sky-d);font-weight:700;white-space:nowrap;}
+.trow span{color:#1e293b;font-weight:500;text-align:right;font-size:11px;}
+.wbtn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--navy);color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:11px;margin-top:10px;cursor:pointer;transition:var(--t);border:none;}
+.wbtn:hover{background:var(--sky-d);}
+.scorecard{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1px solid var(--sky);border-radius:11px;padding:16px;margin-bottom:14px;}
+.scorecard h4{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--sky-deep);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.srow2{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px;}
+.slbl{font-size:11px;font-weight:600;color:#475569;flex:1;}
+.sbar{flex:2;background:#e2e8f0;border-radius:20px;height:7px;overflow:hidden;}
+.sbarf{height:100%;border-radius:20px;transition:width .7s ease;}
+.sval{font-size:11px;font-weight:800;width:44px;text-align:right;flex-shrink:0;}
+.verdict{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:800;margin-top:10px;}
+.v-yes{background:#d1fae5;color:#065f46;}
+.v-no{background:#fee2e2;color:#991b1b;}
+.v-maybe{background:#fef3c7;color:#92400e;}
+.ust{background:#fff;border:1px solid var(--gray3);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid var(--err);}
+.good{background:#fff;border:1px solid var(--gray3);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid var(--ok);}
+.ust h5{color:var(--err);font-size:10px;text-transform:uppercase;margin-bottom:5px;font-weight:800;display:flex;align-items:center;gap:5px;}
+.ust p{font-size:11px;line-height:1.6;color:#475569;}
+.ust .cost{color:var(--ok);font-weight:800;margin-top:6px;font-size:12px;}
+.ftitle{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:9px;padding-bottom:9px;border-bottom:2px solid var(--gray3);}
+.ftitle i{color:var(--sky);}
+.frow{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:30px;}
+.fcard{border-radius:12px;overflow:hidden;cursor:pointer;position:relative;height:160px;box-shadow:0 4px 18px rgba(0,0,0,.14);transition:var(--t);}
+.fcard:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(0,0,0,.22);}
+.fcard img{width:100%;height:100%;object-fit:cover;}
+.fov{position:absolute;inset:0;background:linear-gradient(0deg,rgba(12,26,58,.88) 0%,rgba(12,26,58,.1) 100%);}
+.fbody{position:absolute;bottom:0;left:0;right:0;padding:12px 14px;color:#fff;}
+.fbody h4{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;}
+.fbody p{font-size:10px;color:var(--aqua2);margin-top:2px;text-transform:uppercase;letter-spacing:.8px;}
+.pop-card{background:#fff;border-radius:11px;border:1px solid var(--gray3);padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:var(--t);}
+.pop-card:hover{border-color:var(--sky);box-shadow:var(--shadow);}
+.pop-num{width:32px;height:32px;border-radius:8px;background:var(--sky);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;font-family:'Rajdhani',sans-serif;}
+.pop-card h4{font-size:12px;font-weight:800;color:#0f172a;}
+.pop-card p{font-size:10px;color:var(--gray);}
+.avoid-card{background:#fff;border-radius:11px;border:1px solid var(--gray3);padding:16px;display:flex;gap:14px;align-items:flex-start;transition:var(--t);}
+.avoid-card:hover{border-color:var(--err);box-shadow:0 4px 14px rgba(239,68,68,.1);}
+.avoid-icon{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
+.ai-red{background:#fee2e2;color:var(--err);}
+.ai-org{background:#fff7ed;color:#ea580c;}
+.ai-green{background:#d1fae5;color:var(--ok);}
+.avoid-card h4{font-size:12px;font-weight:800;color:#0f172a;margin-bottom:4px;}
+.avoid-card p{font-size:11px;color:var(--gray);line-height:1.5;}
+.avoid-card .reason{font-size:10px;font-weight:700;color:var(--err);margin-top:5px;display:flex;align-items:center;gap:4px;}
+.simgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:12px;}
+.simcard{background:var(--off);border:1.5px solid var(--gray3);border-radius:8px;padding:12px;cursor:pointer;transition:var(--t);display:flex;align-items:center;gap:9px;}
+.simcard:hover{border-color:var(--sky);background:#e0f2fe;}
+.simcard i{color:var(--sky);font-size:16px;flex-shrink:0;}
+.simcard h5{font-size:11px;font-weight:800;color:#0f172a;}
+.simcard p{font-size:9px;color:var(--gray);}
+.prosoon{background:linear-gradient(135deg,#1e293b,#0f2554);border-radius:12px;padding:20px 22px;color:#fff;text-align:center;margin-top:20px;}
+.prosoon h4{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--aqua);margin-bottom:8px;}
+.prosoon p{font-size:12px;color:rgba(255,255,255,.7);margin-bottom:12px;line-height:1.6;}
+.prosoon ul{list-style:none;margin-bottom:14px;}
+.prosoon ul li{font-size:11px;color:rgba(255,255,255,.8);padding:3px 0;display:flex;align-items:center;gap:7px;justify-content:center;}
+.prosoon ul li i{color:var(--gold);}
+.btnsoon{background:transparent;border:2px solid var(--aqua);color:var(--aqua);border-radius:8px;padding:9px 22px;font-weight:700;font-size:11px;cursor:default;opacity:.7;font-family:'Inter',sans-serif;}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:9px;font-weight:800;text-transform:uppercase;}
+.badge-free{background:#eff6ff;color:var(--sky-d);}
+.badge-api{background:#ecfdf5;color:#047857;}
+.spin{text-align:center;padding:50px;color:var(--sky);}
+.spin i{font-size:28px;animation:rot 1s linear infinite;}
+@keyframes rot{to{transform:rotate(360deg);}}
+.spin p{margin-top:10px;font-weight:600;font-size:12px;color:var(--gray);}
+.prose{max-width:720px;margin:0 auto;}
+.prose h1{font-family:'Rajdhani',sans-serif;font-size:28px;color:var(--navy);margin-bottom:14px;font-weight:700;}
+.prose h2{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--sky);margin:20px 0 9px;display:flex;align-items:center;gap:7px;}
+.prose p,.prose li{font-size:12px;line-height:1.8;color:#475569;margin-bottom:9px;}
+.prose ul{margin-left:16px;}
+.stitle{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:9px;padding-bottom:9px;border-bottom:2px solid var(--gray3);}
+.stitle i{color:var(--sky);}
+.recall-tag{display:inline-flex;align-items:center;gap:5px;background:#fee2e2;color:#991b1b;font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;margin-top:8px;}
+@media(max-width:600px){
+  header{height:54px;padding:0 3%;}
+  .logo{font-size:16px;}
+  .hnav{display:none;}
+  .hero{height:240px;}
+  .wrap,.swrap{width:96%;}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+  .ctab{padding:11px 12px;font-size:9px;}
+  .frow{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:380px){
+  .frow{grid-template-columns:1fr;}
+  .grid{grid-template-columns:1fr 1fr;}
+}
+footer{background:var(--navy);color:rgba(255,255,255,.6);padding:30px 5%;text-align:center;}
+footer p{font-size:11px;margin-bottom:5px;}
+footer a{color:var(--aqua);text-decoration:none;}
+.fline{width:36px;height:2px;background:var(--sky);margin:0 auto 16px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="goHome()">
+    <div class="logo-icon"><i class="fas fa-gauge-high" style="color:#fff;font-size:13px;"></i></div>
+    Auto<span>Encyclopedia</span>
+  </div>
+  <div class="hnav">
+    <button class="nav-btn" style="color:#fca5a5;font-weight:800;" onclick="openPage('avoid')">
+      <i class="fas fa-skull-crossbones" style="margin-right:4px;"></i>Cars to Watch Out For
+    </button>
+    <button class="nav-btn" onclick="openPage('about')"><i class="fas fa-info-circle" style="margin-right:4px;"></i>About Us</button>
+    <button class="nav-btn" onclick="openPage('rodo')"><i class="fas fa-shield-halved" style="margin-right:4px;"></i>Privacy Policy</button>
+  </div>
+  <div class="hright">
+    <div id="gBtn">
+      <div id="g_id_onload" data-client_id="504025681831-s190kmrpkgnvbiup6v2l7i0hoaubiom9.apps.googleusercontent.com" data-callback="onGSign" data-auto_select="true"></div>
+      <div class="g_id_signin" data-type="icon" data-shape="circle" data-theme="filled_blue" data-size="medium"></div>
+    </div>
+    <div id="uArea" class="uw" style="display:none;">
+      <img id="uAvt" class="uavt" src="" alt="user" onclick="toggleUM()">
+      <div class="umenu" id="uMenu">
+        <a onclick="openSettings()"><i class="fas fa-gear"></i>Settings</a>
+        <a class="lo" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i>Log Out</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="cbar">
+  <button class="ctab active" data-cat="cars" onclick="switchCat('cars')"><i class="fas fa-car"></i>Cars</button>
+  <button class="ctab" data-cat="moto" onclick="switchCat('moto')"><i class="fas fa-motorcycle"></i>Motorcycles</button>
+  <button class="ctab" data-cat="boats" onclick="switchCat('boats')"><i class="fas fa-sailboat"></i>Boats</button>
+  <button class="ctab" data-cat="engines" onclick="switchCat('engines')"><i class="fas fa-gears"></i>Engines</button>
+</nav>
+
+<div id="homeSection">
+  <div class="hero">
+    <div class="hbg" id="hBg" style="background-image:url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1600&q=80');"></div>
+    <div class="hov"></div>
+    <div class="hcon">
+      <h1 id="hTitle">Is it a bargain or a bottomless money pit?</h1>
+      <p id="hSub">Common faults - Repair costs - Pre-purchase rating</p>
+      <div class="hstats">
+        <div class="hstat"><strong>1000+</strong><span>Models</span></div>
+        <div class="hstat"><strong>Free</strong><span>Everything</span></div>
+        <div class="hstat"><strong>Faults</strong><span>and costs</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swrap">
+    <div class="scard">
+      <span class="slabel"><i class="fas fa-magnifying-glass-chart" style="margin-right:5px;"></i>Look up a vehicle's history by VIN</span>
+      <div style="background:#f0fdf4;border:1.5px solid var(--ok);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:11px;color:#166534;font-weight:600;display:flex;align-items:center;gap:8px;">
+        <i class="fas fa-circle-info"></i>Technical data from NHTSA.gov (US government) and the CarVector API. Full VIN history - coming soon in the full version!
+      </div>
+      <div class="srow">
+        <input class="sinp" type="text" id="vinIn" placeholder="e.g. 1HGBH41JXMN109186" maxlength="17" oninput="san(this)">
+        <button class="sbtn" onclick="decodeVin()"><i class="fas fa-search" style="margin-right:5px;"></i>Check</button>
+      </div>
+      <p style="font-size:10px;color:var(--gray);margin-top:7px;">
+        Sample VIN: <strong style="cursor:pointer;color:var(--sky);" onclick="document.getElementById('vinIn').value='1HGBH41JXMN109186'">1HGBH41JXMN109186</strong> (Honda Civic)
+      </p>
+    </div>
+    <div class="scard">
+      <span class="slabel" id="sLabel"><i class="fas fa-search" style="margin-right:5px;"></i>Check if it's worth buying - enter a model</span>
+      <div class="srow">
+        <input class="sinp" type="text" id="liveIn" placeholder="e.g. BMW E90, Audi A4 B8, Passat B6..." onkeyup="doLive()" oninput="san(this)">
+      </div>
+      <div id="lDrop" class="ldrop"></div>
+      <div class="qtags" id="qTags">
+        <span class="qlabel">Most searched:</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div id="vGroups" class="view active">
+    <div id="featSec"></div>
+    <div id="popSec"></div>
+    <div class="fbar">
+      <input class="finp" type="text" id="gSearch" placeholder="Search groups and brands..." onkeyup="filterGroups()" oninput="san(this)" style="max-width:400px;">
+    </div>
+    <div class="grid" id="gGrid"></div>
+  </div>
+
+  <div id="vBrands" class="view">
+    <button class="bbtn" id="bbBrands"><i class="fas fa-arrow-left"></i>Back</button>
+    <div class="stitle" id="bTitle"><i class="fas fa-layer-group"></i></div>
+    <div class="fbar"><input class="finp" type="text" id="bSearch" placeholder="Filter brands..." oninput="filterGrid('bGrid',this.value);san(this)" style="max-width:300px;"></div>
+    <div class="grid" id="bGrid"></div>
+  </div>
+
+  <div id="vModels" class="view">
+    <button class="bbtn" id="bbModels"><i class="fas fa-arrow-left"></i>Back</button>
+    <div class="stitle" id="mTitle"><i class="fas fa-car-side"></i></div>
+    <div class="fbar">
+      <input class="finp" type="text" id="mSearch" placeholder="Filter models..." oninput="filterGrid('mGrid',this.value);san(this)" style="max-width:260px;">
+      <select class="fsel" id="mSort" onchange="sortModels()">
+        <option value="">Sort: default</option>
+        <option value="az">A - Z</option>
+        <option value="za">Z - A</option>
+      </select>
+    </div>
+    <div class="grid" id="mGrid"></div>
+  </div>
+
+  <div id="vReport" class="view">
+    <button class="bbtn" id="bbReport"><i class="fas fa-arrow-left"></i>Back</button>
+    <div id="rContent"></div>
+  </div>
+
+  <div id="vEngines" class="view">
+    <div class="stitle"><i class="fas fa-gears"></i>Engine Encyclopedia</div>
+    <div class="fbar"><input class="finp" type="text" id="eSearch" placeholder="Filter engines..." oninput="filterGrid('eGrid',this.value);san(this)" style="max-width:300px;"></div>
+    <div class="grid" id="eGrid"></div>
+  </div>
+
+  <div id="vEngReport" class="view">
+    <button class="bbtn" onclick="switchCat('engines')"><i class="fas fa-arrow-left"></i>Engines</button>
+    <div id="erContent"></div>
+  </div>
+
+  <div id="vAvoid" class="view">
+    <button class="bbtn" onclick="goHome()"><i class="fas fa-arrow-left"></i>Back</button>
+    <div style="max-width:960px;margin:0 auto;">
+      <h1 style="font-family:'Rajdhani',sans-serif;font-size:clamp(22px,4vw,34px);font-weight:700;color:var(--navy);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+        <i class="fas fa-skull-crossbones" style="color:var(--err);"></i>Cars to Watch Out For
+      </h1>
+      <p style="font-size:13px;color:var(--gray);margin-bottom:24px;line-height:1.6;">We've rounded up the cars, engines, and models that most often drain their owners' wallets. Check before you buy.</p>
+      <div class="stitle"><i class="fas fa-car-burst"></i>The worst used cars to buy</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:32px;" id="avCars"></div>
+      <div class="stitle"><i class="fas fa-gears"></i>Engines to avoid at all costs</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:32px;" id="avEngines"></div>
+      <div class="stitle"><i class="fas fa-chart-line"></i>Models with the highest failure rates (TUV/ADAC)</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:32px;" id="avReliab"></div>
+      <div class="stitle"><i class="fas fa-thumbs-up"></i>Cars worth buying</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:32px;" id="goodCars"></div>
+      <div class="prosoon">
+        <h4><i class="fas fa-crown" style="margin-right:6px;"></i>PRO version - coming soon</h4>
+        <p>Coming soon for registered users:</p>
+        <ul>
+          <li><i class="fas fa-check-circle"></i>Detailed repair costs for every model and year</li>
+          <li><i class="fas fa-check-circle"></i>Vehicle history by VIN</li>
+          <li><i class="fas fa-check-circle"></i>Full technical pre-purchase analysis</li>
+        </ul>
+        <button class="btnsoon"><i class="fas fa-clock" style="margin-right:6px;"></i>Unlock soon</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="vAbout" class="view">
+    <button class="bbtn" onclick="goHome()"><i class="fas fa-arrow-left"></i>Back</button>
+    <div class="prose">
+      <h1><i class="fas fa-circle-info" style="color:var(--sky);margin-right:8px;"></i>About the Project</h1>
+      <h2><i class="fas fa-star"></i>Who we are</h2>
+      <p>AutoEncyclopedia is a free, independent catalog of automotive knowledge. The project was built out of a passion for vehicles and a desire to give every buyer reliable, easy-to-understand data before they hand over their money.</p>
+      <h2><i class="fas fa-database"></i>Our data sources</h2>
+      <p>We draw on: the Wikipedia REST API (descriptions), Wikimedia Commons (CC-BY-SA photos), the NHTSA VIN Decoder API (technical data, US government), the NHTSA Complaints API (owner complaints and faults), and the CarVector API (verified specs, representative images, and federal recall data).</p>
+      <h2><i class="fas fa-triangle-exclamation"></i>A note on accuracy</h2>
+      <p>Reliability scores, "avoid this" notes, and typical-cost ranges on this site are editorial estimates meant as a starting point for research, not verified guarantees. Recall and complaint data pulled live from NHTSA and CarVector is sourced and dated; always confirm details against your vehicle's own service history before buying.</p>
+      <h2><i class="fas fa-envelope"></i>Contact</h2>
+      <p>Email: <a href="mailto:valtore.official@gmail.com">valtore.official@gmail.com</a></p>
+    </div>
+  </div>
+
+  <div id="vRodo" class="view">
+    <button class="bbtn" onclick="goHome()"><i class="fas fa-arrow-left"></i>Back</button>
+    <div class="prose">
+      <h1><i class="fas fa-shield-halved" style="color:var(--sky);margin-right:8px;"></i>Privacy Policy</h1>
+      <h2><i class="fas fa-building"></i>Data controller</h2>
+      <p>AutoEncyclopedia Engine - contact: valtore.official@gmail.com. Data is processed in accordance with the GDPR (EU 2016/679).</p>
+      <h2><i class="fas fa-database"></i>Data we collect</h2>
+      <p>When you sign in with Google OAuth 2.0: name, e-mail address, and profile picture. VIN numbers are not stored - they are passed anonymously and directly to the NHTSA and CarVector APIs.</p>
+      <h2><i class="fas fa-user-shield"></i>Your rights</h2>
+      <p>Access, correction, deletion, and portability of your data, and the right to lodge a complaint with your national data protection authority.</p>
+    </div>
+  </div>
+
+  <div id="vSettings" class="view">
+    <button class="bbtn" onclick="goHome()"><i class="fas fa-arrow-left"></i>Back</button>
+    <div class="prose">
+      <h1><i class="fas fa-gear" style="color:var(--sky);margin-right:8px;"></i>Settings</h1>
+      <div id="sCont"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="fline"></div>
+  <p>&copy; 2026 AutoEncyclopedia Engine &bull; Everything free</p>
+  <p>Contact: <a href="mailto:valtore.official@gmail.com">valtore.official@gmail.com</a></p>
+  <p style="margin-top:10px;font-size:10px;opacity:.5;">Data is provided for informational purposes only. Always verify against your vehicle's manual and service records.</p>
+</footer>
+
+<script>
+'use strict';
+// ═══ SECURITY ═══
+function san(el){el.value=el.value.replace(/[<>"'`;&|\\]/g,'');}
+function esc(s){if(typeof s!=='string')return '';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function cVin(v){return v.replace(/[^A-HJ-NPR-Z0-9]/gi,'').toUpperCase().slice(0,17);}
+
+// ═══════════════════════════════════════════════════════
+// CARVECTOR API CLIENT
+// ═══════════════════════════════════════════════════════
+// NOTE ON SECURITY: this is a static, client-side-only site with no backend,
+// so the bearer key below is visible to anyone who views the page source.
+// That's fine for a personal demo on the free tier, but if this site goes
+// public and gets real traffic, move this call behind a small server-side
+// proxy (or a serverless function) so the key never ships to the browser.
+const CV_API_KEY='cv_gTFhzvtnUCusmHdKCAX5pxx5zQFQVM9O';
+const CV_BASE='https://api.carvector.io/v1';
+const CV_CACHE={};
+
+// cvFetch returns {ok, status, data} so callers can tell "no data exists" (404)
+// apart from "your plan doesn't include this" (402/403) apart from "network/key
+// problem" (0) — that distinction matters if we don't want to fake certainty.
+async function cvFetch(path){
+  if(CV_CACHE[path]!==undefined) return CV_CACHE[path];
+  let result;
+  try{
+    const r=await fetch(CV_BASE+path,{
+      headers:{'Authorization':'Bearer '+CV_API_KEY},
+      signal:AbortSignal.timeout(8000)
+    });
+    if(!r.ok){
+      result={ok:false,status:r.status,data:null};
+    }else{
+      result={ok:true,status:r.status,data:await r.json()};
+    }
+  }catch{
+    result={ok:false,status:0,data:null};
+  }
+  CV_CACHE[path]=result;
+  return result;
+}
+
+// Search CarVector's catalog for a make/model. Tries a few strategies since
+// exact trim names ("Golf GTI", "3 Series") rarely match the search index
+// verbatim, and returns the first hit or null if nothing matches at all.
+async function cvLookup(make,model,year){
+  const tryQuery=async(params)=>{
+    const q=new URLSearchParams(params);
+    q.set('limit','5');
+    const res=await cvFetch('/vehicles?'+q.toString());
+    if(res.ok&&res.data&&res.data.results&&res.data.results.length)return res.data.results;
+    return null;
+  };
+  const firstWord=(model||'').split(' ')[0];
+  const attempts=[
+    {make,model,...(year?{year}:{})},
+    {make,model},
+    {make,model:firstWord},
+    {make}
+  ];
+  for(const a of attempts){
+    if(!a.make)continue;
+    const hits=await tryQuery(a);
+    if(hits){
+      // prefer a result whose model text contains our target model, else take the first
+      const better=hits.find(h=>h.model&&model&&h.model.toLowerCase().includes(firstWord.toLowerCase()));
+      return better||hits[0];
+    }
+  }
+  return null;
+}
+
+// Fetch full spec detail + recall campaigns + (if the plan allows it) the
+// complaint aggregate for a CarVector vehicle id. Each piece degrades on its
+// own — a 402/403/404 on complaints doesn't take down the specs or recalls.
+async function cvDetail(id){
+  const [veh,recalls,complaints]=await Promise.all([
+    cvFetch('/vehicles/'+encodeURIComponent(id)),
+    cvFetch('/vehicles/'+encodeURIComponent(id)+'/recalls'),
+    cvFetch('/vehicles/'+encodeURIComponent(id)+'/complaints')
+  ]);
+  return {
+    vehicle:veh.ok?veh.data:null,
+    recalls:(recalls.ok&&recalls.data&&recalls.data.recalls)||[],
+    complaints:complaints.ok?complaints.data:null,
+    complaintsStatus:complaints.status
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+// NHTSA COMPLAINTS — free, public, no key needed. Real owner-reported
+// problems for a specific make/model/year, straight from the US federal
+// database. Used as a fallback "common faults" source when CarVector's
+// complaint-aggregate endpoint isn't on this plan.
+// ═══════════════════════════════════════════════════════
+async function nhtsaComplaints(make,model,year){
+  try{
+    const url=`https://api.nhtsa.gov/complaints/complaintsByVehicle?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&modelYear=${encodeURIComponent(year||'')}`;
+    const r=await fetch(url,{signal:AbortSignal.timeout(8000)});
+    if(!r.ok)return null;
+    const d=await r.json();
+    return (d.results&&d.results.length)?d.results:null;
+  }catch{return null;}
+}
+
+// ═══ STATE ═══
+let curUser=null,curCat='cars',curGroup=null,curBrand=null;
+
+// ═══════════════════════════════════════════════════════
+// MANUAL PHOTO DATABASE - ADD YOUR OWN PHOTOS HERE!
+// ═══════════════════════════════════════════════════════
+const MANUAL_PHOTOS = {
+  brands: {
+    "Volkswagen": "https://freepngimg.com/thumb/volkswagen/36961-6-volkswagen.png",
+    "Bentley": "https://freepngimg.com/thumb/bentley/5-2-bentley-png-clipart.png",
+    "Bugatti": "https://thfvnext.bing.com/th/id/R.2f6887d7ace89aaeb43b71912a5a80a9?rik=TjM59YGX6H%2fZ6g&pid=ImgRaw&r=0",
+    "Lamborghini": "https://logo-marque.com/wp-content/uploads/2021/03/Lamborghini-Logo.png",
+    "Porsche": "https://thfvnext.bing.com/th/id/R.34362162cfe15152af26f2be1aa23814?rik=mNTI8%2fzmRxIbzA&riu=http%3a%2f%2fpngimg.com%2fuploads%2fporsche_logo%2fporsche_logo_PNG1.png&ehk=viyJGrSvoJsH3wwAWviFXn%2bRDqbPUEaUiW4Cndw0V9I%3d&risl=&pid=ImgRaw&r=0",
+    "Škoda": "https://dhihk6wcjzylk.cloudfront.net/carprices/media/brands/skoda-logo.png",
+    "Audi": "https://freepngimg.com/thumb/audi/29748-2-audi-logo-with-transparent-background.png",
+    "Alfa Romeo": "https://thfvnext.bing.com/th/id/R.618b3bfccf76528b5977bfbddef67276?rik=7ibKJTCaqGlwGA&pid=ImgRaw&r=0",
+    "Fiat": "https://logos-world.net/wp-content/uploads/2021/03/Fiat-Emblem.png",
+    "Jeep": "https://pngimg.com/uploads/car_logo/car_logo_PNG1648.png",
+    "Citroën": "https://papik.pro/grafic/uploads/posts/2023-04/1681525964_papik-pro-p-sitroen-logotip-vektor-37.png",
+    "Dodge": "https://www.le-certificat-de-conformite.fr/sites/default/files/dodge_0.png",
+    "Maserati": "https://thfvnext.bing.com/th/id/R.ff6879fa67ca511d2a8ad53b97db4330?rik=g2KxhnJ2PAiVhA&pid=ImgRaw&r=0",
+    "Opel": "https://yasetuning.com/img/cms/opellogo.png",
+    "Peugeot": "https://wallpaperaccess.com/full/6760827.png",
+    "Toyota": "https://thfvnext.bing.com/th/id/R.b6a6ccec252a7dafc0ccd153ef66c32c?rik=CCsBN4TDIiWvXQ&riu=http%3a%2f%2fwww.pngall.com%2fwp-content%2fuploads%2f2016%2f04%2fToyota-Logo-Free-Download-PNG.png&ehk=8o4dM4vVbuYrUwRxJfRlyxjq%2b5I8%2fea1ph%2fj9xxJUts%3d&risl=&pid=ImgRaw&r=0",
+    "Lexus": "https://thfvnext.bing.com/th/id/R.6932f1452f477881853d2e06ad537ce9?rik=wQpDMJlR6ekkxQ&pid=ImgRaw&r=0",
+    "Daihatsu": "https://logos-world.net/wp-content/uploads/2021/08/Daihatsu-Logo.png",
+    "BMW": "https://thfvnext.bing.com/th/id/R.47d0b4260f22ffb41d8c59c736348ce5?rik=gfDGLQ7v5h5TWQ&pid=ImgRaw&r=0c",
+    "MINI": "https://www.pngkey.com/png/full/67-671350_mini-cooper-logo-vector-free-download-mini-cooper.png",
+    "Rolls-Royce": "https://thfvnext.bing.com/th/id/R.be97e06d3e7dbc62dcc0fa57b5043695?rik=UAJWdL0p8pDQdg&pid=ImgRaw&r=0",
+    "Mercedes-Benz": "https://wallpapers.com/images/hd/mercedes-benz-logo-silver-gv8burugtbc7uje9-2.png",
+    "Maybach": "https://www.logo-voiture.com/wp-content/uploads/2023/03/logo-maybach-noir-678x509.png",
+    "Smart": "https://thfvnext.bing.com/th/id/R.74975fb3c6ac510ce9a80089fc4e07b4?rik=AuC9tZGQMSl96w&riu=http%3a%2f%2fvoiture.top%2fwp-content%2fuploads%2f2024%2f08%2fSmart-logo.png&ehk=64z4e88FrGbfmKsk8hTXJ3fthLWW3YWQ1RdARkk%2fKcM%3d&risl=&pid=ImgRaw&r=0",
+    "Hyundai": "https://th.bing.com/th/id/R.35647c0cec927537fa43ed1836a446c2?rik=7Lzu71WwPczowA&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fhyundai-logo-png-hyundai-car-logo-png-brand-image-1749.png&ehk=UI8O%2bS7ci5lpalKI9Rf1u%2bMYvCgw%2bVwAeupMAcxmk2g%3d&risl=&pid=ImgRaw&r=0",
+    "Kia": "https://logos-world.net/wp-content/uploads/2021/03/Kia-Logo-2021-present.png",
+    "Genesis": "https://listcarbrands.com/wp-content/uploads/2016/12/Genesis-Logo.png",
+    "Ford": "https://freepnglogo.com/images/all_img/1719934959ford-logo-transparent.png",
+    "Lincoln": "https://th.bing.com/th/id/R.a58df8c48f042710dceb207ef4e197fa?rik=bIjy5R3cbfMA%2fQ&pid=ImgRaw&r=0",
+    "Volvo": "https://th.bing.com/th/id/R.e7e0d8cb24e7fe307952eaaea416d6a3?rik=%2bYP%2bqYN%2fs6l%2fgQ&pid=ImgRaw&r=0",
+    "Polestar": "https://listcarbrands.com/wp-content/uploads/2017/10/Polestar-Logo-2017.png",
+    "Lotus": "https://dscovers.fr/app/uploads/sites/3/2021/03/lotus.png",
+    "Renault": "https://thfvnext.bing.com/th/id/R.e5f8d0ebd65047e6e30e45299b708c35?rik=5BdB%2bKtrG0kZ1A&pid=ImgRaw&r=0",
+    "Nissan": "https://www.freepnglogos.com/uploads/nissan-logo-27.png",
+    "Mitsubishi": "https://th.bing.com/th/id/R.c2a4da26cbfb4fff4af52f57f2ed0246?rik=F0CgfkPgdSsq0w&pid=ImgRaw&r=0",
+    "Dacia": "https://logos-world.net/wp-content/uploads/2021/08/Dacia-Logo-2015-2021.png",
+    "Ferrari": "https://logos-world.net/wp-content/uploads/2020/06/Ferrari-Logo.png",
+    "McLaren": "https://listcarbrands.com/wp-content/uploads/2016/12/McLaren-Logo.png",
+    "Mazda": "https://www.pngmart.com/files/23/Mazda-Logo-PNG-Pic.png",
+    "Honda": "https://th.bing.com/th/id/R.891226b572e9e2f1f69d3ff380579838?rik=EkUBjwEXrT6zhA&pid=ImgRaw&r=0",
+    "Subaru": "https://www.pngplay.com/wp-content/uploads/8/Subaru-Logo-Transparent-Background.png",
+    "Honda Moto": "https://www.freeiconspng.com/uploads/honda-motorcycles-logo-11.png",
+    "Yamaha": "https://thumbnail.imgbin.com/18/2/14/imgbin-yamaha-motor-company-yamaha-yzf-r1-motorcycle-logo-side-by-side-motorcycle-iURVQzLvqkfN9v4avA3NkpZmm_t.jpg",
+    "Suzuki": "https://th.bing.com/th/id/R.140464423fa0741cd60defe959e59654?rik=EHmd56GIJTJgOA&pid=ImgRaw&r=0",
+    "Kawasaki": "https://th.bing.com/th/id/R.64ac04a2bad903715ebec1e7d9157aaf?rik=pz7WSqGNYGXIBQ&pid=ImgRaw&r=0",
+    "Ducati": "https://www.pngall.com/wp-content/uploads/8/Ducati-Logo-PNG.png",
+    "Aprilia": "https://www.marefa.org/w/images/thumb/8/82/Aprilia_Racing_Logo.svg/2560px-Aprilia_Racing_Logo.svg.png",
+    "MV Agusta": "https://motorcycle-logos.com/wp-content/uploads/2016/11/MV-Agusta-motorcycle-logo.png",
+    "Moto Guzzi": "https://motorcycle-logos.com/wp-content/uploads/2016/11/Moto-Guzzi-Motorcycle-Logo.png",
+    "Vespa": "https://cdn.imgbin.com/11/19/16/imgbin-vespa-gts-scooter-piaggio-logo-scooter-E1V2jBzkKwENn65qqq1UGskM8.jpg",
+    "BMW Motorrad": "https://th.bing.com/th/id/R.276a970cd35a83cc71beee75cb89f382?rik=%2bKvKSMifCu9iNA&pid=ImgRaw&r=0",
+    "Harley-Davidson": "https://www.pngall.com/wp-content/uploads/13/Harley-Davidson-Logo-PNG-Free-Image.png",
+    "KTM": "https://static.vecteezy.com/system/resources/previews/022/100/803/non_2x/ktm-logo-transparent-free-png.png",
+    "Triumph": "https://th.bing.com/th/id/R.7207aa4103321a6ae534304244c8ffe1?rik=Aos2bFgBSKB8Qw&pid=ImgRaw&r=0",
+    "Indian": "https://motorcycle-logos.com/wp-content/uploads/2016/11/Indian-Logo.png",
+    "CFMoto": "https://www.cfmoto.bg/storage/frontend/cfmoto/images/dev.cfmoto.bg/common/cfmoto-banner_tHGFg__d2Lls_1684752609.webp",
+    "Zontes": "https://your-server.com/photos/brands/zontes.jpg",
+    "Voge": "https://your-server.com/photos/brands/voge.jpg",
+    "Junak": "https://your-server.com/photos/brands/junak.jpg",
+    "Barton": "https://your-server.com/photos/brands/barton.jpg",
+    "Zipp": "https://your-server.com/photos/brands/zipp.jpg",
+    "Klasyki": "https://your-server.com/photos/brands/classic-bikes.jpg",
+    "Yamaha Boats": "https://your-server.com/photos/brands/yamaha-boat.jpg",
+    "Sea Ray": "https://your-server.com/photos/brands/sea-ray.jpg",
+    "Bayliner": "https://your-server.com/photos/brands/bayliner.jpg",
+    "Boston Whaler": "https://your-server.com/photos/brands/boston-whaler.jpg",
+    "Jeanneau": "https://your-server.com/photos/brands/jeanneau.jpg",
+    "Beneteau": "https://your-server.com/photos/brands/beneteau.jpg",
+    "Quicksilver": "https://your-server.com/photos/brands/quicksilver.jpg",
+    "Tracker Boats": "https://your-server.com/photos/brands/tracker.jpg",
+    "Lund Boats": "https://your-server.com/photos/brands/lund.jpg",
+    "Ranger Boats": "https://your-server.com/photos/brands/ranger.jpg",
+    "Sea-Doo": "https://your-server.com/photos/brands/sea-doo.jpg",
+    "Kawasaki Jet Ski": "https://your-server.com/photos/brands/kawasaki-jetski.jpg",
+    "Yamaha WaveRunner": "https://your-server.com/photos/brands/yamaha-waverunner.jpg"
+  },
+  models: {}
+};
+
+// ═══ FUNCTION TO GET MANUAL PHOTO ═══
+function getManualPhoto(brand, model = '') {
+  const cleanBrand = brand.replace(/[⭐\s]/g, '').trim();
+  const cleanModel = model.replace(/[⭐\s]/g, '').trim();
+  const modelKey = `${cleanBrand} ${cleanModel}`;
+  if (MANUAL_PHOTOS.models[modelKey]) return MANUAL_PHOTOS.models[modelKey];
+  const modelKeyNoSpace = `${cleanBrand} ${cleanModel}`.replace(/\s+/g, '');
+  for (const [key, url] of Object.entries(MANUAL_PHOTOS.models)) {
+    if (key.replace(/\s+/g, '').toLowerCase() === modelKeyNoSpace.toLowerCase()) return url;
+  }
+  if (MANUAL_PHOTOS.brands[cleanBrand]) return MANUAL_PHOTOS.brands[cleanBrand];
+  for (const [brandName, url] of Object.entries(MANUAL_PHOTOS.brands)) {
+    if (brandName.toLowerCase() === cleanBrand.toLowerCase()) return url;
+  }
+  return null;
+}
+function addPhoto(type, name, photoUrl) {
+  if (type === 'brand') MANUAL_PHOTOS.brands[name] = photoUrl;
+  else if (type === 'model') MANUAL_PHOTOS.models[name] = photoUrl;
+}
+function addPhotosBatch(photosArray) {
+  photosArray.forEach(photo => {
+    if (photo.type === 'brand') MANUAL_PHOTOS.brands[photo.name] = photo.url;
+    else if (photo.type === 'model') MANUAL_PHOTOS.models[photo.name] = photo.url;
+  });
+}
+
+// ═══ AUTH ═══
+function onGSign(r){
+  try{
+    const p=r.credential.split('.');
+    const pl=JSON.parse(atob(p[1].replace(/-/g,'+').replace(/_/g,'/')));
+    if(!pl.email)throw 0;
+    curUser={name:esc(pl.name||''),email:pl.email,picture:pl.picture||''};
+    sessionStorage.setItem('ae',JSON.stringify(curUser));
+    showU();
+  }catch(e){}
+}
+function showU(){
+  document.getElementById('gBtn').style.display='none';
+  document.getElementById('uArea').style.display='block';
+  document.getElementById('uAvt').src=curUser.picture;
+}
+function doLogout(){
+  sessionStorage.removeItem('ae');curUser=null;
+  document.getElementById('uArea').style.display='none';
+  document.getElementById('gBtn').style.display='block';
+  document.getElementById('uMenu').classList.remove('open');
+}
+function toggleUM(){document.getElementById('uMenu').classList.toggle('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.uw'))document.getElementById('uMenu').classList.remove('open');});
+function openSettings(){
+  document.getElementById('uMenu').classList.remove('open');
+  document.getElementById('sCont').innerHTML=curUser
+    ?`<div class="panel"><div class="trow"><strong>Name</strong><span>${esc(curUser.name)}</span></div><div class="trow"><strong>E-mail</strong><span>${esc(curUser.email)}</span></div></div>`
+    :'<p>Sign in to view your settings.</p>';
+  showV('vSettings');
+}
+(()=>{const s=sessionStorage.getItem('ae');if(s){try{curUser=JSON.parse(s);showU();}catch(e){}}})();
+
+// ═══════════════════════════════════════════════════════
+// WIKIPEDIA IMAGE SYSTEM — FALLBACK ONLY (when manual photos missing)
+// ═══════════════════════════════════════════════════════
+const IMG_CACHE={};
+const WIKI_CACHE={};
+
+async function wikiSummary(title, lang='en'){
+  try{
+    const r=await fetch(
+      `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g,'_'))}`,
+      {signal:AbortSignal.timeout(5000)}
+    );
+    if(!r.ok) return null;
+    const d=await r.json();
+    if(!d.extract||d.extract.length<40) return null;
+    return {
+      text:d.extract,
+      img:d.originalimage?.source||d.thumbnail?.source||null,
+      url:d.content_urls?.desktop?.page||null,
+      lang
+    };
+  }catch{return null;}
+}
+
+function imgQueries(brand, model){
+  const b=brand.trim(), m=(model||'').trim();
+  if(!m) return [b,`${b} (automobile)`,`${b} (manufacturer)`,`${b} (motorcycle brand)`,`${b} motorcycle`];
+  return [
+    `${b} ${m}`,
+    `${b} ${m} (automobile)`,
+    `${b} ${m} (motorcycle)`,
+    `${m} (automobile)`,
+    `${b} ${m.split(' ')[0]}`,
+    b
+  ];
+}
+
+async function getImg(brand, model=''){
+  const manualPhoto = getManualPhoto(brand, model);
+  if (manualPhoto) return manualPhoto;
+  const k=(brand+'|'+(model||'')).toLowerCase().trim().replace(/⭐/g,'');
+  if(IMG_CACHE[k]!==undefined) return IMG_CACHE[k];
+  IMG_CACHE[k]=null;
+  const queries=imgQueries(brand.replace(/⭐/g,''), (model||'').replace(/⭐/g,''));
+  for(const q of queries){
+    for(const lang of['en','pl']){
+      const d=await wikiSummary(q,lang);
+      if(d&&d.img){IMG_CACHE[k]=d.img;return d.img;}
+    }
+  }
+  return null;
+}
+
+async function getWiki(brand, model=''){
+  const k=(brand+'|'+(model||'')).toLowerCase().trim().replace(/⭐/g,'');
+  if(WIKI_CACHE[k]) return WIKI_CACHE[k];
+  const queries=imgQueries(brand.replace(/⭐/g,''), (model||'').replace(/⭐/g,''));
+  let best=null;
+  for(const q of queries){
+    for(const lang of['en','pl']){
+      const d=await wikiSummary(q,lang);
+      if(d){
+        if(!best||d.text.length>best.text.length) best=d;
+        if(best.img) break;
+      }
+    }
+    if(best&&best.img) break;
+  }
+  const result=best||{text:null,img:null,url:null,lang:'none'};
+  WIKI_CACHE[k]=result;
+  return result;
+}
+
+// ═══════════════════════════════════════════════════════
+// WIKIPEDIA INFOBOX SPECS — a real secondary data source.
+// Wikipedia's vehicle articles carry an editor-maintained "Infobox
+// automobile / motorcycle / ship" template with actual spec fields
+// (engine, transmission, dimensions, etc). We fetch the raw wikitext,
+// pull that template out, and show its fields verbatim with a link back
+// to the article — real, sourced numbers instead of a guess or a filler
+// string. If no infobox exists for a given model, we say so honestly.
+// ═══════════════════════════════════════════════════════
+const INFOBOX_CACHE={};
+
+function cleanWikitext(s){
+  if(!s)return '';
+  return s
+    .replace(/<ref[^>]*>[\s\S]*?<\/ref>/gi,'')
+    .replace(/<ref[^>]*\/>/gi,'')
+    .replace(/<!--[\s\S]*?-->/g,'')
+    .replace(/\{\{(?:cvt|convert)\|([^|}]+)\|([^|}]+)\|[^}]*\}\}/gi,'$1 $2')
+    .replace(/\{\{nowrap\|([^}]*)\}\}/gi,'$1')
+    .replace(/\{\{small\|([^}]*)\}\}/gi,'$1')
+    .replace(/\{\{[^{}]*\}\}/g,'')
+    .replace(/\[\[(?:[^|\]]*\|)?([^\]]+)\]\]/g,'$1')
+    .replace(/'''?/g,'')
+    .replace(/<br\s*\/?>/gi,'; ')
+    .replace(/<[^>]+>/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function parseInfobox(wikitext){
+  const startIdx=wikitext.search(/\{\{\s*Infobox/i);
+  if(startIdx===-1)return null;
+  // Walk forward tracking brace depth so we only read this one template block.
+  let depth=0,i=startIdx,end=wikitext.length;
+  for(;i<wikitext.length;i++){
+    if(wikitext.startsWith('{{',i)){depth++;i++;}
+    else if(wikitext.startsWith('}}',i)){depth--;i++;if(depth===0){end=i+2;break;}}
+  }
+  const block=wikitext.slice(startIdx,end);
+  const fields={};
+  let curKey=null;
+  for(const rawLine of block.split('\n')){
+    const line=rawLine.replace(/\r/,'');
+    const m=line.match(/^\|\s*([a-zA-Z_][\w ]*)\s*=\s*(.*)$/);
+    if(m){
+      curKey=m[1].trim().toLowerCase().replace(/\s+/g,'_');
+      fields[curKey]=m[2];
+    }else if(curKey&&line.trim()&&!/^[|}]/.test(line.trim())){
+      fields[curKey]+=' '+line.trim();
+    }else if(/^\||^\}\}/.test(line.trim())){
+      // new field marker or end reached without matching our regex (e.g. blank '| key')
+    }
+  }
+  for(const k in fields)fields[k]=cleanWikitext(fields[k]);
+  return fields;
+}
+
+async function fetchWikitext(title,lang='en'){
+  try{
+    const url=`https://${lang}.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvslots=main&formatversion=2&format=json&origin=*&titles=${encodeURIComponent(title)}`;
+    const r=await fetch(url,{signal:AbortSignal.timeout(8000)});
+    if(!r.ok)return null;
+    const d=await r.json();
+    const page=d.query&&d.query.pages&&d.query.pages[0];
+    if(!page||page.missing)return null;
+    const rev=page.revisions&&page.revisions[0];
+    const content=rev&&rev.slots&&rev.slots.main&&rev.slots.main.content;
+    return content||null;
+  }catch{return null;}
+}
+
+// Which infobox fields are worth showing per category, in priority order.
+const INFOBOX_KEYS={
+  cars:['engine','layout','transmission','wheelbase','length','width','height','curb_weight','weight','production','assembly','class','body_style','platform','predecessor','successor'],
+  moto:['engine','bore_stroke','compression_ratio','top_speed','power','torque','transmission','ignition','frame','suspension','brakes','tires','wheelbase','seat_height','dry_weight','wet_weight','fuel_capacity','production'],
+  boats:['length','beam','draft','displacement','propulsion','sail_plan','crew','class','builder','launched','power']
+};
+
+async function getWikiSpecs(brand,model){
+  const k=(brand+'|'+model).toLowerCase().trim().replace(/⭐/g,'');
+  if(INFOBOX_CACHE[k]!==undefined)return INFOBOX_CACHE[k];
+  const queries=imgQueries(brand.replace(/⭐/g,''),model.replace(/⭐/g,''));
+  let result=null;
+  for(const q of queries){
+    for(const lang of['en']){
+      const wt=await fetchWikitext(q,lang);
+      if(!wt)continue;
+      const fields=parseInfobox(wt);
+      if(!fields)continue;
+      const wantedKeys=INFOBOX_KEYS[curCat]||INFOBOX_KEYS.cars;
+      const rows=wantedKeys.filter(fk=>fields[fk]&&fields[fk].length>0&&fields[fk].length<300)
+        .map(fk=>[fk.replace(/_/g,' '),fields[fk]]);
+      if(rows.length){
+        result={rows,url:`https://${lang}.wikipedia.org/wiki/${encodeURIComponent(q.replace(/ /g,'_'))}`,lang};
+        break;
+      }
+    }
+    if(result)break;
+  }
+  INFOBOX_CACHE[k]=result;
+  return result;
+}
+
+// ═══ DATABASES ═══
+const dbCars={
+  "Volkswagen Group":{
+    "Audi":{"A1":"2010-2024","A2":"1999-2005","A3":"1996-2024","A4":"1994-2024","A5":"2007-2024","A6":"1994-2024","A7":"2010-2024","A8":"1994-2024","Q2":"2016-2024","Q3":"2011-2024","Q5":"2008-2024","Q7":"2005-2024","Q8":"2018-2024","TT ⭐":"1998-2023","R8 ⭐":"2006-2023","RS3":"2011-2024","RS4":"2000-2024","RS6 ⭐":"2002-2024","S3":"2006-2024","e-tron":"2019-2024","Quattro ⭐":"1980-1991"},
+    "Bentley":{"Continental GT ⭐":"2003-2024","Flying Spur":"2005-2024","Bentayga":"2015-2024","Mulsanne ⭐":"2010-2020","Arnage":"1998-2009"},
+    "Bugatti":{"Veyron ⭐":"2005-2015","Chiron ⭐":"2016-2022","Divo":"2018-2021","EB110 ⭐":"1991-1995","Type 35 ⭐":"1924-1930"},
+    "Lamborghini":{"Aventador ⭐":"2011-2022","Huracán ⭐":"2014-2024","Urus":"2018-2024","Gallardo ⭐":"2003-2013","Murciélago ⭐":"2001-2010","Diablo ⭐":"1990-2001","Countach ⭐":"1974-1990","Miura ⭐":"1966-1972","Revuelto":"2023-2024"},
+    "Porsche":{"911 ⭐":"1963-2024","Taycan":"2019-2024","Panamera":"2009-2024","Macan":"2014-2024","Cayenne":"2002-2024","918 Spyder ⭐":"2013-2015","Carrera GT ⭐":"2003-2006","959 ⭐":"1986-1988","944":"1982-1991","928":"1977-1995","356 ⭐":"1948-1965","718 Cayman":"2016-2024"},
+    "Škoda":{"Fabia ⭐":"1999-2024","Octavia ⭐":"1996-2024","Superb":"2001-2024","Kodiaq":"2016-2024","Karoq":"2017-2024","Kamiq":"2019-2024","Yeti":"2009-2017","Enyaq iV":"2020-2024","Felicia ⭐":"1994-2001"},
+    "Volkswagen":{"Golf ⭐":"1974-2024","Golf GTI ⭐":"1976-2024","Polo":"1975-2024","Passat ⭐":"1973-2024","Arteon":"2017-2024","Tiguan":"2007-2024","Touareg":"2002-2024","T-Roc":"2017-2024","ID.3":"2020-2024","ID.4":"2020-2024","ID. Buzz ⭐":"2022-2024","Beetle ⭐":"1938-2019","Scirocco ⭐":"1974-2017","Corrado ⭐":"1988-1995","Transporter ⭐":"1950-2024"}
+  },
+  "Stellantis":{
+    "Alfa Romeo":{"Giulia":"2016-2024","Stelvio":"2017-2024","Tonale":"2022-2024","Giulietta":"2010-2020","156":"1997-2007","159":"2005-2011","147":"2000-2010","GTV":"1994-2004","4C ⭐":"2013-2020","8C Competizione ⭐":"2007-2008"},
+    "Fiat":{"500 ⭐":"2007-2024","Panda ⭐":"1980-2024","Punto":"1993-2018","Tipo":"2015-2024","Uno ⭐":"1983-1995","Multipla ⭐":"1998-2010","126p ⭐":"1973-2000"},
+    "Jeep":{"Wrangler ⭐":"1986-2024","Grand Cherokee":"1992-2024","Cherokee":"1974-2024","Compass":"2006-2024","Renegade":"2014-2024","Gladiator":"2019-2024"},
+    "Citroën":{"C1":"2005-2021","C3":"2002-2024","C4":"2004-2024","C5 Aircross":"2018-2024","Berlingo":"1996-2024","2CV ⭐":"1948-1990","DS ⭐":"1955-1975"},
+    "Dodge":{"Charger ⭐":"2006-2023","Challenger ⭐":"2008-2023","Durango":"1998-2024","Viper ⭐":"1992-2017","Demon ⭐":"2018-2023"},
+    "Maserati":{"Ghibli":"2013-2024","Levante":"2016-2024","MC20":"2020-2024","Quattroporte":"1963-2024","GranTurismo":"2007-2024"},
+    "Opel":{"Corsa":"1982-2024","Astra":"1991-2024","Insignia":"2008-2022","Mokka":"2012-2024","Vectra":"1988-2009"},
+    "Peugeot":{"208":"2012-2024","308":"2007-2024","508":"2010-2024","3008":"2008-2024","205":"1983-1998","206":"1998-2010"}
+  },
+  "Toyota Group":{
+    "Toyota":{"Corolla ⭐":"1966-2024","Camry":"1982-2024","Yaris":"1999-2024","Prius ⭐":"1997-2024","Supra MK4 ⭐":"1993-2002","Supra MK5":"2019-2024","GT86":"2012-2021","GR86":"2021-2024","RAV4":"1994-2024","Land Cruiser ⭐":"1951-2024","Hilux ⭐":"1968-2024","MR2 ⭐":"1984-2007","Celica ⭐":"1970-2006","bZ4X":"2022-2024"},
+    "Lexus":{"IS":"1998-2024","ES":"1989-2024","LS ⭐":"1989-2024","RX ⭐":"1998-2024","GX":"2002-2024","LX":"1996-2024","LC ⭐":"2017-2024","LFA ⭐":"2010-2012","RC F ⭐":"2014-2024"},
+    "Daihatsu":{"Mira":"1980-2024","Copen ⭐":"2002-2024","Terios":"1997-2024","Charade":"1977-2013"}
+  },
+  "BMW Group":{
+    "BMW":{"1 Series":"2004-2024","3 Series ⭐":"1975-2024","5 Series ⭐":"1972-2024","7 Series ⭐":"1977-2024","X1":"2009-2024","X3":"2003-2024","X5 ⭐":"1999-2024","M3 ⭐":"1986-2024","M5 ⭐":"1985-2024","i8 ⭐":"2014-2020","Z4":"2002-2024","i7":"2022-2024"},
+    "MINI":{"Cooper ⭐":"2001-2024","Countryman":"2010-2024","Clubman":"2007-2023","GP ⭐":"2002-2024"},
+    "Rolls-Royce":{"Phantom ⭐":"1925-2024","Ghost":"2009-2024","Wraith ⭐":"2013-2023","Cullinan ⭐":"2018-2024","Silver Ghost ⭐":"1906-1926"}
+  },
+  "Mercedes-Benz Group":{
+    "Mercedes-Benz":{"A-Class":"1997-2024","C-Class ⭐":"1993-2024","E-Class ⭐":"1984-2024","S-Class ⭐":"1954-2024","G-Class ⭐":"1979-2024","SL ⭐":"1952-2024","AMG GT ⭐":"2014-2024","SLS AMG ⭐":"2009-2014","190E ⭐":"1982-1993","W123 ⭐":"1976-1985","EQS":"2021-2024"},
+    "Maybach":{"S680":"2021-2024","GLS 600":"2020-2024","57":"2002-2012","62":"2002-2012"},
+    "Smart":{"Fortwo":"1998-2024","Smart #1":"2022-2024","Roadster ⭐":"2003-2006"}
+  },
+  "Hyundai Group":{
+    "Hyundai":{"i10":"2007-2024","i20":"2009-2024","i30":"2007-2024","Tucson ⭐":"2004-2024","Santa Fe ⭐":"2000-2024","Ioniq 5 ⭐":"2021-2024","Ioniq 6":"2022-2024","Veloster ⭐":"2011-2022"},
+    "Kia":{"Picanto":"2004-2024","Rio":"2000-2024","Ceed":"2006-2024","Sportage ⭐":"1993-2024","Sorento ⭐":"2002-2024","EV6 ⭐":"2021-2024","Stinger ⭐":"2017-2023","Soul ⭐":"2008-2024"},
+    "Genesis":{"G70":"2017-2024","G80":"2016-2024","G90 ⭐":"2014-2024","GV70":"2020-2024","GV80 ⭐":"2020-2024"}
+  },
+  "Ford Motor":{
+    "Ford":{"Fiesta ⭐":"1976-2023","Focus ⭐":"1998-2024","Mondeo":"1992-2022","Mustang ⭐":"1964-2024","Puma":"2019-2024","Kuga":"2008-2024","Explorer ⭐":"1990-2024","GT ⭐":"2005-2022","Capri ⭐":"1968-1986","Escort ⭐":"1968-2004","F-150 ⭐":"1948-2024","Bronco ⭐":"1966-2024","Transit ⭐":"1965-2024"},
+    "Lincoln":{"Navigator ⭐":"1997-2024","Continental ⭐":"1939-2020","Town Car ⭐":"1980-2011"}
+  },
+  "Geely / Volvo":{
+    "Volvo":{"XC40 ⭐":"2017-2024","XC60 ⭐":"2008-2024","XC90 ⭐":"2002-2024","S60":"2000-2024","S90":"1997-2024","V60":"2010-2024","240 ⭐":"1974-1993","850 ⭐":"1991-1997","P1800 ⭐":"1961-1973","EX30":"2023-2024"},
+    "Polestar":{"Polestar 1 ⭐":"2019-2021","Polestar 2":"2020-2024","Polestar 3":"2023-2024"},
+    "Lotus":{"Elise ⭐":"1996-2021","Exige ⭐":"2000-2021","Emira":"2022-2024","Evija ⭐":"2021-2024","Esprit ⭐":"1976-2004"}
+  },
+  "Renault-Nissan":{
+    "Renault":{"Clio ⭐":"1990-2024","Megane":"1995-2024","Captur":"2013-2024","Zoe":"2012-2024","Alpine A110 ⭐":"1961-2024"},
+    "Nissan":{"Micra":"1982-2022","Qashqai":"2006-2024","Juke":"2010-2024","Patrol ⭐":"1951-2024","GT-R R35 ⭐":"2007-2024","Skyline R34 ⭐":"1999-2002","350Z":"2002-2009","Leaf":"2010-2024"},
+    "Mitsubishi":{"Lancer Evolution ⭐":"1992-2016","Outlander":"2001-2024","Pajero ⭐":"1982-2021"},
+    "Dacia":{"Duster":"2010-2024","Sandero":"2008-2024","Logan":"2004-2024"}
+  },
+  "Other / Supercar":{
+    "Ferrari":{"F40 ⭐":"1987-1992","Enzo ⭐":"2002-2004","LaFerrari ⭐":"2013-2018","SF90 ⭐":"2019-2024","Roma":"2020-2024","296 GTB":"2021-2024"},
+    "McLaren":{"720S ⭐":"2017-2024","Artura":"2022-2024","P1 ⭐":"2013-2015","F1 ⭐":"1992-1998"},
+    "Mazda":{"MX-5 ⭐":"1989-2024","RX-7 ⭐":"1978-2002","RX-8":"2003-2012","Mazda 6":"2002-2024"},
+    "Honda":{"NSX ⭐":"1990-2022","S2000 ⭐":"1999-2009","Civic Type R":"2015-2024","Accord":"1976-2024"},
+    "Subaru":{"Impreza WRX STI ⭐":"1992-2021","BRZ":"2012-2024","Outback":"1995-2024","Forester":"1997-2024"}
+  }
+};
+const dbMoto={
+  "Japanese":{
+    "Honda":{"CBR600RR ⭐":"2003-2024","CBR1000RR Fireblade ⭐":"1992-2024","CBR650R":"2019-2024","CB500F":"2013-2024","CB650R ⭐":"2019-2024","CB1000R":"2008-2024","Hornet 600 ⭐":"1998-2013","Hornet 750":"2023-2024","Africa Twin ⭐":"2015-2024","NC750X":"2012-2024","Rebel 500":"2017-2024","Gold Wing ⭐":"1974-2024","VFR800":"1994-2024","PCX 125":"2010-2024"},
+    "Yamaha":{"YZF-R1 ⭐":"1998-2024","YZF-R6 ⭐":"1999-2020","YZF-R7":"2021-2024","MT-07 ⭐":"2014-2024","MT-09 ⭐":"2013-2024","MT-10":"2016-2024","XSR700":"2016-2024","XSR900":"2016-2024","Tracer 9 ⭐":"2021-2024","Tenere 700 ⭐":"2019-2024","FZ6":"2004-2010","FJR1300 ⭐":"2001-2020","TMAX ⭐":"2001-2024"},
+    "Suzuki":{"Hayabusa ⭐":"1999-2024","GSX-R600 ⭐":"1992-2020","GSX-R750 ⭐":"1985-2018","GSX-R1000 ⭐":"2001-2024","SV650 ⭐":"1999-2024","V-Strom 650 ⭐":"2002-2024","V-Strom 1050":"2019-2024","Bandit 600 ⭐":"1995-2006","Katana ⭐":"1981-2024"},
+    "Kawasaki":{"Ninja 400 ⭐":"2018-2024","Ninja 650":"2006-2024","Ninja ZX-6R ⭐":"1995-2024","Ninja ZX-10R ⭐":"2004-2024","Ninja H2 ⭐":"2015-2024","Z650":"2017-2024","Z750 ⭐":"2004-2012","Z900 ⭐":"2017-2024","Z1000":"2003-2020","Versys 650":"2006-2024","KLR 650 ⭐":"1987-2024"}
+  },
+  "Italian":{
+    "Ducati":{"Panigale V4 ⭐":"2018-2024","Panigale V2":"2020-2024","Monster 696 ⭐":"2008-2014","Monster 1200":"2014-2021","Streetfighter V4 ⭐":"2020-2024","Multistrada V4 ⭐":"2021-2024","Diavel ⭐":"2011-2024","Scrambler Icon":"2015-2024","916 ⭐":"1994-1999"},
+    "Aprilia":{"RSV4 ⭐":"2009-2024","RS 660 ⭐":"2020-2024","Tuono V4 ⭐":"2011-2024","Tuono 660":"2021-2024","Tuareg 660":"2022-2024"},
+    "MV Agusta":{"F4 ⭐":"1998-2018","F3 675":"2012-2018","Brutale 800 ⭐":"2012-2024","Brutale 1000 RR ⭐":"2020-2024","Superveloce 800 ⭐":"2020-2024"},
+    "Moto Guzzi":{"V7 ⭐":"1967-2024","V9 Bobber":"2016-2024","V85 TT ⭐":"2019-2024","California 1400 ⭐":"2012-2020"},
+    "Vespa":{"Primavera 125 ⭐":"2013-2024","Sprint 125":"2015-2024","GTS 300 ⭐":"2008-2024","Elettrica ⭐":"2018-2024","PX 125 ⭐":"1977-2018"}
+  },
+  "Premium / Touring":{
+    "BMW Motorrad":{"R1250GS ⭐":"2018-2024","R1300GS ⭐":"2023-2024","F850GS":"2018-2024","S1000RR ⭐":"2009-2024","S1000R":"2014-2024","R nineT ⭐":"2013-2024","R18 ⭐":"2020-2024","K1600GT ⭐":"2011-2024","CE 04 ⭐":"2022-2024"},
+    "Harley-Davidson":{"Sportster 883 ⭐":"1957-2022","Iron 883":"2010-2022","Fat Boy ⭐":"1990-2024","Road King ⭐":"1994-2024","Street Glide ⭐":"2006-2024","Pan America ⭐":"2021-2024","LiveWire ⭐":"2019-2024"},
+    "KTM":{"Duke 390 ⭐":"2013-2024","Duke 890 ⭐":"2020-2024","Duke 1290 Super Duke R ⭐":"2014-2024","Adventure 890 ⭐":"2021-2024","Adventure 1290 ⭐":"2014-2024"},
+    "Triumph":{"Street Triple ⭐":"2007-2024","Speed Triple ⭐":"1994-2024","Trident 660":"2021-2024","Daytona 675 ⭐":"2006-2017","Tiger 900 ⭐":"2020-2024","Bonneville T100 ⭐":"2001-2024","Rocket 3 ⭐":"2020-2024"},
+    "Indian":{"Scout ⭐":"2015-2024","Chief ⭐":"1922-2024","Roadmaster ⭐":"2015-2024","Challenger ⭐":"2020-2024","FTR 1200 ⭐":"2019-2024"}
+  },
+  "Popular Choices":{
+    "CFMoto":{"650NK ⭐":"2018-2024","800NK ⭐":"2022-2024","650MT":"2018-2024","800MT ⭐":"2022-2024","700CL-X ⭐":"2021-2024","450SR ⭐":"2022-2024"},
+    "Zontes":{"125G1 ⭐":"2019-2024","310T ⭐":"2019-2024","310X":"2019-2024","350T":"2021-2024","350R":"2021-2024"},
+    "Voge":{"650R ⭐":"2021-2024","500DS ⭐":"2020-2024","650DSX ⭐":"2022-2024","900DSX ⭐":"2023-2024","300R":"2019-2024"},
+    "Junak":{"M11 ⭐":"2018-2024","M12":"2019-2024","M16":"2020-2024","Vintage 125":"2022-2024"},
+    "Barton":{"Hyper 125":"2018-2024","Blade 125":"2017-2024","Classic 125":"2016-2024"},
+    "Zipp":{"Pro 125":"2018-2024","Quantum 125":"2019-2024","Roadstar 125":"2020-2024"}
+  },
+  "Legends":{
+    "Classics":{"Honda CB750 ⭐":"1969-2003","Kawasaki Z1 ⭐":"1972-1977","Suzuki GT750 ⭐":"1971-1977","Yamaha XS650 ⭐":"1969-1985","BMW R90S ⭐":"1973-1976","Ducati 900SS ⭐":"1973-1985","Triumph Bonneville ⭐":"1959-2024"}
+  }
+};
+const dbBoats={
+  "Sport Boats":{
+    "Yamaha Boats":{"SX190":"2015-2024","SX210":"2015-2024","SX230":"2015-2024","AR190":"2015-2024","AR210":"2015-2024","212X":"2016-2024","FX Cruiser HO":"2015-2024"},
+    "Sea Ray":{"SPX 190":"2015-2024","SPX 210":"2015-2024","SPX 230":"2015-2024","SDX 250":"2017-2024","SLX 260":"2016-2024","SLX 280":"2018-2024","Sundancer 265":"2016-2024","Sundancer 320":"2016-2024","Sundancer 370":"2017-2024"},
+    "Bayliner":{"VR4":"2018-2024","VR5":"2018-2024","VR6":"2018-2024","Element E16":"2016-2024","Element E18":"2016-2024","Ciera 8":"2019-2024"},
+    "Boston Whaler":{"150 Montauk":"2015-2024","170 Montauk":"2015-2024","190 Montauk":"2015-2024","240 Dauntless":"2016-2024","250 Outrage":"2016-2024","320 Outrage":"2017-2024"}
+  },
+  "Sail / Cabin":{
+    "Jeanneau":{"Cap Camarat 5.5":"2010-2024","Cap Camarat 6.5":"2010-2024","Cap Camarat 7.5":"2012-2024","Merry Fisher 605":"2015-2024","Merry Fisher 695":"2015-2024","Merry Fisher 795":"2016-2024","NC 33":"2017-2024"},
+    "Beneteau":{"Antares 6":"2012-2024","Antares 7":"2012-2024","Antares 8":"2014-2024","Flyer 6":"2015-2024","Flyer 7":"2015-2024","Flyer 8":"2016-2024","Gran Turismo 32":"2012-2024","Oceanis 30.1":"2019-2024"},
+    "Quicksilver":{"Activ 455":"2015-2024","Activ 505":"2015-2024","Activ 555":"2016-2024","Activ 605":"2016-2024","Activ 675":"2017-2024","675 Pilothouse":"2016-2024"}
+  },
+  "Fishing":{
+    "Tracker Boats":{"Pro 170":"2015-2024","Pro Team 175 TXW":"2016-2024","Pro Team 190 TX":"2016-2024","Bass Tracker Classic XL":"2015-2024","Grizzly 1648":"2014-2024"},
+    "Lund Boats":{"Rebel XL 1650":"2015-2024","Rebel XL 1775":"2016-2024","Impact 1875":"2017-2024","Pro-V 1875":"2016-2024","Tyee 1850":"2017-2024"},
+    "Ranger Boats":{"Z175":"2015-2024","Z185":"2016-2024","Z520R":"2017-2024","RT178":"2016-2024","VX1788":"2016-2024"}
+  },
+  "Personal Watercraft":{
+    "Sea-Doo":{"Spark":"2014-2024","Spark Trixx":"2017-2024","GTI 90":"2010-2024","GTI 130":"2010-2024","GTX 170":"2012-2024","GTX 230":"2015-2024","GTX Limited":"2016-2024","RXP-X 300":"2016-2024","RXT-X 300":"2016-2024","Explorer Pro":"2021-2024"},
+    "Kawasaki Jet Ski":{"Jet Ski SX-R":"2003-2024","STX 160":"2019-2024","Ultra 310X":"2014-2024","Ultra 310LX":"2014-2024","Ultra 310R":"2016-2024"},
+    "Yamaha WaveRunner":{"EX":"2017-2024","EX Sport":"2017-2024","VX Cruiser":"2014-2024","VX Deluxe":"2014-2024","GP1800R":"2018-2024","FX HO":"2014-2024","FX SVHO":"2014-2024","SuperJet":"1990-2024","JetBlaster":"2021-2024"}
+  }
+};
+const dbEngines=[
+  {id:"r2",name:"Inline 2-cylinder engine",type:"Inline",cyl:2,desc:"Two cylinders. Simple design, low weight. Used in microcars and small scooters.",wiki:"Two-cylinder engine"},
+  {id:"r3",name:"Inline 3-cylinder engine",type:"Inline",cyl:3,desc:"Compact and economical. Found in the Ford Fiesta EcoBoost, VW Polo TSI, and BMW i3.",wiki:"Three-cylinder engine"},
+  {id:"r4",name:"Inline 4-cylinder engine",type:"Inline",cyl:4,desc:"The most common engine layout in the world. A balance of power and efficiency, used in most compact cars.",wiki:"Straight-four engine"},
+  {id:"r6",name:"Inline 6-cylinder engine",type:"Inline",cyl:6,desc:"Inherently well-balanced. BMW is famous for its inline-sixes — smooth power delivery and a distinctive sound, as in the Toyota Supra.",wiki:"Straight-six engine"},
+  {id:"v6",name:"V6 engine",type:"V-configuration",cyl:6,desc:"Compact and powerful, typically at a 60° or 90° bank angle. Used by Alfa Romeo, Ford, and the Nissan GT-R.",wiki:"V6 engine"},
+  {id:"v8",name:"V8 engine",type:"V-configuration",cyl:8,desc:"A classic symbol of power. Found in the Ford Mustang, Chevrolet Corvette, BMW M5, and Mercedes-AMG models.",wiki:"V8 engine"},
+  {id:"v10",name:"V10 engine",type:"V-configuration",cyl:10,desc:"Rare and extreme. Used in the Lamborghini Huracán, Audi R8, Dodge Viper, and the E60-generation BMW M5.",wiki:"V10 engine"},
+  {id:"v12",name:"V12 engine",type:"V-configuration",cyl:12,desc:"The pinnacle of engineering. Used by Ferrari, Lamborghini, Mercedes-Benz, BMW 7 Series, and Rolls-Royce.",wiki:"V12 engine"},
+  {id:"boxer",name:"Boxer (flat) engine",type:"Boxer",cyl:4,desc:"Horizontally-opposed pistons give a low center of gravity. Found in the Subaru Impreza, BRZ, and the Porsche 911.",wiki:"Boxer engine"},
+  {id:"rotary",name:"Wankel (rotary) engine",type:"Rotary",cyl:0,desc:"A rotary design offering high output for its weight. Iconic in the Mazda RX-7 and RX-8.",wiki:"Wankel engine"},
+  {id:"w12",name:"W12 engine",type:"V-configuration (W)",cyl:12,desc:"12 cylinders arranged in a W layout. Found in the VW Phaeton, Bentley Continental GT, and Audi A8.",wiki:"W12 engine"},
+  {id:"ev",name:"Electric motor (EV)",type:"Electric",cyl:0,desc:"Instant torque, zero tailpipe emissions. Found in Tesla, Polestar, Rivian, and BYD vehicles.",wiki:"Electric motor vehicle"},
+  {id:"hybrid",name:"Hybrid drivetrain (HEV/PHEV)",type:"Hybrid",cyl:4,desc:"Combines a combustion engine with an electric motor. Found in the Toyota Prius, and models from Honda, BMW, and Volvo.",wiki:"Hybrid electric vehicle"}
+];
+
+// ═══ CAT CONFIG ═══
+const CAT={
+  cars:{
+    db:()=>dbCars, icon:'fa-car',
+    title:'The biggest free automotive knowledge base',
+    sub:'Common faults - Repair costs - Pre-purchase rating',
+    bg:'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1600&q=80',
+    searchLabel:"Check if it's worth buying - enter a model",
+    ph:'e.g. BMW E90, Audi A4 B8, Passat B6...',
+    tags:[
+      {l:'Audi A4 B8',q:'Audi A4'},
+      {l:'BMW E90',q:'BMW 3 Series'},
+      {l:'Passat B6',q:'Volkswagen Passat'},
+      {l:'Toyota Corolla',q:'Toyota Corolla'},
+      {l:'Skoda Octavia',q:'Skoda Octavia'},
+      {l:'Ford Focus',q:'Ford Focus'}
+    ]
+  },
+  moto:{
+    db:()=>dbMoto, icon:'fa-motorcycle',
+    title:'Check a motorcycle before you buy',
+    sub:'Common faults - Service costs - Is it worth it',
+    bg:'https://images.pexels.com/photos/18203171/pexels-photo-18203171.jpeg',
+    searchLabel:'Check a motorcycle before you buy',
+    ph:'e.g. Honda CBR600, Kawasaki Z900, Yamaha MT-07...',
+    tags:[
+      {l:'Honda CBR600RR',q:'Honda CBR600RR'},
+      {l:'Kawasaki Z900',q:'Kawasaki Z900'},
+      {l:'Yamaha MT-07',q:'Yamaha MT-07'},
+      {l:'BMW R1250GS',q:'BMW R1250GS'},
+      {l:'Ducati Monster',q:'Ducati Monster'},
+      {l:'Suzuki SV650',q:'Suzuki SV650'}
+    ]
+  },
+  boats:{
+    db:()=>dbBoats, icon:'fa-sailboat',
+    title:'Check a boat before you buy',
+    sub:'Common faults - Service costs - Technical rating',
+    bg:'https://images.pexels.com/photos/17687399/pexels-photo-17687399.jpeg',
+    searchLabel:'Check a boat or personal watercraft',
+    ph:'e.g. Sea-Doo GTX, Sea Ray SPX, Beneteau...',
+    tags:[
+      {l:'Sea-Doo Spark',q:'Sea-Doo Spark'},
+      {l:'Sea Ray SPX',q:'Sea Ray SPX'},
+      {l:'Beneteau Flyer',q:'Beneteau Flyer'},
+      {l:'Boston Whaler',q:'Boston Whaler Montauk'},
+      {l:'Kawasaki Jet Ski',q:'Kawasaki Jet Ski'},
+      {l:'Yamaha WaveRunner',q:'Yamaha WaveRunner'}
+    ]
+  },
+  engines:{
+    db:()=>({}), icon:'fa-gears',
+    title:'Engine Encyclopedia',
+    sub:'Design - Types - How it works',
+    bg:'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1600&q=80',
+    searchLabel:'Search for an engine',
+    ph:'e.g. V8 engine, boxer, electric...',
+    tags:[
+      {l:'V8 engine',q:'v8'},
+      {l:'Boxer engine',q:'boxer'},
+      {l:'V12 engine',q:'v12'},
+      {l:'Inline-6',q:'r6'},
+      {l:'EV motor',q:'electric'},
+      {l:'Wankel engine',q:'wankel'}
+    ]
+  }
+};
+function getDb(){return CAT[curCat].db();}
+
+// ═══ SWITCH CATEGORY ═══
+function switchCat(cat){
+  curCat=cat;
+  document.querySelectorAll('.ctab').forEach(b=>b.classList.toggle('active',b.dataset.cat===cat));
+  const c=CAT[cat];
+  document.getElementById('hBg').style.backgroundImage=`url('${c.bg}')`;
+  document.getElementById('hTitle').textContent=c.title;
+  document.getElementById('hSub').textContent=c.sub;
+  document.getElementById('sLabel').innerHTML=`<i class="fas fa-search" style="margin-right:5px;"></i>${c.searchLabel}`;
+  document.getElementById('liveIn').placeholder=c.ph;
+  document.getElementById('liveIn').value='';
+  document.getElementById('lDrop').style.display='none';
+  document.getElementById('qTags').innerHTML=
+    `<span class="qlabel">Most searched:</span>`+
+    c.tags.map(t=>`<button class="qtag" onclick="qSearch('${esc(t.q)}')">${esc(t.l)}</button>`).join('');
+  curGroup=null;curBrand=null;
+  if(cat==='engines'){
+    document.getElementById('homeSection').style.display='none';
+    showV('vEngines');buildEnginesGrid();
+    return;
+  }
+  document.getElementById('homeSection').style.display='block';
+  showV('vGroups');buildGroups();buildFeatured();buildPopular();
+}
+
+// ═══ RATINGS ═══
+const RATES={
+  'audi a4':           {f:58,c:62,w:true, n:'A good choice overall. Watch out for 2.0 TFSI units built before 2008 — timing chain wear. The 2.0 TDI diesel after 2009 is sturdier.'},
+  'audi a3':           {f:45,c:50,w:true, n:'Reliable, cheap parts. Avoid the 7-speed DSG from 2009-2012 (known for shuddering on pull-away).'},
+  'audi q5':           {f:50,c:65,w:true, n:'Expensive to service. Look for cars with full authorized-dealer service history.'},
+  'audi tt':           {f:48,c:60,w:true, n:'Great looks and handling. Check the convertible roof seals and DSG condition.'},
+  'audi r8':           {f:35,c:90,w:true, n:'Unusually reliable for a supercar. Insurance and servicing costs are high.'},
+  'bmw 3 series':      {f:52,c:68,w:true, n:'A driving legend. Avoid the N47 2.0d (timing chain issues). The E90 325i/330i inline-six petrol is the best pick.'},
+  'bmw 5 series':      {f:50,c:70,w:true, n:'A comfortable sports sedan. Servicing costs more than an equivalent Mercedes E-Class. Avoid the E60 V8.'},
+  'bmw 7 series':      {f:58,c:85,w:true, n:'Prestigious but expensive to run. The electronics and V8 on later models can lead to costly failures.'},
+  'bmw x5':            {f:55,c:75,w:true, n:'Expensive to maintain. Air-suspension electronics failures are a common and costly repair.'},
+  'bmw m3':            {f:60,c:90,w:true, n:'Excellent performance, expensive parts. The E92\'s S65 engine can develop rod-bearing issues.'},
+  'volkswagen golf':   {f:40,c:38,w:true, n:'One of the safest choices out there. Cheap parts, wide service network. Avoid the 2009-11 7-speed DSG.'},
+  'volkswagen passat': {f:42,c:40,w:true, n:'Great value. TDI diesels after 2010 are very solid. Generous equipment for the price.'},
+  'volkswagen tiguan': {f:44,c:42,w:true, n:'Popular and reliable, holds its value well. Recommended.'},
+  'volkswagen polo':   {f:38,c:32,w:true, n:'Cheap to run, good as a city car. Check the service history on 1.2 TSI engines.'},
+  'skoda octavia':     {f:35,c:30,w:true, n:'The best value for money in the C-segment. Excellent reliability, cheap VW Group parts.'},
+  'skoda fabia':       {f:30,c:25,w:true, n:'A budget reliability champion. Ideal as a first car or city runabout.'},
+  'skoda superb':      {f:38,c:35,w:true, n:'D-segment space at a C-segment price. A great buy for a family.'},
+  'toyota corolla':    {f:12,c:18,w:true, n:'A reliability legend. Minimal running costs. Recommended without reservation.'},
+  'toyota yaris':      {f:14,c:20,w:true, n:'Cheap to run, nearly indestructible. Great in the city, low fuel consumption.'},
+  'toyota rav4':       {f:20,c:30,w:true, n:'A reliable SUV. The hybrid has even lower running costs. Recommended.'},
+  'toyota supra':      {f:25,c:80,w:true, n:'A JDM legend. The 2JZ engine is famously tough. Collector value is climbing.'},
+  'toyota land cruiser':{f:18,c:55,w:true, n:'One of the most reliable SUVs in the world. Lasts decades with regular servicing.'},
+  'toyota hilux':      {f:15,c:40,w:true, n:'A pickup reliability legend. Holds its resale value very well. Nearly indestructible.'},
+  'ford focus':        {f:38,c:32,w:true, n:'A solid choice. Absolutely avoid the 1.0 EcoBoost from 2012-2015 — head-gasket issues. Post-2016 units are fine.'},
+  'ford mustang':      {f:45,c:65,w:true, n:'Iconic styling. The V8 is reliable. Servicing is cheaper than a comparably powerful BMW or Mercedes.'},
+  'ford fiesta':       {f:35,c:28,w:true, n:'Reliable and cheap, widely available parts.'},
+  'opel astra':        {f:40,c:35,w:true, n:'Cheap to run. Avoid the 1.7 CDTI (expensive turbo). The 1.4 turbo petrol is a good choice.'},
+  'opel corsa':        {f:38,c:28,w:true, n:'Cheap and reasonably reliable. A good city car.'},
+  'fiat 500':          {f:42,c:32,w:true, n:'Stylish and cheap to run. Small petrol engines are fine, avoid the 1.3 Multijet diesel.'},
+  'fiat panda':        {f:35,c:25,w:true, n:'A near-indestructible budget legend. Cheap to own, ideal for city driving.'},
+  'alfa romeo giulia': {f:62,c:70,w:true, n:'Gorgeous, with excellent handling. Needs an experienced Alfa-specialist workshop.'},
+  'alfa romeo 159':    {f:78,c:78,w:false,n:'The 2.4 JTD is notorious for turbo, EGR, and head-gasket failures. Repair costs often exceed the car\'s value.'},
+  'alfa romeo giulietta':{f:58,c:55,w:true,n:'Good looks and handling. Servicing costs more than a VW. Stick to the 1.4 turbo petrol.'},
+  'mercedes-benz c-class':{f:48,c:62,w:true,n:'Prestigious. Avoid early CDI units (2000-2004). The W123/W124 are legendary, near-indestructible classics.'},
+  'mercedes-benz e-class':{f:45,c:65,w:true,n:'A comfortable sedan. The W124 is bulletproof. The W211 has weak seals. W212/W213 are solid.'},
+  'mercedes-benz g-class':{f:30,c:95,w:true,n:'A nearly indestructible off-roader with astronomical running costs. Only for the well-off.'},
+  'mercedes-benz a-class':{f:50,c:52,w:true,n:'Good reliability from the W176 generation (2012+) onward. Earlier generations have suspension issues.'},
+  'honda civic':       {f:20,c:22,w:true, n:'Excellent reliability, low running costs. The Type R is exceptionally good. Classic Japanese solidity.'},
+  'honda nsx':          {f:22,c:75,w:true, n:'A technical marvel. Collector value is rising. Servicing is pricey but reliability is good.'},
+  'mazda mx-5':        {f:18,c:28,w:true, n:'One of the most reliable sports cars around. Affordable driving fun.'},
+  'mazda rx-7':        {f:55,c:70,w:true, n:'Iconic looks and handling. The Wankel engine needs a specialist and regular oil top-ups.'},
+  'subaru impreza':    {f:40,c:65,w:true, n:'A rally legend. The EJ engine can develop problems if neglected. Full service history is key.'},
+  'jeep wrangler':     {f:48,c:72,w:true, n:'Nearly unstoppable off-road. High fuel use, pricey servicing. For genuine off-road enthusiasts.'},
+  'porsche 911':       {f:28,c:90,w:true, n:'A motoring icon. High servicing costs, but good reliability for a sports car.'},
+  'porsche cayenne':   {f:45,c:85,w:true, n:'Good reliability but expensive to service. Avoid the VW-BMW-sourced V6 from 2003-2007.'},
+  'lamborghini aventador':{f:45,c:99,w:false,n:'Spectacular, but running costs can exceed the price of an average car every single year. Only for the very wealthy.'},
+  'honda cbr600rr':    {f:20,c:35,w:true, n:'The 600cc benchmark. Reliable engine, great handling. Best suited to experienced riders.'},
+  'kawasaki ninja':    {f:22,c:38,w:true, n:'Aggressive character, strong performance. Pricier to service than a Honda. For experienced riders.'},
+  'yamaha mt-07':      {f:15,c:28,w:true, n:'One of the best-reviewed streetfighters around. Cheap to service, solid reliability. Strongly recommended!'},
+  'yamaha mt-09':      {f:18,c:32,w:true, n:'Very good. The triple-cylinder engine has real character. Light and powerful.'},
+  'bmw r1250gs':       {f:25,c:80,w:true, n:'The best touring/adventure bike out there. Expensive, but exceptional engineering and comfort.'},
+  'ducati panigale':   {f:38,c:95,w:true, n:'Extremely fast. Very expensive to service — a costly valve service every 6,000 miles.'},
+  'harley':            {f:30,c:60,w:true, n:'A cruiser legend. Genuine parts are pricey. Unique character and a strong owner community.'},
+  'suzuki sv650':      {f:12,c:25,w:true, n:'One of the best everyday motorcycles. Cheap to service, outstanding reliability.'},
+  'default':           {f:45,c:50,w:null, n:'No detailed data for this model in our database yet.'}
+};
+function getRating(b,m){
+  const k=(b+' '+m).replace(/⭐/g,'').toLowerCase().trim();
+  let best=null,bestLen=0;
+  for(const key of Object.keys(RATES)){
+    if(key==='default')continue;
+    if((k===key||k.startsWith(key+' ')||k.includes(key))&&key.length>bestLen){best=RATES[key];bestLen=key.length;}
+  }
+  return best||RATES.default;
+}
+function scoreBar(label,val,col){
+  const C={green:'var(--ok)',orange:'var(--warn)',red:'var(--err)'}[col]||'var(--sky)';
+  return `<div class="srow2"><span class="slbl">${esc(label)}</span><div class="sbar"><div class="sbarf" style="width:${val}%;background:${C};"></div></div><span class="sval" style="color:${C};">${val}%</span></div>`;
+}
+
+// ═══ AVOID PAGE DATA ═══
+const GOOD_CARS=[
+  {n:'Toyota Corolla (2000 onward)',r:'Legendary reliability. Low running costs. Recommended for families.'},
+  {n:'Honda Civic (8th-10th gen)',r:'Solid construction, durable engines. Consistently strong reliability rankings.'},
+  {n:'Mazda 3 (2003 onward)',r:'Great handling, durable engines. Low repair costs.'},
+  {n:'VW Golf Mk5-Mk7',r:'Well equipped and durable. Only avoid early model years with the 1.2 TSI engine.'},
+  {n:'BMW 3 Series E90/E91',r:'Durable engines, excellent handling. Avoid diesels with known DPF problems.'},
+  {n:'Mercedes C-Class W123',r:'A classic — built like a tank. Low running costs.'}
+];
+const AV_CARS=[
+  {n:'Alfa Romeo 159 2.4 JTD',r:'Notorious turbo, EGR, and head-gasket failures. Repair bills often exceed the car\'s value.'},
+  {n:'VW Touareg 5.0 V10 TDI',r:'The V10 TDI is legendarily failure-prone. Repairs can cost more than the car is worth.'},
+  {n:'Land Rover Discovery 3',r:'The Freelander/Discovery 3 electronics are known for unpredictable failures. Frequent oil leaks.'},
+  {n:'BMW E65 7 Series (V8)',r:'First-gen iDrive, air suspension, and N62 engines add up to a nightmare of service costs.'},
+  {n:'Renault Laguna II',r:'Famous for electronics, key-card, and suspension problems. Bottom of most reliability surveys.'},
+  {n:'Fiat Stilo 1.9 Multijet',r:'Gearbox and engine-electronics faults are widespread. Parts are expensive and hard to find.'}
+];
+const AV_ENGINES=[
+  {n:'VW 2.0 TFSI (pre-2008)',r:'Stretching timing chain, high oil consumption, cracked cylinder heads. Applies to units built before 2008.'},
+  {n:'BMW N47 (2.0d)',r:'Timing chain on the gearbox side is prone to snapping at high mileage.'},
+  {n:'Alfa Romeo 2.4 JTD',r:'Very sensitive to oil quality. Rebuild cost runs high. Avoid neglected examples.'},
+  {n:'Opel 1.6 CDTI (B16DTH)',r:'Oil, EGR, and DPF filter problems. Fitted to the Astra J and Insignia.'},
+  {n:'Ford 1.0 EcoBoost (2012-2015)',r:'A faulty head gasket seal caused overheating that could destroy the engine entirely.'},
+  {n:'Land Rover 3.0 TDV6',r:'Very expensive to repair. Turbo and seal issues. Servicing best left to a dealer or specialist.'}
+];
+const AV_RELIAB=[
+  {n:'Renault Laguna II (2001-2007)',r:'Consistently near the bottom of reliability surveys. Electronics and suspension are the weak points.'},
+  {n:'Alfa Romeo 156 (1997-2007)',r:'Beautiful car, poor reliability. Electrics, gearbox, and rust are common issues.'},
+  {n:'Land Rover Freelander II',r:'Drivetrain, Haldex coupling, and TD4 engines. Very expensive to maintain.'},
+  {n:'Fiat Bravo II (2007-2014)',r:'Electronics, ECU, and dual-clutch gearbox failures. Parts are hard to source.'},
+  {n:'Chrysler 300C (2004-2010)',r:'Gearbox, suspension, and electronics all bring costly repairs.'},
+  {n:'Saab 9-5 (2005-2011)',r:'The manufacturer went bankrupt. Parts are increasingly hard to find. GM-sourced electronics.'}
+];
+function buildAvoid(){
+  const mk=(arr,id,cls)=>{
+    const g=document.getElementById(id);if(!g)return;
+    const isGood=id.includes('good');
+    g.innerHTML=arr.map(a=>`<div class="avoid-card"><div class="avoid-icon ${cls}"><i class="fas ${isGood?'fa-thumbs-up':(id.includes('ng')&&!id.includes('reliab')?'fa-gears':'fa-car-burst')}"></i></div><div><h4>${esc(a.n)}</h4><p>${esc(a.r)}</p><p class="reason"><i class="fas ${isGood?'fa-check-circle':'fa-triangle-exclamation'}"></i>${isGood?'Worth buying':'Avoid on purchase'}</p></div></div>`).join('');
+  };
+  mk(AV_CARS,'avCars','ai-red');
+  mk(AV_ENGINES,'avEngines','ai-org');
+  mk(AV_RELIAB,'avReliab','ai-red');
+  mk(GOOD_CARS,'goodCars','ai-green');
+}
+
+// ═══ FEATURED SECTION ═══
+const FEAT={
+  cars:[
+    {b:'Audi',m:'A4',label:'Audi A4 B8',sub:'Most-checked model before buying'},
+    {b:'BMW',m:'3 Series',label:'BMW 3 Series E90',sub:'A classic with the inline-six'},
+    {b:'Volkswagen',m:'Passat',label:'VW Passat B6/B7',sub:'The most popular estate car'},
+    {b:'Toyota',m:'Corolla',label:'Toyota Corolla',sub:'A reliability legend'}
+  ],
+  moto:[
+    {b:'Honda',m:'CBR600RR',label:'Honda CBR600RR',sub:'The sportbike standard'},
+    {b:'Kawasaki',m:'Ninja ZX-6R',label:'Kawasaki ZX-6R',sub:'600cc hypersport'},
+    {b:'Yamaha',m:'MT-07',label:'Yamaha MT-07',sub:'Streetfighter — highly recommended'},
+    {b:'BMW Motorrad',m:'R1250GS',label:'BMW R1250GS',sub:'King of adventure bikes'}
+  ],
+  boats:[
+    {b:'Sea Ray',m:'SPX 210',label:'Sea Ray SPX 210',sub:'Sport boat'},
+    {b:'Sea-Doo',m:'GTX 230',label:'Sea-Doo GTX',sub:'Premium personal watercraft'},
+    {b:'Beneteau',m:'Flyer 7',label:'Beneteau Flyer',sub:'Cabin cruiser'},
+    {b:'Boston Whaler',m:'190 Montauk',label:'Boston Whaler',sub:'Offshore classic'}
+  ]
+};
+const FALLBACKS={
+  cars:['https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=600&q=75','https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=600&q=75','https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=600&q=75','https://images.unsplash.com/photo-1559416523-140ddc3d238c?auto=format&fit=crop&w=600&q=75'],
+  moto:['https://images.unsplash.com/photo-1558981285-6f0c68243a66?auto=format&fit=crop&w=600&q=75','https://images.unsplash.com/photo-1558618047-3c8c76ca0d31?auto=format&fit=crop&w=600&q=75','https://images.unsplash.com/photo-1609630875171-b1321377ee65?auto=format&fit=crop&w=600&q=75','https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?auto=format&fit=crop&w=600&q=75'],
+  boats:['https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?auto=format&fit=crop&w=600&q=75','https://images.unsplash.com/photo-1519003300449-424ad0405076?auto=format&fit=crop&w=600&q=75','https://images.unsplash.com/photo-1540946485063-a37e59e15a4d?auto=format&fit=crop&w=600&q=75','https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?auto=format&fit=crop&w=600&q=75']
+};
+async function buildFeatured(){
+  const sec=document.getElementById('featSec');
+  const items=FEAT[curCat];const fallbacks=FALLBACKS[curCat];
+  if(!items){sec.innerHTML='';return;}
+  sec.innerHTML=`<div class="ftitle"><i class="fas fa-fire"></i>Most-checked before buying</div>
+    <div class="frow">${items.map((f,i)=>`<div class="fcard" id="fc${i}" onclick="openReportDirect('${esc(f.b)}','${esc(f.m)}')">
+      <img id="fi${i}" src="${fallbacks[i]}" alt="${esc(f.label)}" loading="lazy">
+      <div class="fov"></div>
+      <div class="fbody"><h4>${esc(f.label)}</h4><p>${esc(f.sub)}</p></div>
+    </div>`).join('')}
+    </div>`;
+  items.forEach(async(f,i)=>{
+    const img=await getImg(f.b, f.m);
+    if(img){const el=document.getElementById('fi'+i);if(el)el.src=img;}
+  });
+}
+function openReportDirect(b,m){
+  const db=getDb();
+  for(const g in db)if(db[g][b])if(db[g][b][m]){openReport(b,m,g);return;}
+  for(const g in db)for(const br in db[g])for(const mo in db[g][br]){
+    if(br.replace(/⭐/g,'').includes(b)&&mo.replace(/⭐/g,'').includes(m)){openReport(br,mo,g);return;}
+  }
+}
+
+// ═══ POPULAR SECTION ═══
+function buildPopular(){
+  if(curCat!=='cars'){document.getElementById('popSec').innerHTML='';return;}
+  const popular=[
+    {l:'Audi A4 B8',s:'2008-2015 - Diesel/petrol - Best years: 2010+',g:'Volkswagen Group',b:'Audi',m:'A4'},
+    {l:'BMW 3 Series E90',s:'2005-2012 - Inline-six is best - Avoid the N47 2.0d',g:'BMW Group',b:'BMW',m:'3 Series ⭐'},
+    {l:'VW Passat B6/B7',s:'2005-2014 - Estate and sedan - Cheap to service',g:'Volkswagen Group',b:'Volkswagen',m:'Passat ⭐'},
+    {l:'Toyota Corolla E12',s:'2002-2007 - Reliable - Minimal running costs',g:'Toyota Group',b:'Toyota',m:'Corolla ⭐'},
+    {l:'Skoda Octavia II',s:'2004-2013 - Best value for money',g:'Volkswagen Group',b:'Škoda',m:'Octavia ⭐'},
+    {l:'Ford Focus Mk2',s:'2004-2011 - 1.6 TDCi - Avoid the 2012-15 1.0 EcoBoost',g:'Ford Motor',b:'Ford',m:'Focus ⭐'}
+  ];
+  document.getElementById('popSec').innerHTML=
+    `<div class="ftitle" style="margin-top:4px;"><i class="fas fa-chart-bar"></i>Popular with buyers — click to check</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:28px;">
+      ${popular.map((p,i)=>`<div class="pop-card" onclick="openReport('${esc(p.b)}','${esc(p.m)}','${esc(p.g)}')">
+        <div class="pop-num">${i+1}</div>
+        <div><h4>${esc(p.l)}</h4><p>${esc(p.s)}</p></div>
+      </div>`).join('')}
+    </div>`;
+}
+
+// ═══ LIVE SEARCH ═══
+function doLive(){
+  const v=document.getElementById('liveIn').value.toLowerCase().trim();
+  const drop=document.getElementById('lDrop');
+  drop.innerHTML='';
+  if(v.length<1){drop.style.display='none';return;}
+  const db=getDb();let hits=[];
+  const words=v.split(/\s+/).filter(w=>w.length>0);
+  for(const g in db)for(const b in db[g]){
+    const cb=b.replace(/⭐/g,'').toLowerCase();
+    const brandMatches=words.some(w=>cb.includes(w));
+    if(brandMatches)hits.push({type:'brand',label:b,g,b});
+    const models=db[g][b];
+    if(typeof models==='object')for(const m in models){
+      const cm=m.replace(/⭐/g,'').toLowerCase();
+      const modelMatches=words.some(w=>cm.includes(w) || cb.includes(w));
+      if(modelMatches)hits.push({type:'model',label:b+' '+m,g,b,m});
+    }
+  }
+  const seen=new Set();
+  hits=hits.filter(h=>{if(seen.has(h.label))return false;seen.add(h.label);return true;});
+  if(!hits.length){drop.style.display='none';return;}
+  drop.style.display='block';
+  const ico=CAT[curCat].icon;
+  hits.slice(0,14).forEach(h=>{
+    const d=document.createElement('div');d.className='litem';
+    d.innerHTML=`<i class="fas ${ico}"></i>${esc(h.label)}`;
+    d.onclick=()=>{drop.style.display='none';document.getElementById('liveIn').value='';
+      if(h.type==='brand')showModels(h.g,h.b);else openReport(h.b,h.m,h.g);
+    };drop.appendChild(d);
+  });
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.scard'))document.getElementById('lDrop').style.display='none';});
+function filterGroups(){
+  const v=document.getElementById('gSearch').value.toLowerCase();
+  document.querySelectorAll('#gGrid .card').forEach(c=>{c.style.display=c.textContent.toLowerCase().includes(v)?'':'none';});
+}
+function filterGrid(id,v){document.querySelectorAll(`#${id} .card`).forEach(c=>{c.style.display=c.textContent.toLowerCase().includes(v.toLowerCase())?'':'none';});}
+
+function qSearch(q){
+  const lq=q.replace(/⭐/g,'').toLowerCase().trim();
+  const db=getDb();
+  if(curCat==='engines'){
+    const e=dbEngines.find(x=>x.name.toLowerCase().includes(lq)||x.type.toLowerCase().includes(lq)||x.wiki.toLowerCase().includes(lq));
+    if(e){openEngineReport(e);return;}
+    return;
+  }
+  for(const g in db)for(const b in db[g]){
+    const cb=b.replace(/⭐/g,'').toLowerCase();
+    for(const m in db[g][b]){
+      const cm=m.replace(/⭐/g,'').toLowerCase();
+      if(cb.includes(lq)||cm.includes(lq)||(cb+' '+cm).includes(lq)){openReport(b,m,g);return;}
+    }
+  }
+  document.getElementById('liveIn').value=q;doLive();
+}
+
+// ═══ VIN DECODE — NHTSA (technical fields) + CarVector (specs, image, recalls) ═══
+async function decodeVin(){
+  const raw=document.getElementById('vinIn')?.value||'';
+  const vin=cVin(raw);
+  if(vin.length<11)return alert('Please enter a valid VIN (at least 11 characters). Try the sample: 1HGBH41JXMN109186');
+  showV('vReport');document.getElementById('bbReport').onclick=()=>goHome();
+  const c=document.getElementById('rContent');
+  c.innerHTML=`<div class="spin"><i class="fas fa-circle-notch"></i><p>Decoding VIN: ${esc(vin)}</p></div>`;
+  try{
+    const r=await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${encodeURIComponent(vin)}?format=json`,{signal:AbortSignal.timeout(10000)});
+    if(!r.ok)throw 0;
+    const d=await r.json();
+    const WANT=["Make","Model","Model Year","Trim","Body Class","Engine HP","Engine Displacement (CC)","Fuel Type - Primary","Drive Type","Transmission Style","Number of Cylinders","Manufacturer Name","Plant Country","Series"];
+    let rows='',make='',model='',year='';
+    d.Results.forEach(x=>{
+      if(x.Value&&x.Value!=='Not Applicable'&&x.Value!=='0'&&WANT.includes(x.Variable)){
+        rows+=`<div class="trow"><strong>${esc(x.Variable)}</strong><span>${esc(x.Value)}</span></div>`;
+        if(x.Variable==='Make')make=x.Value;
+        if(x.Variable==='Model')model=x.Value;
+        if(x.Variable==='Model Year')year=x.Value;
+      }
+    });
+    let compHtml='';
+    if(make&&model){
+      try{
+        const rc=await fetch(`https://api.nhtsa.gov/complaints/complaintsByVehicle?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&modelYear=${encodeURIComponent(year||'2020')}`,{signal:AbortSignal.timeout(8000)});
+        if(rc.ok){const dc=await rc.json();const top=(dc.results||[]).slice(0,3);
+          if(top.length)compHtml=`<div class="panel" style="margin-top:14px;"><h3><i class="fas fa-triangle-exclamation"></i>Owner complaints - NHTSA (${esc(make)} ${esc(model)} ${esc(year)})</h3>${top.map(cp=>`<div class="ust"><h5><i class="fas fa-exclamation-circle"></i>${esc(cp.components||'Uncategorized')}</h5><p>${esc((cp.summary||'').slice(0,250))}...</p></div>`).join('')}</div>`;}
+      }catch{}
+    }
+    // CarVector: verified specs, representative image, and federal recalls
+    let cvHtml='';
+    if(make&&model){
+      const cvMatch=await cvLookup(make,model,year);
+      if(cvMatch){
+        const {vehicle,recalls}=await cvDetail(cvMatch.id);
+        if(vehicle){
+          const specRows=['horsepower','cylinders','displacement_l','transmission','drive_type','fuel_type','body_class','doors']
+            .filter(k=>vehicle[k]!==null&&vehicle[k]!==undefined)
+            .map(k=>`<div class="trow"><strong>${esc(k.replace(/_/g,' '))}</strong><span>${esc(String(vehicle[k]))}</span></div>`).join('');
+          cvHtml=`<div class="panel" style="margin-top:14px;">
+            <h3><i class="fas fa-database"></i>Verified specs - CarVector API <span class="badge badge-api" style="margin-left:6px;">Live data</span></h3>
+            ${vehicle.image_url?`<img src="${esc(vehicle.image_url)}" alt="${esc(vehicle.make)} ${esc(vehicle.model)}" style="width:100%;max-height:200px;object-fit:contain;border-radius:8px;margin-bottom:12px;" loading="lazy">`:''}
+            ${specRows}
+            ${recalls.length?`<div style="margin-top:12px;"><span class="recall-tag"><i class="fas fa-triangle-exclamation"></i>${recalls.length} federal recall${recalls.length>1?'s':''} on record</span>
+              ${recalls.slice(0,3).map(rc=>`<div class="ust" style="margin-top:8px;"><h5><i class="fas fa-triangle-exclamation"></i>${esc(rc.component||'Recall')}</h5><p>${esc((rc.summary||'').slice(0,220))}</p><p style="font-size:10px;color:var(--gray);margin-top:4px;">Reported ${esc(rc.report_received||'')} - Campaign ${esc(rc.campaign_id||'')}</p></div>`).join('')}
+              </div>`:`<p style="font-size:11px;color:var(--ok);margin-top:10px;"><i class="fas fa-circle-check"></i> No federal recalls on record for this vehicle in CarVector's database.</p>`}
+          </div>`;
+        }
+      }
+    }
+    let wikiHtml='';
+    if(make&&model){
+      const w=await getWiki(make,model);
+      if(w.text)wikiHtml=`<div class="panel" style="margin-top:14px;"><h3><i class="fas fa-book-open"></i>Wikipedia: ${esc(make)} ${esc(model)}</h3>${w.img?`<img src="${esc(w.img)}" style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;margin-bottom:12px;" alt="${esc(make)} ${esc(model)}" loading="lazy">`:''}
+        <p style="font-size:12px;line-height:1.7;">${esc(w.text.slice(0,600))}${w.text.length>600?'...':''}</p>
+        ${w.url?`<a href="${esc(w.url)}" target="_blank" rel="noopener noreferrer" class="wbtn"><i class="fas fa-arrow-up-right-from-square"></i>Wikipedia</a>`:''}</div>`;
+    }
+    c.innerHTML=`
+      <div style="background:#fffbeb;border:1.5px solid var(--gold);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#92400e;font-weight:600;display:flex;align-items:center;gap:8px;"><i class="fas fa-triangle-exclamation"></i>Demo version. Technical data from the NHTSA database (US government) and the CarVector API. This does not replace a full vehicle history report.</div>
+      <h2 style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:9px;"><i class="fas fa-id-card" style="color:var(--sky);"></i>VIN decode result</h2>
+      <p style="font-size:11px;color:var(--gray);margin-bottom:14px;">VIN: <strong>${esc(vin)}</strong> &bull; NHTSA.gov (USA) &bull; CarVector.io</p>
+      <div class="panel"><h3><i class="fas fa-database"></i>Technical data</h3>${rows||'<p style="font-size:12px;color:var(--gray);">No data found in the NHTSA database for this VIN.</p>'}</div>
+      ${cvHtml}
+      <div class="panel" style="background:#fffbeb;border-left-color:var(--gold);margin-top:12px;">
+        <h3><i class="fas fa-clock-rotate-left"></i>Vehicle history</h3>
+        <p style="font-size:12px;margin-bottom:12px;">Full history (accidents, inspections, mileage) is available from official services:</p>
+        <a href="https://vpic.nhtsa.dot.gov" target="_blank" rel="noopener noreferrer" class="wbtn" style="margin-right:8px;"><i class="fas fa-flag"></i>NHTSA vPIC</a>
+        <a href="https://www.vehiclehistory.com/vin-search?vin=${esc(vin)}" target="_blank" rel="noopener noreferrer" class="wbtn"><i class="fas fa-globe"></i>VehicleHistory</a>
+      </div>${compHtml}${wikiHtml}`;
+  }catch{
+    document.getElementById('rContent').innerHTML=`<div class="panel" style="border-left-color:var(--err);"><h3><i class="fas fa-circle-xmark" style="color:var(--err);"></i>Error</h3><p style="font-size:12px;">Could not fetch data for VIN: <strong>${esc(vin)}</strong></p></div>`;
+  }
+}
+
+// ═══ GROUPS, BRANDS, MODELS ═══
+async function buildGroups(){
+  const db=getDb(),g=document.getElementById('gGrid');
+  document.getElementById('gSearch').value='';g.innerHTML='';
+  for(const grp of Object.keys(db)){
+    const bc=Object.keys(db[grp]).length;
+    const sid='gt_'+grp.replace(/[^a-z0-9]/gi,'_');
+    const ico=CAT[curCat].icon;
+    const card=document.createElement('div');card.className='card';
+    card.innerHTML=`<div class="cthumb" id="${sid}"><div class="cph"><i class="fas ${ico}"></i></div></div><div class="cbody"><h3>${esc(grp)}</h3><p>${bc} ${bc===1?'brand':'brands'}</p></div>`;
+    card.onclick=()=>showBrands(grp);g.appendChild(card);
+    const firstBrand=Object.keys(db[grp])[0].replace(/⭐/g,'').trim();
+    (async(id,fb,ic)=>{
+      const img=await getImg(fb);
+      if(img){const el=document.getElementById(id);if(el)el.innerHTML=`<img src="${esc(img)}" alt="${esc(fb)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'cph\\'><i class=\\'fas ${ic}\\'></i></div>'">`;}
+    })(sid,firstBrand,ico);
+  }
+}
+
+async function showBrands(grp){
+  curGroup=grp;
+  document.getElementById('bbBrands').onclick=()=>{showV('vGroups');buildGroups();};
+  document.getElementById('bTitle').innerHTML=`<i class="fas fa-layer-group"></i>${esc(grp)}`;
+  document.getElementById('bSearch').value='';
+  const db=getDb(),g=document.getElementById('bGrid');g.innerHTML='';
+  const ico=CAT[curCat].icon;
+  for(const b of Object.keys(db[grp])){
+    const mc=Object.keys(db[grp][b]).length;
+    const cleanB=b.replace(/⭐/g,'').trim();
+    const sid='br_'+b.replace(/[^a-z0-9]/gi,'_');
+    const card=document.createElement('div');card.className='card';
+    card.innerHTML=`<div class="cthumb" id="${sid}"><div class="cph"><i class="fas ${ico}"></i></div></div><div class="cbody"><h3>${esc(cleanB)}${b.includes('⭐')?'<span class="star"> ★</span>':''}</h3><p>${mc} models</p></div>`;
+    card.onclick=()=>showModels(grp,b);g.appendChild(card);
+    (async(id,brand,ic)=>{
+      const img=await getImg(brand);
+      if(img){const el=document.getElementById(id);if(el)el.innerHTML=`<img src="${esc(img)}" alt="${esc(brand)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'cph\\'><i class=\\'fas ${ic}\\'></i></div>'">`;}
+    })(sid,cleanB,ico);
+  }
+  showV('vBrands');
+}
+
+function showModels(grp,brand){
+  curGroup=grp;curBrand=brand;
+  document.getElementById('bbModels').onclick=()=>showBrands(grp);
+  const ico=curCat==='moto'?'fa-motorcycle':curCat==='boats'?'fa-sailboat':'fa-car-side';
+  document.getElementById('mTitle').innerHTML=`<i class="fas ${ico}"></i>${esc(brand.replace(/⭐/g,''))}`;
+  document.getElementById('mSearch').value='';document.getElementById('mSort').value='';
+  buildModGrid(grp,brand);showV('vModels');
+}
+function buildModGrid(grp,brand){
+  const db=getDb(),g=document.getElementById('mGrid');g.innerHTML='';
+  if(!db[grp]||!db[grp][brand])return;
+  const ico=CAT[curCat].icon;
+  const cleanB=brand.replace(/⭐/g,'').trim();
+  let idx=0;
+  Object.keys(db[grp][brand]).forEach(m=>{
+    const yr=db[grp][brand][m]||'';
+    const cleanM=m.replace(/⭐/g,'').trim();
+    const sid='mo_'+idx+'_'+m.replace(/[^a-z0-9]/gi,'_').slice(0,16);idx++;
+    const card=document.createElement('div');card.className='card';
+    card.innerHTML=`<div class="cthumb" id="${sid}"><div class="cph"><i class="fas ${ico}"></i></div></div><div class="cbody"><h3>${esc(cleanM)}${m.includes('⭐')?'<span class="star"> ★</span>':''}</h3><p>${yr?'Model years: '+esc(yr):''}</p></div>`;
+    card.onclick=()=>openReport(brand,m,grp);g.appendChild(card);
+    (async(id,b,mo,ic)=>{
+      const img=await getImg(b,mo);
+      if(img){const el=document.getElementById(id);if(el)el.innerHTML=`<img src="${esc(img)}" alt="${esc(b+' '+mo)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'cph\\'><i class=\\'fas ${ic}\\'></i></div>'">`;}
+    })(sid,cleanB,cleanM,ico);
+  });
+}
+function sortModels(){
+  const v=document.getElementById('mSort').value;
+  if(!v){buildModGrid(curGroup,curBrand);return;}
+  const g=document.getElementById('mGrid');
+  const cards=[...g.querySelectorAll('.card')];
+  cards.sort((a,b)=>{const ta=a.querySelector('h3').textContent,tb=b.querySelector('h3').textContent;return v==='az'?ta.localeCompare(tb):tb.localeCompare(ta);});
+  g.innerHTML='';cards.forEach(c=>g.appendChild(c));
+}
+
+// ═══ REPORT ═══
+async function openReport(brand,model,grp){
+  showV('vReport');
+  document.getElementById('bbReport').onclick=()=>showModels(grp,brand);
+  const db=getDb();
+  const years=(db[grp]&&db[grp][brand]&&db[grp][brand][model])||'';
+  const cleanM=model.replace(/⭐/g,'').trim();
+  const cleanB=brand.replace(/⭐/g,'').trim();
+  const c=document.getElementById('rContent');
+  c.innerHTML=`<div class="spin"><i class="fas fa-circle-notch"></i><p>Fetching data...</p></div>`;
+
+  const startYear=parseInt((years.match(/\d{4}/)||[])[0])||undefined;
+  const [wiki,img,cvMatch]=await Promise.all([
+    getWiki(cleanB,cleanM),
+    getImg(cleanB,cleanM),
+    curCat==='cars'?cvLookup(cleanB,cleanM,startYear):Promise.resolve(null)
+  ]);
+  let cvVehicle=null,cvRecalls=[],cvComplaints=null,cvComplaintsStatus=null;
+  if(cvMatch){
+    const detail=await cvDetail(cvMatch.id);
+    cvVehicle=detail.vehicle;cvRecalls=detail.recalls;
+    cvComplaints=detail.complaints;cvComplaintsStatus=detail.complaintsStatus;
+  }
+  // Only bother fetching the Wikipedia infobox if CarVector didn't already
+  // give us structured specs — it's a slower, heavier lookup.
+  const wikiSpecs=cvVehicle?null:await getWikiSpecs(cleanB,cleanM);
+
+  const imgSrc=img||(cvVehicle&&cvVehicle.image_url)||wiki.img||null;
+
+  const imgHtml=imgSrc
+    ?`<img src="${esc(imgSrc)}" class="rimg" alt="${esc(cleanB)} ${esc(cleanM)}" loading="lazy" onerror="this.outerHTML='<div class=\\'rph\\'><i class=\\'fas ${CAT[curCat].icon}\\'></i></div>'">`
+    :`<div class="rph"><i class="fas ${CAT[curCat].icon}"></i></div>`;
+
+  const rt=getRating(cleanB,cleanM);
+  const hasCuratedRating=(rt!==RATES.default);
+  const fc=rt.f>70?'red':rt.f>45?'orange':'green';
+  const cc=rt.c>70?'red':rt.c>45?'orange':'green';
+  const worthHtml=rt.w===null?''
+    :(rt.w?'<span class="verdict v-yes"><i class="fas fa-thumbs-up"></i>Worth buying</span>'
+          :'<span class="verdict v-no"><i class="fas fa-thumbs-down"></i>Not recommended</span>');
+
+  // ═══ Technical data — three-tier real sourcing, never a guess:
+  //   1) CarVector API structured fields (cars, US-market catalog)
+  //   2) Wikipedia's own infobox fields, fetched and parsed live, for
+  //      anything CarVector doesn't cover (non-US cars, motorcycles, boats)
+  //   3) If neither source has this exact model, say so and link out to
+  //      search rather than inventing a number.
+  const CV_TECH_MAP={
+    'Engine displacement':v=>v.displacement_l!=null?v.displacement_l+' L':null,
+    'Peak power':v=>v.horsepower!=null?v.horsepower+' hp':null,
+    'Fuel type':v=>v.fuel_type||null,
+    'Transmission':v=>v.transmission||null,
+    'Drive type':v=>v.drive_type||null,
+    'Cylinders':v=>v.cylinders!=null?String(v.cylinders):null,
+    'Body class':v=>v.body_class||null,
+    'Doors':v=>v.doors!=null?String(v.doors):null
+  };
+  let techRows='',techNote='',techSourceBadge='';
+  if(cvVehicle){
+    techRows=Object.entries(CV_TECH_MAP).map(([label,fn])=>{
+      const val=fn(cvVehicle);
+      return val?`<div class="trow"><strong>${esc(label)}</strong><span>${esc(val)}</span></div>`:'';
+    }).join('');
+    techSourceBadge='<span class="badge badge-api" style="margin-left:6px;">CarVector API</span>';
+    techNote=`<p style="font-size:10px;color:var(--gray);margin-top:8px;">Sourced from CarVector for a matching trim (${esc(cvVehicle.year||'')} ${esc(cvVehicle.make||'')} ${esc(cvVehicle.model||'')}${cvVehicle.trim?' '+esc(cvVehicle.trim):''}). Your exact trim may vary.</p>`;
+  }else if(wikiSpecs&&wikiSpecs.rows.length){
+    techRows=wikiSpecs.rows.map(([label,val])=>`<div class="trow"><strong>${esc(label.charAt(0).toUpperCase()+label.slice(1))}</strong><span>${esc(val)}</span></div>`).join('');
+    techSourceBadge='<span class="badge badge-api" style="margin-left:6px;">Wikipedia infobox</span>';
+    techNote=`<p style="font-size:10px;color:var(--gray);margin-top:8px;">Pulled live from the article's infobox — <a href="${esc(wikiSpecs.url)}" target="_blank" rel="noopener noreferrer">view the source on Wikipedia</a> to verify or see full trim-by-trim detail.</p>`;
+  }else{
+    techRows=`<p style="font-size:12px;color:var(--gray);">We checked CarVector's catalog and this article's Wikipedia infobox and neither had a structured spec table for "${esc(cleanB+' '+cleanM)}". Rather than guess, here's where to check yourself:</p>
+      <p style="margin-top:8px;"><a href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(cleanB+' '+cleanM)}" target="_blank" rel="noopener noreferrer" class="wbtn"><i class="fas fa-magnifying-glass"></i>Search Wikipedia</a></p>`;
+  }
+
+  // ═══ Real-world failure signal: recall counts + actual recall text pulled
+  // live from CarVector, instead of an invented percentage. ═══
+  let cvSignalHtml='';
+  if(cvVehicle){
+    const counts=[
+      ['Recalls',cvVehicle.recall_count],
+      ['Owner complaints',cvVehicle.complaint_count],
+      ['Service bulletins',cvVehicle.tsb_count],
+      ['Investigations',cvVehicle.investigation_count]
+    ].filter(([,v])=>v!==null&&v!==undefined);
+    cvSignalHtml=`<div class="panel"><h3><i class="fas fa-database"></i>Real-world failure signal <span class="badge badge-api" style="margin-left:6px;">CarVector API</span></h3>
+      ${counts.length?`<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        ${counts.map(([label,v])=>`<div style="background:#f0f9ff;border:1px solid var(--gray3);border-radius:8px;padding:8px 12px;text-align:center;min-width:88px;flex:1;"><div style="font-size:20px;font-weight:800;color:var(--sky-deep);font-family:'Rajdhani',sans-serif;">${esc(String(v))}</div><div style="font-size:9px;text-transform:uppercase;color:var(--gray);font-weight:700;">${esc(label)}</div></div>`).join('')}
+      </div>`:''}
+      ${cvRecalls.length?cvRecalls.slice(0,4).map(rc=>`<div class="ust"><h5><i class="fas fa-triangle-exclamation"></i>${esc(rc.component||'Recall')}</h5><p>${esc((rc.summary||'').slice(0,240))}${(rc.summary||'').length>240?'...':''}</p>${rc.remedy?`<p style="font-size:10px;color:var(--gray);margin-top:4px;"><strong>Remedy:</strong> ${esc(rc.remedy.slice(0,150))}${rc.remedy.length>150?'...':''}</p>`:''}<p style="font-size:10px;color:var(--gray);margin-top:4px;">Campaign ${esc(rc.campaign_id||'n/a')} - reported ${esc(rc.report_received||'n/a')}</p></div>`).join('')
+        :'<p style="font-size:11px;color:var(--ok);"><i class="fas fa-circle-check"></i> No open federal recalls on record for this vehicle.</p>'}
+    </div>`;
+  }
+
+  // Most-reported problem areas: real complaint-by-component breakdown when
+  // the plan includes it; an honest "needs a higher plan" note when it 402/403s;
+  // generic category guidance (clearly labeled as such) only as a last resort.
+  let realFaultsHtml='';
+  if(cvComplaints&&cvComplaints.aggregate&&cvComplaints.aggregate.by_component&&Object.keys(cvComplaints.aggregate.by_component).length){
+    const byComp=Object.entries(cvComplaints.aggregate.by_component).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    realFaultsHtml=`<div class="panel"><h3><i class="fas fa-triangle-exclamation"></i>Most-reported problem areas <span class="badge badge-api" style="margin-left:6px;">CarVector API</span></h3>
+      <p style="font-size:10px;color:var(--gray);margin-bottom:10px;">From ${esc(String(cvComplaints.aggregate.total))} owner complaints filed with US federal regulators for this vehicle.</p>
+      ${byComp.map(([comp,count])=>`<div class="ust"><h5><i class="fas fa-triangle-exclamation"></i>${esc(comp)}</h5><p>${esc(String(count))} complaints on record.</p></div>`).join('')}
+    </div>`;
+  }else if(curCat==='cars'&&startYear){
+    // CarVector's complaint aggregate isn't available on this plan (or there's
+    // no CarVector match at all) — fall back to NHTSA's free, public complaint
+    // database directly, for the specific make/model/year, real text included.
+    const nc=await nhtsaComplaints(cleanB,cleanM,startYear);
+    if(nc){
+      realFaultsHtml=`<div class="panel"><h3><i class="fas fa-triangle-exclamation"></i>Owner-reported problems <span class="badge badge-api" style="margin-left:6px;">NHTSA API</span></h3>
+        <p style="font-size:10px;color:var(--gray);margin-bottom:10px;">Real complaints filed with NHTSA for the ${esc(String(startYear))} ${esc(cleanB)} ${esc(cleanM)}.</p>
+        ${nc.slice(0,4).map(cp=>`<div class="ust"><h5><i class="fas fa-exclamation-circle"></i>${esc(cp.components||'Uncategorized')}</h5><p>${esc((cp.summary||'').slice(0,220))}${(cp.summary||'').length>220?'...':''}</p>${cp.dateOfIncident?`<p style="font-size:10px;color:var(--gray);margin-top:4px;">Incident date: ${esc(cp.dateOfIncident)}</p>`:''}</div>`).join('')}
+      </div>`;
+    }
+  }
+  if(!realFaultsHtml&&cvVehicle&&(cvComplaintsStatus===402||cvComplaintsStatus===403)){
+    realFaultsHtml=`<div class="panel"><h3><i class="fas fa-triangle-exclamation"></i>Most-reported problem areas</h3><p style="font-size:12px;color:var(--gray);">Complaint-by-component breakdowns require a higher CarVector plan than the one this key is on, and NHTSA had no separate complaint records for this exact year/model. General category guidance is shown below instead.</p></div>`;
+  }
+
+  const SAFETY={
+    cars:'ABS, ESP/ESC, and up to 9 airbags. Driver-assist systems: automatic emergency braking, lane-keep assist, adaptive cruise control, reversing camera, and parking sensors.',
+    moto:'ABS, traction control, riding modes, and a 6-axis IMU on newer models. Brembo/Tokico disc brakes. Some trims add a quickshifter and traction-control cornering modes.',
+    boats:'Life jackets, fire extinguisher, anchor, and Class B safety equipment. GPS, VHF DSC radio, bilge pump, and light/sound signaling.'
+  };
+  const FAULTS={
+    cars:[{n:"Electronics / ECU faults",f:"OBD-II diagnostics, recalibration or ECU replacement.",c:"$100-650"},{n:"Brake wear",f:"Pads and rotors typically need replacing every 25,000-37,000 miles.",c:"$90-230/axle"},{n:"Timing chain/belt",f:"Preventive replacement roughly every 90,000 miles.",c:"$200-650"}],
+    moto:[{n:"Drive chain wear",f:"Chain and sprocket replacement every 9,000-15,000 miles.",c:"$50-150"},{n:"Electrical faults",f:"Check the wiring harness, battery, and relays.",c:"$25-100"},{n:"Valve adjustment",f:"Typically every 12,000-18,000 miles.",c:"$50-130"}],
+    boats:[{n:"Hull corrosion / osmosis",f:"Sanding, priming, and re-sealing each season.",c:"$130-780"},{n:"Outboard engine service",f:"Spark plugs, filters, and impeller every 2 seasons.",c:"$50-200"},{n:"Pump seal wear",f:"Inspect and replace seals as needed.",c:"$40-130"}]
+  };
+  const faults=(FAULTS[curCat]||FAULTS.cars);
+  const SINFO={
+    cars:`<div class="panel"><h3><i class="fas fa-wrench"></i>Service and running costs</h3>
+      <div class="trow"><strong>Oil + filter</strong><span>Every 10,000-19,000 miles (or yearly)</span></div>
+      <div class="trow"><strong>Major service</strong><span>Every 19,000-37,000 miles</span></div>
+      <div class="trow"><strong>Brakes (rotors/pads)</strong><span>Every 25,000-50,000 miles</span></div>
+      <div class="trow"><strong>Timing belt/chain</strong><span>Every 75,000-125,000 miles</span></div>
+      <div class="trow"><strong>Tires</strong><span>Every 19,000-31,000 miles</span></div>
+    </div>`,
+    moto:`<div class="panel"><h3><i class="fas fa-wrench"></i>Service and running costs</h3>
+      <div class="trow"><strong>Engine oil</strong><span>Every 3,000-6,000 miles</span></div>
+      <div class="trow"><strong>Drive chain</strong><span>Every 9,000-15,000 miles</span></div>
+      <div class="trow"><strong>Tires</strong><span>Every 6,000-12,000 miles</span></div>
+      <div class="trow"><strong>Brakes</strong><span>Inspect every 3,000 miles</span></div>
+    </div>`,
+    boats:`<div class="panel"><h3><i class="fas fa-wrench"></i>Service and running costs</h3>
+      <div class="trow"><strong>Annual inspection</strong><span>Required every season</span></div>
+      <div class="trow"><strong>Cooling impeller</strong><span>Every 1-2 seasons</span></div>
+      <div class="trow"><strong>Sacrificial anode</strong><span>Yearly</span></div>
+      <div class="trow"><strong>Antifouling paint</strong><span>Every 1-2 years (saltwater)</span></div>
+    </div>`
+  };
+
+  c.innerHTML=`
+    ${imgHtml}
+    <div class="rhdr">
+      <div>
+        <h1>${esc(cleanB)} ${esc(cleanM)}</h1>
+        ${years?`<p class="years"><i class="fas fa-calendar-days" style="margin-right:4px;"></i>Model years: ${esc(years)}</p>`:''}
+        ${wiki.lang==='en'?'':''}
+      </div>
+      <span class="badge badge-free"><i class="fas fa-check" style="margin-right:3px;"></i>Free</span>
+    </div>
+
+    ${hasCuratedRating?`<div class="scorecard">
+      <h4><i class="fas fa-chart-bar"></i>Editorial rating <span style="font-weight:600;text-transform:none;letter-spacing:0;font-size:9px;color:var(--gray);">(our estimate, not a guarantee — see real recall/complaint data below)</span></h4>
+      ${scoreBar('Failure rate',rt.f,fc)}
+      ${scoreBar('Running costs',rt.c,cc)}
+      ${worthHtml}
+      ${rt.n?`<p style="font-size:11px;color:#475569;margin-top:10px;line-height:1.6;"><i class="fas fa-lightbulb" style="color:var(--gold);margin-right:5px;"></i>${esc(rt.n)}</p>`:''}
+    </div>`:`<div class="scorecard">
+      <h4><i class="fas fa-chart-bar"></i>Model rating</h4>
+      <p style="font-size:12px;color:#475569;line-height:1.6;">We don't have a curated editorial estimate for this exact model yet, so we won't show you a made-up percentage. See the real recall and complaint numbers from CarVector below instead — that's actual sourced data, not a guess.</p>
+    </div>`}
+
+    <div class="r2col">
+      <div>
+        <div class="panel">
+          <h3><i class="fas fa-book-open"></i>Vehicle description (Wikipedia)</h3>
+          ${wiki.text?`<p style="font-size:12px;line-height:1.75;">${esc(wiki.text.slice(0,700))}${wiki.text.length>700?'...':''}</p>`:`<p style="font-size:12px;color:var(--gray);">No Wikipedia summary found for "${esc(cleanB+' '+cleanM)}". <a href="https://en.wikipedia.org/wiki/${encodeURIComponent(cleanB+'_'+cleanM.replace(/ /g,'_'))}" target="_blank" rel="noopener noreferrer">Try searching Wikipedia directly</a>.</p>`}
+          ${wiki.url?`<a href="${esc(wiki.url)}" target="_blank" rel="noopener noreferrer" class="wbtn"><i class="fas fa-arrow-up-right-from-square"></i>Wikipedia</a>`:''}
+        </div>
+        ${cvSignalHtml}
+        <div class="panel">
+          <h3><i class="fas fa-shield-halved"></i>Safety and equipment</h3>
+          <p style="font-size:12px;line-height:1.7;">${SAFETY[curCat]||SAFETY.cars}</p>
+          <p style="font-size:10px;color:var(--gray);margin-top:8px;">General equipment available on this category — check the specific trim/year for what was actually fitted.</p>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <h3><i class="fas fa-gears"></i>Technical data${techSourceBadge}</h3>
+          ${techRows}
+          ${techNote}
+        </div>
+        ${realFaultsHtml||`<div class="panel">
+          <h3><i class="fas fa-triangle-exclamation"></i>Typical problem areas <span style="font-weight:600;text-transform:none;letter-spacing:0;font-size:9px;color:var(--gray);margin-left:4px;">(general guidance for this category, not model-specific data)</span></h3>
+          ${faults.map(f=>`<div class="ust"><h5><i class="fas fa-triangle-exclamation"></i>${esc(f.n)}</h5><p><strong>Fix:</strong> ${esc(f.f)}</p><p class="cost">${esc(f.c)}</p></div>`).join('')}
+        </div>`}
+        ${SINFO[curCat]||SINFO.cars}
+      </div>
+    </div>
+
+    <div class="prosoon">
+      <h4><i class="fas fa-crown" style="margin-right:6px;"></i>PRO version - coming soon</h4>
+      <p>Exact repair costs for this model and year, VIN history, and a full analysis.</p>
+      <ul>
+        <li><i class="fas fa-check-circle"></i>Detailed repair costs (USD) by model year</li>
+        <li><i class="fas fa-check-circle"></i>Vehicle history by VIN</li>
+        <li><i class="fas fa-check-circle"></i>Full technical pre-purchase analysis</li>
+      </ul>
+      <button class="btnsoon"><i class="fas fa-clock" style="margin-right:6px;"></i>Unlock soon</button>
+    </div>
+
+    ${curCat==='cars'?`<div class="panel" style="margin-top:16px;">
+      <h3><i class="fas fa-car-side"></i>Similar cars — also worth checking</h3>
+      <div class="simgrid">
+        <div class="simcard" onclick="qSearch('Audi A4')"><i class="fas fa-car"></i><div><h5>Audi A4 B8</h5><p>2008-2015</p></div></div>
+        <div class="simcard" onclick="qSearch('BMW 3 Series')"><i class="fas fa-car"></i><div><h5>BMW E90</h5><p>2005-2012</p></div></div>
+        <div class="simcard" onclick="qSearch('Volkswagen Passat')"><i class="fas fa-car"></i><div><h5>VW Passat B6</h5><p>2005-2010</p></div></div>
+        <div class="simcard" onclick="qSearch('Toyota Corolla')"><i class="fas fa-car"></i><div><h5>Toyota Corolla</h5><p>Reliable</p></div></div>
+        <div class="simcard" onclick="qSearch('Skoda Octavia')"><i class="fas fa-car"></i><div><h5>Skoda Octavia II</h5><p>2004-2013</p></div></div>
+        <div class="simcard" onclick="qSearch('Ford Focus')"><i class="fas fa-car"></i><div><h5>Ford Focus Mk2</h5><p>2004-2011</p></div></div>
+      </div>
+    </div>`:''}`;
+}
+
+// ═══ ENGINES ═══
+async function buildEnginesGrid(){
+  const g=document.getElementById('eGrid');g.innerHTML='';
+  document.getElementById('eSearch').value='';
+  for(const e of dbEngines){
+    const sid='en_'+e.id;
+    const card=document.createElement('div');card.className='card';
+    card.innerHTML=`<div class="cthumb" id="${sid}"><div class="cph"><i class="fas fa-gears"></i></div></div><div class="cbody"><h3>${esc(e.name)}</h3><p>${esc(e.type)}${e.cyl?' - '+e.cyl+' cyl.':''}</p></div>`;
+    card.onclick=()=>openEngineReport(e);g.appendChild(card);
+    (async(id,eng)=>{
+      const img=await getImg(eng.wiki);
+      if(img){const el=document.getElementById(id);if(el)el.innerHTML=`<img src="${esc(img)}" alt="${esc(eng.name)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'cph\\'><i class=\\'fas fa-gears\\'></i></div>'">`;}
+    })(sid,e);
+  }
+}
+async function openEngineReport(eng){
+  showV('vEngReport');
+  const c=document.getElementById('erContent');
+  c.innerHTML=`<div class="spin"><i class="fas fa-circle-notch"></i><p>Fetching from Wikipedia...</p></div>`;
+  const [wiki,img]=await Promise.all([getWiki(eng.wiki), getImg(eng.wiki)]);
+  const finalImg=img||wiki.img||null;
+  c.innerHTML=`
+    ${finalImg?`<img src="${esc(finalImg)}" class="rimg" alt="${esc(eng.name)}" loading="lazy" onerror="this.outerHTML='<div class=\\'rph\\'><i class=\\'fas fa-gears\\'></i></div>'">`:'<div class="rph"><i class="fas fa-gears"></i></div>'}
+    <div class="rhdr"><h1>${esc(eng.name)}</h1></div>
+    <div class="r2col">
+      <div>
+        <div class="panel"><h3><i class="fas fa-book-open"></i>Description (Wikipedia ${wiki.lang==='en'?'EN':wiki.lang==='pl'?'PL':''})</h3>
+          <p style="font-size:12px;line-height:1.75;">${wiki.text?esc(wiki.text.slice(0,700)):esc(eng.desc)}</p>
+          ${wiki.url?`<a href="${esc(wiki.url)}" target="_blank" rel="noopener noreferrer" class="wbtn"><i class="fas fa-arrow-up-right-from-square"></i>Wikipedia</a>`:''}
+        </div>
+      </div>
+      <div>
+        <div class="panel"><h3><i class="fas fa-gears"></i>Specification</h3>
+          <div class="trow"><strong>Layout</strong><span>${esc(eng.type)}</span></div>
+          ${eng.cyl?`<div class="trow"><strong>Cylinders</strong><span>${eng.cyl}</span></div>`:''}
+          <div class="trow"><strong>Used in</strong><span>Cars, SUVs, sports cars</span></div>
+        </div>
+        <div class="panel"><h3><i class="fas fa-circle-info"></i>Characteristics</h3>
+          <p style="font-size:12px;line-height:1.7;">${esc(eng.desc)}</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ═══ NAVIGATION ═══
+function showV(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const showHome=(id==='vGroups')&&curCat!=='engines';
+  document.getElementById('homeSection').style.display=showHome?'block':'none';
+  window.scrollTo(0,0);
+}
+function openPage(p){
+  if(p==='avoid')buildAvoid();
+  const map={avoid:'vAvoid',about:'vAbout',rodo:'vRodo'};
+  showV(map[p]||'vGroups');
+  document.getElementById('homeSection').style.display='none';
+}
+function goHome(){curGroup=null;curBrand=null;switchCat(curCat);}
+
+// ═══ INIT ═══
+switchCat('cars');
+</script>
+</body>
+</html>

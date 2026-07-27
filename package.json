@@ -1,0 +1,18 @@
+{
+  "name": "autoencyklopedia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AutoEncyclopedia Express backend with SQLite storage.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "check": "node --check server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.9.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
