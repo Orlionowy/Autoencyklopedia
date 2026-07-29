@@ -10,9 +10,11 @@
     "check": "node --check server.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.110.9",
     "better-sqlite3": "^12.9.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pg": "^8.22.0"
   }
 }

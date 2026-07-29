@@ -15,4 +15,4 @@ The source code, database structure, original content, design, and other materia
 - Use this project commercially.
 - Create derivative works based on this project without written permission from the author.
 
- Unauthorized use is prohibited.
+ Unauthorized use is prohibited.    
