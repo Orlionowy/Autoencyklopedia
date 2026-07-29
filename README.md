@@ -1,4 +1,4 @@
-# AutoEncyclopedia
+# Autoencyclopedia
 
 A web application for browsing vehicle information, finding cars, buying and selling in a marketplace, and using an AI car helper.
 
