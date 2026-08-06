@@ -9,18 +9,79 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 :root{
-  --sky:#0ea5e9;--sky-d:#0284c7;--sky-deep:#0369a1;
   --navy:#0c1a3a;--navy2:#0f2554;
   --aqua:#22d3ee;--aqua2:#67e8f9;
-  --off:#f0f9ff;
-  --gray:#64748b;--gray2:#94a3b8;--gray3:#e2e8f0;
   --gold:#f59e0b;--ok:#10b981;--err:#ef4444;--warn:#f59e0b;
-  --shadow:0 4px 24px rgba(14,165,233,.13);
   --t:.2s cubic-bezier(.4,0,.2,1);
+  --footer-bg:var(--navy); /* footer stays dark navy in both themes — a fixed brand element, like the header */
+  --bg-main:var(--page-bg); /* alias — resolves to whichever theme's page background is currently active */
 }
+
+/* ═══ LIGHT THEME (default) ═══ */
+:root,html[data-theme="light"]{
+  --sky:#0284c7;--sky-d:#0369a1;--sky-deep:#075985;
+  --off:#f8fafc;
+  --gray:#64748b;--gray2:#94a3b8;--gray3:#e2e8f0;
+  --shadow:0 4px 24px rgba(14,165,233,.13);
+
+  --page-bg:linear-gradient(180deg,#f8fafc 0%,#eff6ff 100%);
+  --surface:#ffffff;
+  --surface-2:#f8fafc;
+  --text-main:#0f172a;
+  --text-secondary:#334155;
+  --glass-bg:rgba(255,255,255,.5);
+  --glass-bg-strong:rgba(255,255,255,.78);
+  --glass-border:rgba(255,255,255,.7);
+  --card-border:rgba(226,232,240,.8);
+  --modal-overlay:rgba(12,26,58,.55);
+  --sidebar-tint:rgba(15,37,84,.045);
+
+  /* Soft multi-layered drop shadows — no glow in light mode, per spec */
+  --panel-shadow:0 2px 8px rgba(15,23,42,.05),0 10px 28px rgba(15,23,42,.05);
+  --btn-glow:0 2px 8px rgba(2,132,199,.18);
+  --btn-glow-hover:0 4px 14px rgba(2,132,199,.28);
+  --card-glow:0 8px 24px rgba(15,23,42,.08);
+  --input-focus-glow:0 0 0 3px rgba(2,132,199,.12);
+}
+
+/* ═══ DARK THEME ═══ */
+html[data-theme="dark"]{
+  /* Electric sky-blue/cyan accent — deliberately NOT the flat/deeper blue
+     used in light mode, so it reads as vivid against a dark page. */
+  --sky:#38bdf8;--sky-d:#60a5fa;--sky-deep:#0ea5e9;
+
+  --off:#151d2a;
+  --gray:#94a3b8;--gray2:#7c8ba1;--gray3:#334155;
+  --shadow:0 4px 24px rgba(0,0,0,.55);
+
+  /* Elevation: page darkest, surface-2 mid, surface (cards/modals) lightest
+     — so panels visibly lift off the page instead of flattening into one
+     slab of black. */
+  --page-bg:linear-gradient(180deg,#0b0f17 0%,#151d2a 100%);
+  --surface:#1e293b;
+  --surface-2:#151d2a;
+  --text-main:#f1f5f9;
+  --text-secondary:#cbd5e1;
+  --glass-bg:rgba(21,29,42,.6);
+  --glass-bg-strong:rgba(30,41,59,.85);
+  --glass-border:rgba(148,163,184,.16);
+  --card-border:rgba(148,163,184,.14);
+  --modal-overlay:rgba(0,0,0,.75);
+  --sidebar-tint:rgba(148,163,184,.05);
+
+  /* The signature "glow" — balanced, not blinding: a soft cyan bloom
+     layered under a normal dark drop-shadow for depth. */
+  --panel-shadow:0 2px 10px rgba(0,0,0,.4),0 0 20px rgba(56,189,248,.06);
+  --btn-glow:0 0 12px rgba(56,189,248,.25);
+  --btn-glow-hover:0 0 18px rgba(56,189,248,.4);
+  --card-glow:0 0 0 1px rgba(56,189,248,.15),0 0 20px rgba(56,189,248,.12);
+  --input-focus-glow:0 0 0 3px rgba(56,189,248,.22);
+}
+
+*{transition:background .3s ease,color .3s ease,box-shadow .3s ease,border-color .3s ease;}
 *{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:'Inter',sans-serif;background:var(--off);color:#1e293b;overflow-x:hidden;}
+html{scroll-behavior:smooth;background:var(--bg-main);min-height:100%;}
+body{font-family:'Inter',sans-serif;background:var(--bg-main);color:var(--text-main);overflow-x:hidden;min-height:100vh;margin:0;display:flex;flex-direction:column;}
 header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:999;box-shadow:0 2px 20px rgba(0,0,0,.35);height:60px;border-bottom:2px solid var(--sky);gap:8px;}
 .logo{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#fff;cursor:pointer;letter-spacing:1px;white-space:nowrap;display:flex;align-items:center;gap:7px;}
 .logo span{color:var(--aqua);}
@@ -53,14 +114,15 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .hstat strong{display:block;font-size:22px;font-weight:800;color:var(--aqua);font-family:'Rajdhani',sans-serif;}
 .hstat span{font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px;}
 .swrap{width:94%;max-width:860px;margin:-26px auto 30px;position:relative;z-index:10;}
-.scard{background:#fff;border-radius:12px;padding:18px 20px;box-shadow:0 8px 28px rgba(14,165,233,.14);border:1px solid var(--gray3);margin-bottom:10px;}
+.scard{background:var(--surface);border-radius:12px;padding:18px 20px;box-shadow:0 8px 28px rgba(14,165,233,.14);border:1px solid var(--gray3);margin-bottom:10px;}
 .slabel{font-size:9px;font-weight:800;color:var(--sky-deep);text-transform:uppercase;letter-spacing:1.4px;display:block;margin-bottom:7px;}
 .srow{display:flex;gap:8px;}
-.sinp{flex:1;padding:11px 14px;border:1.5px solid var(--gray3);border-radius:8px;font-size:13px;font-weight:500;outline:none;font-family:'Inter',sans-serif;transition:var(--t);min-width:0;}
-.sinp:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(14,165,233,.1);}
-.sbtn{background:var(--navy);color:#fff;border:none;padding:0 18px;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer;white-space:nowrap;transition:var(--t);}
+.sinp{flex:1;padding:11px 14px;border:1.5px solid var(--gray3);border-radius:8px;font-size:13px;font-weight:500;outline:none;font-family:'Inter',sans-serif;transition:var(--t);min-width:0;background:var(--surface);color:var(--text-main);}
+.sinp:focus{border-color:var(--sky);box-shadow:var(--input-focus-glow);}
+.sbtn{background:var(--navy);color:#fff;border:none;padding:0 18px;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer;white-space:nowrap;transition:var(--t);box-shadow:var(--btn-glow);}
+.sbtn:hover{box-shadow:var(--btn-glow-hover);}
 .sbtn:hover{background:var(--sky-d);}
-.ldrop{background:#fff;border:1px solid var(--gray3);border-radius:8px;max-height:230px;overflow-y:auto;display:none;box-shadow:0 8px 28px rgba(0,0,0,.1);margin-top:4px;}
+.ldrop{background:var(--surface);border:1px solid var(--gray3);border-radius:8px;max-height:230px;overflow-y:auto;display:none;box-shadow:0 8px 28px rgba(0,0,0,.1);margin-top:4px;}
 .litem{padding:10px 14px;cursor:pointer;font-size:12px;font-weight:500;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:9px;transition:var(--t);}
 .litem:hover{background:#f0f9ff;color:var(--sky-d);}
 .litem i{font-size:11px;color:var(--sky);width:14px;flex-shrink:0;}
@@ -68,52 +130,51 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .qtag{background:var(--off);border:1.5px solid var(--sky);color:var(--sky-d);border-radius:20px;padding:4px 11px;font-size:10px;font-weight:700;cursor:pointer;transition:var(--t);font-family:'Inter',sans-serif;}
 .qtag:hover{background:var(--sky);color:#fff;}
 .qlabel{font-size:10px;color:var(--gray);font-weight:600;}
-.wrap{width:94%;max-width:1280px;margin:0 auto 90px;}
+.wrap{width:94%;max-width:1280px;margin:0 auto 90px;flex:1 0 auto;}
 .fbar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
-.finp{padding:9px 13px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;font-weight:600;outline:none;font-family:'Inter',sans-serif;transition:var(--t);min-width:0;flex:1;}
-.finp:focus{border-color:var(--sky);}
+.finp{padding:9px 13px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;font-weight:600;outline:none;font-family:'Inter',sans-serif;transition:var(--t);min-width:0;flex:1;background:var(--surface);color:var(--text-main);}
+.finp:focus{border-color:var(--sky);box-shadow:var(--input-focus-glow);}
 .fsel{padding:9px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;font-weight:600;outline:none;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
-.card{background:#fff;border-radius:11px;border:1px solid var(--gray3);overflow:hidden;cursor:pointer;transition:var(--t);position:relative;}
-.card:hover{transform:translateY(-3px);border-color:var(--sky);box-shadow:var(--shadow);}
+.card{background:var(--surface);border-radius:11px;border:1px solid var(--card-border);overflow:hidden;cursor:pointer;transition:var(--t);position:relative;}
+.card-add{min-height:172px;}
+.card:hover{transform:translateY(-3px);border-color:var(--sky);box-shadow:var(--card-glow);}
 .admin-actions{position:absolute;top:8px;right:8px;display:flex;gap:6px;opacity:0;transition:opacity .15s;z-index:5;}
 .card:hover .admin-actions{opacity:1;}
 .aicon{width:27px;height:27px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3);}
 .aicon.aedit{background:var(--sky-d);}
 .aicon.adel{background:var(--err);}
-.admin-toolbar{display:none;gap:10px;margin-bottom:16px;}
-.admin-toolbar.show{display:flex;}
-.vmodal-overlay{position:fixed;inset:0;background:rgba(12,26,58,.55);display:none;align-items:center;justify-content:center;z-index:6000;padding:20px;}
+.vmodal-overlay{position:fixed;inset:0;background:var(--modal-overlay);display:none;align-items:center;justify-content:center;z-index:6000;padding:20px;}
 .vmodal-overlay.open{display:flex;}
-.vmodal{background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.35);}
-.vmodal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--gray3);position:sticky;top:0;background:#fff;z-index:2;}
-.vmodal-head h3{font-family:'Rajdhani',sans-serif;font-size:19px;color:var(--navy);font-weight:700;}
+.vmodal{background:var(--surface);border:1px solid var(--card-border);border-radius:14px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--panel-shadow),0 20px 60px rgba(0,0,0,.25);}
+.vmodal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--gray3);position:sticky;top:0;background:var(--surface);z-index:2;}
+.vmodal-head h3{font-family:'Rajdhani',sans-serif;font-size:19px;color:var(--text-main);font-weight:700;}
 .vmodal-head button{background:none;border:none;font-size:22px;cursor:pointer;color:var(--gray);line-height:1;}
 .vmodal-body{padding:20px 22px;}
 .vmodal-body label{display:block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--sky-deep);margin:14px 0 6px;}
 .vmodal-body label:first-child{margin-top:0;}
-.vmodal-body input[type="text"],.vmodal-body input:not([type]),.vmodal-body input[type="file"],.vmodal-body select,.vmodal-body textarea{width:100%;padding:9px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;outline:none;}
-.vmodal-body input:focus,.vmodal-body select:focus,.vmodal-body textarea:focus{border-color:var(--sky);}
-.vmodal-foot{display:flex;justify-content:flex-end;gap:10px;padding:16px 22px;border-top:1px solid var(--gray3);position:sticky;bottom:0;background:#fff;}
+.vmodal-body input[type="text"],.vmodal-body input:not([type]),.vmodal-body input[type="file"],.vmodal-body select,.vmodal-body textarea{width:100%;padding:9px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;outline:none;background:var(--surface);color:var(--text-main);}
+.vmodal-body input:focus,.vmodal-body select:focus,.vmodal-body textarea:focus{border-color:var(--sky);box-shadow:var(--input-focus-glow);}
+.vmodal-foot{display:flex;justify-content:flex-end;gap:10px;padding:16px 22px;border-top:1px solid var(--gray3);position:sticky;bottom:0;background:var(--surface);}
 .vbtn-cancel,.vbtn-save,.vbtn-danger{padding:9px 18px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;border:none;font-family:'Inter',sans-serif;}
-.vbtn-cancel{background:var(--off);color:#334155;}
+.vbtn-cancel{background:var(--off);color:var(--text-secondary);}
 .vbtn-save{background:var(--navy);color:#fff;}
 .vbtn-danger{background:var(--err);color:#fff;}
 .empty-note{font-size:12px;color:var(--gray);grid-column:1/-1;padding:20px 0;text-align:center;}
-.checklist-progress-wrap{background:#fff;border:1px solid var(--gray3);border-radius:11px;padding:16px 18px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,.04);}
+.checklist-progress-wrap{background:var(--surface);border:1px solid var(--gray3);border-radius:11px;padding:16px 18px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,.04);}
 .checklist-progress-bar-bg{background:var(--gray3);border-radius:20px;height:10px;overflow:hidden;margin-top:9px;}
 .checklist-progress-bar-fg{background:linear-gradient(90deg,var(--sky),var(--ok));height:100%;border-radius:20px;transition:width .3s ease;}
 .checklist-section{margin-bottom:14px;}
 .checklist-items{display:flex;flex-direction:column;gap:1px;}
-.check-item{display:flex;align-items:flex-start;gap:11px;padding:10px 8px;border-radius:8px;cursor:pointer;transition:background .15s;font-size:12px;color:#334155;line-height:1.55;}
+.check-item{display:flex;align-items:flex-start;gap:11px;padding:10px 8px;border-radius:8px;cursor:pointer;transition:background .15s;font-size:12px;color:var(--text-secondary);line-height:1.55;}
 .check-item:hover{background:var(--off);}
 .check-item input[type="checkbox"]{width:18px;height:18px;flex-shrink:0;margin-top:1px;accent-color:var(--sky);cursor:pointer;}
 .check-item input[type="checkbox"]:checked ~ span{color:var(--gray);text-decoration:line-through;}
-.pro-plan-card{border:1.5px solid var(--gray3);border-radius:12px;padding:18px;position:relative;background:#fff;}
-.pro-plan-card.featured{border-color:var(--gold);background:#fffbeb;}
+.pro-plan-card{border:1.5px solid var(--gray3);border-radius:12px;padding:18px;position:relative;background:var(--surface);}
+.pro-plan-card.featured{border-color:var(--gold);background:var(--surface)beb;}
 .pro-plan-badge{position:absolute;top:-10px;right:14px;background:var(--gold);color:#1e293b;font-size:9px;font-weight:800;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;}
-.pro-plan-card h4{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px;}
-.pro-plan-price{font-size:24px;font-weight:800;color:var(--navy);margin-bottom:12px;}
+.pro-plan-card h4{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--text-main);margin-bottom:6px;}
+.pro-plan-price{font-size:24px;font-weight:800;color:var(--text-main);margin-bottom:12px;}
 .pro-plan-price span{font-size:11px;font-weight:600;color:var(--gray);}
 .pro-plan-features{list-style:none;margin-bottom:14px;}
 .pro-plan-features li{font-size:11px;color:#475569;padding:4px 0;display:flex;align-items:center;gap:7px;}
@@ -125,8 +186,144 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .star-btn-inline{position:static;background:var(--off);box-shadow:0 1px 4px rgba(0,0,0,.08);}
 .star-btn-inline i{color:var(--gray2);}
 .star-btn-inline.filled i{color:var(--gold);}
+
+/* ═══ Groups & Messaging — split-view workspace ═══ */
+.chat-workspace{display:flex;border-radius:20px;overflow:hidden;box-shadow:0 10px 40px rgba(12,26,58,.12);border:1px solid var(--glass-border);background:var(--glass-bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);min-height:600px;max-height:78vh;}
+.chat-sidebar{width:32%;min-width:250px;max-width:340px;flex-shrink:0;background:var(--sidebar-tint);border-right:1px solid var(--glass-border);display:flex;flex-direction:column;padding:16px;}
+.chat-tabswitch{display:flex;gap:4px;background:rgba(12,26,58,.07);border-radius:12px;padding:4px;margin-bottom:14px;flex-shrink:0;}
+.chat-tabbtn{flex:1;background:none;border:none;padding:10px 8px;border-radius:9px;font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--gray);cursor:pointer;transition:var(--t);font-family:'Inter',sans-serif;}
+.chat-tabbtn:hover{color:var(--sky-d);}
+.chat-tabbtn.active{background:var(--surface);color:var(--text-main);box-shadow:0 2px 10px rgba(12,26,58,.14);}
+.chat-sidebar-search{position:relative;margin-bottom:12px;flex-shrink:0;}
+.chat-sidebar-search i{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--gray2);}
+.chat-sidebar-search input{width:100%;padding:10px 14px 10px 32px;border-radius:11px;border:1.5px solid var(--glass-border);background:var(--glass-bg-strong);color:var(--text-main);font-size:11.5px;font-family:'Inter',sans-serif;outline:none;transition:var(--t);}
+.chat-sidebar-search input:focus{border-color:var(--sky);background:var(--surface);}
+.chat-sidebar-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin:0 -6px;padding:0 6px;}
+.chat-sidebar-footer{flex-shrink:0;margin-top:12px;padding-top:12px;border-top:1px solid rgba(15,37,84,.08);}
+.chat-sidebar-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(15,37,84,.14),transparent);margin:12px 4px;flex-shrink:0;}
+.chat-messages-list .empty-note{background:var(--glass-bg-strong);color:var(--text-secondary);border-radius:12px;padding:16px 20px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+.chat-sidebar-section-label{font-size:9.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--gray2);padding:2px 10px 8px;flex-shrink:0;}
+.chat-group-card{display:flex;align-items:center;gap:11px;padding:10px 8px;border-radius:13px;cursor:pointer;transition:var(--t);}
+.chat-group-card:hover{background:var(--glass-bg-strong);}
+.chat-group-card.active-thread{background:var(--surface);box-shadow:var(--card-glow);}
+.chat-group-avatar{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;font-family:'Rajdhani',sans-serif;background:linear-gradient(135deg,var(--sky),var(--sky-deep));}
+.chat-group-meta{flex:1;min-width:0;}
+.chat-group-name{font-size:12px;font-weight:800;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chat-group-sub{font-size:10px;color:var(--gray);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.chat-founder-badge{background:var(--ok);color:#fff;font-size:8px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px;flex-shrink:0;}
+.chat-role-badge{font-size:8px;font-weight:800;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.2px;margin-left:5px;}
+.chat-role-badge.admin{background:var(--sky);color:#fff;}
+.chat-role-badge.moderator{background:var(--gold);color:#1e293b;}
+.chat-bell-btn{background:none;border:none;color:var(--gray2);cursor:pointer;padding:6px;border-radius:8px;flex-shrink:0;transition:var(--t);font-size:12px;}
+.chat-bell-btn:hover{background:rgba(12,26,58,.06);color:var(--sky-d);}
+.chat-bell-btn.muted i{opacity:.35;}
+.chat-panel{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--glass-bg);}
+.chat-panel-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--gray2);gap:10px;}
+.chat-panel-empty i{font-size:46px;opacity:.28;}
+.chat-panel-empty p{font-size:12px;font-weight:700;}
+.chat-panel-active{flex:1;display:flex;flex-direction:column;min-height:0;padding:18px 22px;background-size:cover;background-position:center;background-repeat:no-repeat;transition:background-color .2s;}
+.chat-panel-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:14px;border-radius:14px;background:var(--glass-bg-strong);color:var(--text-main);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(12,26,58,.06);gap:10px;flex-shrink:0;overflow:visible;position:relative;z-index:30;}
+.chat-panel-header-user{display:flex;align-items:center;gap:12px;min-width:0;}
+.chat-panel-header-user h2{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chat-panel-header-sub{font-size:10px;color:var(--gray);margin-top:1px;}
+.chat-thread-back-btn{display:none;background:none;border:none;color:var(--sky-d);font-size:16px;cursor:pointer;padding:6px 10px 6px 0;flex-shrink:0;}
+.chat-kebab-wrap{position:relative;flex-shrink:0;overflow:visible;z-index:20;}
+.chat-kebab-btn{background:none;border:none;color:var(--gray);cursor:pointer;padding:8px 11px;border-radius:9px;transition:var(--t);font-size:16px;}
+.chat-kebab-btn:hover{background:var(--off);color:var(--sky-d);}
+.chat-kebab-menu{display:none;position:absolute;top:100%;right:0;margin-top:8px;background:var(--surface);border:1px solid var(--gray3);border-radius:11px;box-shadow:0 10px 30px rgba(12,26,58,.22);min-width:190px;z-index:9999;overflow:hidden;animation:sd .15s ease;}
+.chat-kebab-menu.open{display:block;}
+.chat-kebab-menu button{display:flex;align-items:center;width:100%;text-align:left;padding:11px 14px;background:none;border:none;font-size:11.5px;font-weight:700;color:var(--text-secondary);cursor:pointer;transition:var(--t);white-space:nowrap;}
+.chat-kebab-menu button:hover{background:var(--off);}
+.chat-kebab-menu button.danger{color:var(--err);}
+.chat-founder-panel .panel{margin-bottom:12px;background:var(--glass-bg-strong);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.chat-member-row{align-items:center;}
+.chat-messages-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:13px;padding:6px 4px;}
+.chat-bubble-row{display:flex;align-items:flex-end;gap:8px;max-width:72%;}
+.chat-bubble-row.mine{align-self:flex-end;flex-direction:row-reverse;}
+.chat-bubble-row.theirs{align-self:flex-start;}
+.chat-bubble-avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--gray3);}
+.chat-bubble-col{display:flex;flex-direction:column;min-width:0;}
+.chat-bubble-row.mine .chat-bubble-col{align-items:flex-end;}
+.chat-bubble-row.theirs .chat-bubble-col{align-items:flex-start;}
+.chat-bubble-sender-name{font-size:9.5px;font-weight:800;color:var(--sky-d);margin-bottom:3px;padding:2px 8px;display:flex;align-items:center;gap:5px;background:var(--glass-bg-strong);border-radius:8px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);width:fit-content;}
+.chat-founder-tag{background:var(--ok);color:#fff;font-size:7px;padding:1.5px 6px;border-radius:10px;text-transform:uppercase;letter-spacing:.2px;}
+.chat-bubble{padding:10px 14px;border-radius:17px;font-size:12.5px;line-height:1.5;word-break:break-word;transition:transform .12s;}
+.chat-bubble-row:hover .chat-bubble{transform:translateY(-1px);}
+.chat-bubble.mine{background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;border-bottom-right-radius:5px;box-shadow:0 2px 8px rgba(12,26,58,.25);}
+.chat-bubble.theirs{background:var(--gray3);color:var(--text-main);border-bottom-left-radius:5px;}
+.chat-bubble-time{font-size:9px;color:var(--gray2);margin-top:4px;padding:2px 7px;background:var(--glass-bg-strong);border-radius:8px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);width:fit-content;}
+.chat-bubble-img-wrap{border-radius:14px;overflow:hidden;margin-top:2px;max-width:230px;}
+.chat-bubble-img{width:100%;display:block;cursor:zoom-in;transition:transform .2s;}
+.chat-bubble-img:hover{transform:scale(1.03);}
+.chat-msg-delete{opacity:0;transition:opacity .15s;background:none;border:none;color:var(--gray2);cursor:pointer;font-size:11px;padding:4px;flex-shrink:0;align-self:center;}
+.chat-bubble-row:hover .chat-msg-delete{opacity:1;}
+.chat-msg-delete:hover{color:var(--err);}
+.chat-composer{margin-top:14px;flex-shrink:0;}
+.chat-image-preview-wrap{display:none;margin-bottom:8px;}
+.chat-image-remove-btn{position:absolute;top:-8px;right:-8px;background:var(--err);color:#fff;border:none;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:14px;line-height:1;}
+.chat-input-bar{display:flex;align-items:center;gap:4px;background:var(--glass-bg-strong);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--gray3);border-radius:26px;padding:6px 6px 6px 10px;box-shadow:0 4px 16px rgba(12,26,58,.08);}
+.chat-input-icon-btn{background:none;border:none;color:var(--gray);font-size:16px;cursor:pointer;padding:8px;border-radius:50%;transition:var(--t);flex-shrink:0;}
+.chat-input-icon-btn:hover{background:var(--off);color:var(--sky-d);}
+.chat-input-icon-btn.chat-attach-checking,.chat-send-btn.chat-attach-checking{opacity:.6;pointer-events:none;}
+.chat-input-icon-btn.chat-attach-checking i{animation:rot 1s linear infinite;}
+.chat-send-btn.chat-attach-checking i{animation:rot 1s linear infinite;}
+.chat-text-input{flex:1;border:none;outline:none;font-size:12.5px;font-family:'Inter',sans-serif;background:none;color:var(--text-main);min-width:0;padding:8px 4px;}
+.chat-send-btn{background:var(--sky);color:#fff;border:none;padding:10px 20px;border-radius:22px;display:flex;align-items:center;gap:6px;cursor:pointer;flex-shrink:0;transition:var(--t);font-size:11.5px;font-weight:800;font-family:'Inter',sans-serif;box-shadow:var(--btn-glow);}
+.chat-send-btn:hover{box-shadow:var(--btn-glow-hover);}
+.chat-send-btn:hover{background:var(--sky-d);}
+.chat-send-btn:active{transform:scale(.93);}
+.chat-emoji-wrap{position:relative;}
+.chat-emoji-picker{display:none;position:absolute;bottom:48px;left:0;background:var(--surface);border:1px solid var(--gray3);border-radius:14px;box-shadow:0 10px 30px rgba(12,26,58,.18);padding:10px;width:225px;grid-template-columns:repeat(6,1fr);gap:2px;z-index:80;}
+.chat-emoji-picker.open{display:grid;}
+.chat-emoji-picker button{background:none;border:none;font-size:18px;cursor:pointer;border-radius:8px;padding:5px;transition:var(--t);}
+.chat-emoji-picker button:hover{background:var(--off);}
+.chat-suspended-banner{background:#fef2f2;border:1.5px solid var(--err);border-radius:11px;padding:14px 16px;font-size:12px;color:#991b1b;line-height:1.6;margin-bottom:12px;}
+.chat-lightbox{display:none;position:fixed;inset:0;background:rgba(12,26,58,.92);z-index:7000;align-items:center;justify-content:center;padding:30px;cursor:zoom-out;}
+.chat-lightbox.open{display:flex;}
+.chat-lightbox img{max-width:92vw;max-height:88vh;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5);cursor:default;}
+.chat-lightbox-close{position:absolute;top:18px;right:26px;color:#fff;font-size:34px;cursor:pointer;line-height:1;}
+.sbtn:active{transform:scale(.93);}
+.chat-clickable-avatar{cursor:pointer;transition:transform .15s;}
+.chat-clickable-avatar:hover{transform:scale(1.08);}
+.chat-clickable-name{cursor:pointer;}
+.chat-clickable-name:hover{text-decoration:underline;}
+.group-profile-header{display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:16px;}
+.group-profile-avatar-wrap{position:relative;margin-bottom:10px;}
+.group-profile-avatar-edit{position:absolute;bottom:0;right:0;background:var(--sky);color:#fff;border:2px solid #fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;}
+.group-profile-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--text-main);}
+.group-profile-meta{font-size:11px;color:var(--gray);margin-top:2px;}
+.group-profile-desc{font-size:12px;color:#475569;text-align:center;margin-top:8px;line-height:1.6;}
+.group-member-list{max-height:220px;overflow-y:auto;margin-top:10px;}
+.group-member-row{display:flex;align-items:center;gap:10px;padding:8px 4px;border-radius:9px;transition:var(--t);}
+.group-member-row:hover{background:var(--off);}
+.group-member-row img{width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.user-profile-header{display:flex;flex-direction:column;align-items:center;text-align:center;}
+.user-profile-avatar{width:84px;height:84px;border-radius:50%;object-fit:cover;margin-bottom:10px;border:3px solid #fff;box-shadow:0 4px 16px rgba(12,26,58,.15);}
+.user-profile-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--text-main);}
+.user-profile-meta{font-size:11px;color:var(--gray);margin-top:3px;}
+.user-profile-actions{display:flex;gap:8px;margin-top:14px;width:100%;}
+.user-profile-actions button{flex:1;justify-content:center;}
+.user-profile-listings{margin-top:18px;}
+.user-profile-listings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;}
+.user-listing-card{border:1px solid var(--gray3);border-radius:10px;overflow:hidden;background:var(--surface);}
+.user-listing-card img{width:100%;height:56px;object-fit:cover;display:block;}
+.user-listing-card .ulc-body{padding:6px;}
+.user-listing-card .ulc-title{font-size:9px;font-weight:700;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-listing-card .ulc-price{font-size:9px;color:var(--sky-d);font-weight:800;}
+.wallpaper-swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:6px;}
+.wallpaper-swatch{width:100%;aspect-ratio:1;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:var(--t);}
+.wallpaper-swatch:hover{transform:scale(1.08);}
+.wallpaper-swatch.selected{border-color:var(--sky);box-shadow:0 0 0 2px rgba(14,165,233,.25);}
+@media(max-width:760px){
+  .chat-workspace{flex-direction:column;min-height:0;max-height:none;border-radius:16px;}
+  .chat-sidebar{width:100%;max-width:none;border-right:none;border-bottom:1px solid rgba(15,37,84,.08);max-height:60vh;}
+  .chat-workspace.show-thread .chat-sidebar{display:none;}
+  .chat-workspace:not(.show-thread) .chat-panel{display:none;}
+  .chat-panel-active{padding:14px;}
+  .chat-thread-back-btn{display:inline-flex;}
+}
 @media(max-width:520px){#proPricingModal .vmodal-body > div{grid-template-columns:1fr!important;}}
-.vm-sec{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--navy);margin-top:18px;padding-top:14px;border-top:1px solid var(--gray3);}
+.vm-sec{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--text-main);margin-top:18px;padding-top:14px;border-top:1px solid var(--gray3);}
 .kv-editor{border:1.5px solid var(--gray3);border-radius:8px;padding:10px;background:var(--off);margin-top:6px;}
 .kv-row{display:grid;grid-template-columns:1fr 1.4fr auto;gap:6px;margin-bottom:6px;}
 .kv-row input{width:100%;padding:7px 9px;font-size:12px;border:1px solid var(--gray3);border-radius:6px;font-family:'Inter',sans-serif;}
@@ -138,7 +335,7 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .cph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
 .cph i{font-size:36px;color:rgba(255,255,255,.2);}
 .cbody{padding:12px 14px;}
-.cbody h3{font-size:11px;font-weight:800;text-transform:uppercase;color:#0f172a;letter-spacing:.4px;line-height:1.3;}
+.cbody h3{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text-main);letter-spacing:.4px;line-height:1.3;}
 .cbody p{font-size:10px;color:var(--gray);margin-top:3px;}
 .star{color:var(--gold);}
 .view{display:none;}
@@ -148,18 +345,19 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .rph{width:100%;height:180px;border-radius:12px;margin-bottom:20px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--navy2),var(--sky-deep));}
 .rph i{font-size:56px;color:rgba(255,255,255,.2);}
 .rhdr{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
-.rhdr h1{font-family:'Rajdhani',sans-serif;font-size:clamp(20px,4vw,32px);font-weight:700;color:var(--navy);}
+.rhdr h1{font-family:'Rajdhani',sans-serif;font-size:clamp(20px,4vw,32px);font-weight:700;color:var(--text-main);}
 .rhdr .years{color:var(--sky);font-weight:700;font-size:11px;margin-top:3px;}
 .r2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:680px){.r2col{grid-template-columns:1fr;}}
-.panel{background:#fff;border-radius:11px;padding:18px;border:1px solid var(--gray3);box-shadow:0 2px 10px rgba(0,0,0,.04);margin-bottom:14px;}
+.panel{background:var(--surface);border-radius:11px;padding:18px;border:1px solid var(--card-border);box-shadow:var(--panel-shadow);margin-bottom:14px;}
 .panel h3{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--sky-deep);display:flex;align-items:center;gap:7px;margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--gray3);}
 .panel h3 i{font-size:12px;color:var(--sky);}
 .trow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:12px;gap:8px;}
 .trow:last-child{border:none;}
 .trow strong{font-size:9px;text-transform:uppercase;color:var(--sky-d);font-weight:700;white-space:nowrap;}
-.trow span{color:#1e293b;font-weight:500;text-align:right;font-size:11px;}
-.wbtn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--navy);color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:11px;margin-top:10px;cursor:pointer;transition:var(--t);border:none;}
+.trow span{color:var(--text-main);font-weight:500;text-align:right;font-size:11px;}
+.wbtn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--navy);color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:11px;margin-top:10px;cursor:pointer;transition:var(--t);border:none;box-shadow:var(--btn-glow);}
+.wbtn:hover{box-shadow:var(--btn-glow-hover);}
 .wbtn:hover{background:var(--sky-d);}
 .scorecard{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1px solid var(--sky);border-radius:11px;padding:16px;margin-bottom:14px;}
 .scorecard h4{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--sky-deep);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
@@ -172,40 +370,45 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .v-yes{background:#d1fae5;color:#065f46;}
 .v-no{background:#fee2e2;color:#991b1b;}
 .v-maybe{background:#fef3c7;color:#92400e;}
-.ust{background:#fff;border:1px solid var(--gray3);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid var(--err);}
-.good{background:#fff;border:1px solid var(--gray3);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid var(--ok);}
+.ust{background:var(--surface);border:1px solid var(--gray3);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid var(--err);}
+.good{background:var(--surface);border:1px solid var(--gray3);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid var(--ok);}
 .ust h5{color:var(--err);font-size:10px;text-transform:uppercase;margin-bottom:5px;font-weight:800;display:flex;align-items:center;gap:5px;}
 .ust p{font-size:11px;line-height:1.6;color:#475569;}
 .ust .cost{color:var(--ok);font-weight:800;margin-top:6px;font-size:12px;}
-.ftitle{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:9px;padding-bottom:9px;border-bottom:2px solid var(--gray3);}
+.ftitle{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--text-main);margin-bottom:14px;display:flex;align-items:center;gap:9px;padding-bottom:9px;border-bottom:2px solid var(--gray3);}
 .ftitle i{color:var(--sky);}
 .frow{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:30px;}
 .fcard{border-radius:12px;overflow:hidden;cursor:pointer;position:relative;height:160px;box-shadow:0 4px 18px rgba(0,0,0,.14);transition:var(--t);}
+.add-tile-icon{width:44px;height:44px;border-radius:50%;background:var(--sky);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:var(--btn-glow);transition:var(--t);}
+.add-tile-vertical{background:var(--off);border:2px dashed var(--gray3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;box-shadow:none;cursor:pointer;transition:var(--t);}
+.add-tile-vertical:hover{border-color:var(--sky);}
+.add-tile-vertical:hover .add-tile-icon{box-shadow:var(--btn-glow-hover);transform:scale(1.06);}
+.add-tile-vertical span{font-size:11.5px;font-weight:700;color:var(--sky-d);}
 .fcard:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(0,0,0,.22);}
 .fcard img{width:100%;height:100%;object-fit:cover;}
 .fov{position:absolute;inset:0;background:linear-gradient(0deg,rgba(12,26,58,.88) 0%,rgba(12,26,58,.1) 100%);}
 .fbody{position:absolute;bottom:0;left:0;right:0;padding:12px 14px;color:#fff;}
 .fbody h4{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;}
 .fbody p{font-size:10px;color:var(--aqua2);margin-top:2px;text-transform:uppercase;letter-spacing:.8px;}
-.pop-card{background:#fff;border-radius:11px;border:1px solid var(--gray3);padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:var(--t);}
+.pop-card{background:var(--surface);border-radius:11px;border:1px solid var(--gray3);padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:var(--t);}
 .pop-card:hover{border-color:var(--sky);box-shadow:var(--shadow);}
 .pop-num{width:32px;height:32px;border-radius:8px;background:var(--sky);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;font-family:'Rajdhani',sans-serif;}
-.pop-card h4{font-size:12px;font-weight:800;color:#0f172a;}
+.pop-card h4{font-size:12px;font-weight:800;color:var(--text-main);}
 .pop-card p{font-size:10px;color:var(--gray);}
-.avoid-card{background:#fff;border-radius:11px;border:1px solid var(--gray3);padding:16px;display:flex;gap:14px;align-items:flex-start;transition:var(--t);}
+.avoid-card{background:var(--surface);border-radius:11px;border:1px solid var(--gray3);padding:16px;display:flex;gap:14px;align-items:flex-start;transition:var(--t);}
 .avoid-card:hover{border-color:var(--err);box-shadow:0 4px 14px rgba(239,68,68,.1);}
 .avoid-icon{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
 .ai-red{background:#fee2e2;color:var(--err);}
-.ai-org{background:#fff7ed;color:#ea580c;}
+.ai-org{background:var(--surface)7ed;color:#ea580c;}
 .ai-green{background:#d1fae5;color:var(--ok);}
-.avoid-card h4{font-size:12px;font-weight:800;color:#0f172a;margin-bottom:4px;}
+.avoid-card h4{font-size:12px;font-weight:800;color:var(--text-main);margin-bottom:4px;}
 .avoid-card p{font-size:11px;color:var(--gray);line-height:1.5;}
 .avoid-card .reason{font-size:10px;font-weight:700;color:var(--err);margin-top:5px;display:flex;align-items:center;gap:4px;}
 .simgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:12px;}
 .simcard{background:var(--off);border:1.5px solid var(--gray3);border-radius:8px;padding:12px;cursor:pointer;transition:var(--t);display:flex;align-items:center;gap:9px;}
 .simcard:hover{border-color:var(--sky);background:#e0f2fe;}
 .simcard i{color:var(--sky);font-size:16px;flex-shrink:0;}
-.simcard h5{font-size:11px;font-weight:800;color:#0f172a;}
+.simcard h5{font-size:11px;font-weight:800;color:var(--text-main);}
 .simcard p{font-size:9px;color:var(--gray);}
 .prosoon{background:linear-gradient(135deg,#1e293b,#0f2554);border-radius:12px;padding:20px 22px;color:#fff;text-align:center;margin-top:20px;}
 .prosoon h4{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--aqua);margin-bottom:8px;}
@@ -221,11 +424,11 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 @keyframes rot{to{transform:rotate(360deg);}}
 .spin p{margin-top:10px;font-weight:600;font-size:12px;color:var(--gray);}
 .prose{max-width:720px;margin:0 auto;}
-.prose h1{font-family:'Rajdhani',sans-serif;font-size:28px;color:var(--navy);margin-bottom:14px;font-weight:700;}
+.prose h1{font-family:'Rajdhani',sans-serif;font-size:28px;color:var(--text-main);margin-bottom:14px;font-weight:700;}
 .prose h2{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--sky);margin:20px 0 9px;display:flex;align-items:center;gap:7px;}
 .prose p,.prose li{font-size:12px;line-height:1.8;color:#475569;margin-bottom:9px;}
 .prose ul{margin-left:16px;}
-.stitle{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:9px;padding-bottom:9px;border-bottom:2px solid var(--gray3);}
+.stitle{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--text-main);margin-bottom:14px;display:flex;align-items:center;gap:9px;padding-bottom:9px;border-bottom:2px solid var(--gray3);}
 .stitle i{color:var(--sky);}
 @media(max-width:600px){
   header{height:54px;padding:0 3%;}
@@ -241,7 +444,7 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
   .frow{grid-template-columns:1fr;}
   .grid{grid-template-columns:1fr 1fr;}
 }
-footer{background:var(--navy);color:rgba(255,255,255,.6);padding:30px 5%;text-align:center;}
+footer{background:var(--footer-bg);color:rgba(255,255,255,.6);padding:30px 5%;text-align:center;margin:0;flex-shrink:0;}
 footer p{font-size:11px;margin-bottom:5px;}
 footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
 .fline{width:36px;height:2px;background:var(--sky);margin:0 auto 16px;}
@@ -258,8 +461,26 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
 @media(max-width:480px){.cookie-banner{left:10px;right:10px;bottom:10px;padding:14px;}}
 .profile-avatar-lg{width:96px;height:96px;border-radius:50%;object-fit:cover;margin-bottom:14px;border:3px solid var(--sky);}
 .profile-field-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--sky-deep);display:block;margin-bottom:6px;}
-.profile-readonly{font-size:13px;color:#334155;font-weight:600;padding:11px 14px;background:var(--off);border-radius:8px;border:1.5px solid var(--gray3);}
+.profile-readonly{font-size:13px;color:var(--text-secondary);font-weight:600;padding:11px 14px;background:var(--off);border-radius:8px;border:1.5px solid var(--gray3);}
+.theme-toggle{position:relative;width:50px;height:27px;border-radius:20px;border:none;background:rgba(255,255,255,.15);cursor:pointer;flex-shrink:0;padding:0;display:flex;align-items:center;transition:background .3s;}
+.theme-toggle:hover{background:rgba(255,255,255,.25);}
+.theme-toggle-icon{position:absolute;font-size:11px;top:50%;transform:translateY(-50%);pointer-events:none;}
+.theme-toggle-icon.sun{left:7px;color:#fbbf24;}
+.theme-toggle-icon.moon{right:7px;color:#cbd5e1;}
+.theme-toggle-knob{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .3s cubic-bezier(.4,0,.2,1),background .3s;}
+html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background:#1c1c1e;}
 </style>
+<script>
+// Applied immediately (before body paints) to avoid a flash of the wrong theme.
+(function(){
+  try{
+    var saved=localStorage.getItem('ae_theme');
+    var theme=saved==='dark'||saved==='light' ? saved
+      : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  }catch(e){}
+})();
+</script>
 </head>
 <body>
 
@@ -278,6 +499,11 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
     <button class="nav-btn" onclick="openPage('terms')"><i class="fas fa-file-contract" style="margin-right:4px;"></i>Terms</button>
   </div>
   <div class="hright">
+  <button id="themeToggleBtn" class="theme-toggle" onclick="toggleTheme()" title="Switch theme" aria-label="Toggle light/dark theme">
+    <i class="fas fa-sun theme-toggle-icon sun"></i>
+    <i class="fas fa-moon theme-toggle-icon moon"></i>
+    <span class="theme-toggle-knob"></span>
+  </button>
   <button id="goProBtn" onclick="openProPricingModal()" style="display:flex;background:var(--gold);color:#1e293b;border:none;padding:8px 14px;border-radius:20px;font-weight:800;font-size:11px;cursor:pointer;align-items:center;gap:6px;font-family:'Inter',sans-serif;white-space:nowrap;">
     <i class="fas fa-crown"></i> Go PRO
   </button>
@@ -304,6 +530,7 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
   <button class="ctab" data-cat="boats" onclick="go({view:'groups',cat:'boats'})"><i class="fas fa-sailboat"></i>Boats</button>
   <button class="ctab" data-cat="engines" onclick="go({view:'engines'})"><i class="fas fa-gears"></i>Engines</button>
   <button class="ctab" data-cat="saved" onclick="tryOpenSaved()"><i class="fas fa-star"></i>Saved</button>
+  <button class="ctab" data-cat="chat" onclick="tryOpenChatHub()"><i class="fas fa-comments"></i>Groups &amp; Messaging</button>
   <button class="ctab" data-cat="market" onclick="tryOpenMarket()"><i class="fas fa-shop"></i>Marketplace</button>
 </nav>
 
@@ -350,10 +577,6 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
 </div>
 
 <main class="wrap">
-  <div id="adminToolbar" class="admin-toolbar">
-    <button class="wbtn" id="adminAddBtn"><i class="fas fa-plus"></i> <span id="adminAddLabel">Add Group</span></button>
-  </div>
-
   <div id="vGroups" class="view active">
     <div id="featSec"></div>
     <div id="popSec"></div>
@@ -398,7 +621,7 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
 
   <div id="vAvoid" class="view">
     <div style="max-width:960px;margin:0 auto;">
-      <h1 style="font-family:'Rajdhani',sans-serif;font-size:clamp(22px,4vw,34px);font-weight:700;color:var(--navy);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+      <h1 style="font-family:'Rajdhani',sans-serif;font-size:clamp(22px,4vw,34px);font-weight:700;color:var(--text-main);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
         <i class="fas fa-skull-crossbones" style="color:var(--err);"></i>Cars To Avoid
       </h1>
       <p style="font-size:13px;color:var(--gray);margin-bottom:24px;line-height:1.6;">We've collected the cars, engines, and models that most often ruin their owner's wallet. Check before you buy.</p>
@@ -479,7 +702,7 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
 
       <h2><i class="fas fa-copyright"></i>AutoEncyclopedia License</h2>
       <div class="panel" style="text-align:left;">
-        <p style="font-weight:700;color:var(--navy);margin-bottom:6px;">Copyright © 2026 Olivier Rafalo. All rights reserved.</p>
+        <p style="font-weight:700;color:var(--text-main);margin-bottom:6px;">Copyright © 2026 Olivier Rafalo. All rights reserved.</p>
         <p>The source code, database structure, original content, design, and other materials of this project are the property of Olivier Rafalo.</p>
         <p style="font-weight:700;margin-top:10px;">You may:</p>
         <ul style="margin-left:16px;">
@@ -622,10 +845,58 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
 
         <label>Towing Capacity</label>
         <input id="vmTowing" type="text" placeholder="e.g. 1,800 kg braked">
+
+        <div class="vm-sec"><i class="fas fa-house" style="margin-right:6px;color:var(--sky);"></i>Homepage Placement</div>
+        <label>Feature in section</label>
+        <select id="vmHomepageSection">
+          <option value="">Not featured</option>
+          <option value="featured">Most Checked Before Buying</option>
+          <option value="popular">Popular With Buyers</option>
+        </select>
+        <label>Badge / Subtitle Text</label>
+        <input id="vmHomepageBadge" type="text" placeholder="e.g. Most checked before buying">
       </div>
       <div class="vmodal-foot">
         <button class="vbtn-cancel" onclick="closeVehicleModal()">Cancel</button>
         <button class="vbtn-save" onclick="saveVehicleModal()"><i class="fas fa-floppy-disk" style="margin-right:6px;"></i>Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick-add: a lightweight way to feature a vehicle on the homepage without
+       filling out the full technical profile. Still saves into the same
+       vehicles table — the rest of the fields can be filled in later via Edit. -->
+  <div id="quickAddVehicleModal" class="vmodal-overlay">
+    <div class="vmodal" style="max-width:440px;">
+      <div class="vmodal-head"><h3><i class="fas fa-star" style="margin-right:8px;color:var(--sky);"></i>Add Featured Vehicle</h3><button onclick="closeQuickAddVehicleModal()">&times;</button></div>
+      <div class="vmodal-body">
+        <label>Vehicle Title</label>
+        <input id="qavTitle" type="text" placeholder="e.g. Audi A4 B8">
+
+        <label>Subtitle / Short Badge Text</label>
+        <input id="qavBadge" type="text" placeholder="e.g. Most checked before buying">
+
+        <label>Brand</label>
+        <select id="qavBrand"></select>
+
+        <label>Image URL</label>
+        <input id="qavImageUrl" type="text" placeholder="https://..." oninput="updateQavPreview(this.value)">
+        <label>...or upload an image file</label>
+        <input id="qavImageFile" type="file" accept="image/*" onchange="handleQavFileChange(event)">
+        <div id="qavPreviewWrap" style="margin-top:10px;display:none;">
+          <img id="qavPreview" src="" alt="Preview" style="max-width:100%;max-height:150px;border-radius:8px;display:block;">
+        </div>
+
+        <label>Category (which homepage section?)</label>
+        <select id="qavSection">
+          <option value="featured">Most Checked Before Buying</option>
+          <option value="popular">Popular With Buyers</option>
+        </select>
+        <p style="font-size:11px;color:var(--gray);margin-top:10px;line-height:1.6;"><i class="fas fa-circle-info" style="margin-right:5px;"></i>This creates a real catalog entry — you can add full technical details (specs, faults, verdict, etc.) later via its Edit button.</p>
+      </div>
+      <div class="vmodal-foot">
+        <button class="vbtn-cancel" onclick="closeQuickAddVehicleModal()">Cancel</button>
+        <button class="vbtn-save" onclick="saveQuickAddVehicle()"><i class="fas fa-floppy-disk" style="margin-right:6px;"></i>Add to Homepage</button>
       </div>
     </div>
   </div>
@@ -711,7 +982,7 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
       <div class="vmodal-head"><h3><i class="fas fa-lock" style="margin-right:8px;color:var(--sky);"></i>Sign in required</h3><button onclick="closeAuthRequiredModal()">&times;</button></div>
       <div class="vmodal-body" style="text-align:center;">
         <i class="fas fa-user-lock" style="font-size:40px;color:var(--sky);margin-bottom:14px;display:block;"></i>
-        <p id="authRequiredMessage" style="font-size:13px;color:#334155;line-height:1.6;">Please sign in or create a free account to continue.</p>
+        <p id="authRequiredMessage" style="font-size:13px;color:var(--text-secondary);line-height:1.6;">Please sign in or create a free account to continue.</p>
       </div>
       <div class="vmodal-foot">
         <button class="vbtn-cancel" onclick="closeAuthRequiredModal()">Cancel</button>
@@ -760,7 +1031,7 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
       <div class="vmodal-head"><h3><i class="fas fa-star" style="margin-right:8px;color:var(--gold);"></i>Save limit reached</h3><button onclick="closeFavLimitModal()">&times;</button></div>
       <div class="vmodal-body" style="text-align:center;">
         <i class="fas fa-star-half-stroke" style="font-size:40px;color:var(--gold);margin-bottom:14px;display:block;"></i>
-        <p style="font-size:13px;color:#334155;line-height:1.6;">Darmowy plan pozwala na zapisanie maksymalnie 4 pojazdów. Przejdź na wersję PRO, aby zapisywać bez limitu!</p>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;">Darmowy plan pozwala na zapisanie maksymalnie 4 pojazdów. Przejdź na wersję PRO, aby zapisywać bez limitu!</p>
       </div>
       <div class="vmodal-foot">
         <button class="vbtn-cancel" onclick="closeFavLimitModal()">Cancel</button>
@@ -769,11 +1040,79 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
     </div>
   </div>
 
+  <div id="createChatGroupModal" class="vmodal-overlay">
+    <div class="vmodal" style="max-width:460px;">
+      <div class="vmodal-head"><h3><i class="fas fa-users" style="margin-right:8px;color:var(--sky);"></i>Create a Group</h3><button onclick="closeCreateChatGroupModal()">&times;</button></div>
+      <div class="vmodal-body">
+        <label>Group Avatar (optional)</label>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div id="newChatGroupAvatarPreview" class="chat-group-avatar" style="width:56px;height:56px;font-size:20px;background:var(--gray3);color:var(--gray);"><i class="fas fa-users"></i></div>
+          <button type="button" class="wbtn" style="padding:8px 14px;font-size:11px;" onclick="document.getElementById('newChatGroupAvatarInput').click()"><i class="fas fa-upload" style="margin-right:6px;"></i>Upload Image</button>
+          <input type="file" id="newChatGroupAvatarInput" accept="image/*" style="display:none;" onchange="handleNewGroupAvatarSelected(event)">
+        </div>
+        <label>Group Name</label>
+        <input id="newChatGroupName" type="text" placeholder="e.g. BMW E90 Owners Club">
+        <label>Description</label>
+        <textarea id="newChatGroupDesc" rows="3" placeholder="What's this group about?"></textarea>
+        <p style="font-size:11px;color:var(--gray);margin-top:10px;line-height:1.6;"><i class="fas fa-circle-info" style="margin-right:5px;"></i>New groups need admin approval before they go live and other users can find or join them. You'll automatically become its founder.</p>
+      </div>
+      <div class="vmodal-foot">
+        <button class="vbtn-cancel" onclick="closeCreateChatGroupModal()">Cancel</button>
+        <button class="vbtn-save" onclick="submitCreateChatGroup()"><i class="fas fa-paper-plane" style="margin-right:6px;"></i>Submit for Approval</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group Profile modal: info + founder/admin management -->
+  <div id="groupProfileModal" class="vmodal-overlay">
+    <div class="vmodal" style="max-width:480px;">
+      <div class="vmodal-head"><h3><i class="fas fa-circle-info" style="margin-right:8px;color:var(--sky);"></i>Group Info</h3><button onclick="closeGroupProfileModal()">&times;</button></div>
+      <div class="vmodal-body" id="groupProfileModalBody"></div>
+    </div>
+  </div>
+
+  <!-- User Profile modal: shown whenever an avatar/username is clicked anywhere in chat -->
+  <div id="userProfileModal" class="vmodal-overlay">
+    <div class="vmodal" style="max-width:420px;">
+      <div class="vmodal-head"><h3><i class="fas fa-user" style="margin-right:8px;color:var(--sky);"></i>Profile</h3><button onclick="closeUserProfileModal()">&times;</button></div>
+      <div class="vmodal-body" id="userProfileModalBody"></div>
+    </div>
+  </div>
+
+  <!-- Chat wallpaper picker -->
+  <div id="wallpaperModal" class="vmodal-overlay">
+    <div class="vmodal" style="max-width:420px;">
+      <div class="vmodal-head"><h3><i class="fas fa-image" style="margin-right:8px;color:var(--sky);"></i>Chat Wallpaper</h3><button onclick="closeWallpaperModal()">&times;</button></div>
+      <div class="vmodal-body">
+        <label>Solid color</label>
+        <div id="wallpaperColorSwatches" class="wallpaper-swatches"></div>
+        <label style="margin-top:14px;">Or upload a custom image</label>
+        <button type="button" class="wbtn" style="width:100%;justify-content:center;margin-top:6px;" onclick="document.getElementById('wallpaperUploadInput').click()"><i class="fas fa-upload" style="margin-right:6px;"></i>Upload Wallpaper</button>
+        <input type="file" id="wallpaperUploadInput" accept="image/*" style="display:none;" onchange="handleWallpaperUpload(event)">
+        <button type="button" class="vbtn-cancel" style="width:100%;justify-content:center;margin-top:10px;" onclick="resetWallpaper()"><i class="fas fa-rotate-left" style="margin-right:6px;"></i>Reset to Default</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group deletion confirmation (separate from the admin catalog's generic deleteModal, since this needs to allow the group's founder, not just the site admin) -->
+  <div id="deleteChatGroupModal" class="vmodal-overlay">
+    <div class="vmodal" style="max-width:400px;">
+      <div class="vmodal-body" style="text-align:center;padding-top:26px;">
+        <i class="fas fa-triangle-exclamation" style="font-size:34px;color:var(--err);margin-bottom:10px;display:block;"></i>
+        <p style="font-size:13px;color:var(--text-secondary);">Are you sure you want to delete this group? All messages and data will be permanently lost.</p>
+      </div>
+      <div class="vmodal-foot">
+        <button class="vbtn-cancel" onclick="closeDeleteChatGroupModal()">Cancel</button>
+        <button class="vbtn-danger" onclick="performDeleteChatGroup()"><i class="fas fa-trash" style="margin-right:6px;"></i>Confirm Delete</button>
+      </div>
+    </div>
+  </div>
+
   <div id="deleteModal" class="vmodal-overlay">
     <div class="vmodal" style="max-width:380px;">
       <div class="vmodal-body" style="text-align:center;padding-top:26px;">
         <i class="fas fa-triangle-exclamation" style="font-size:34px;color:var(--err);margin-bottom:10px;display:block;"></i>
-        <p style="font-size:13px;color:#334155;">Are you sure you want to delete this record? This cannot be undone.</p>
+        <p style="font-size:13px;color:var(--text-secondary);">Are you sure you want to delete this record? This cannot be undone.</p>
       </div>
       <div class="vmodal-foot">
         <button class="vbtn-cancel" onclick="closeDeleteModal()">Cancel</button>
@@ -784,7 +1123,7 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
 
   <div id="vChecklist" class="view">
     <div style="max-width:900px;margin:0 auto;">
-      <h1 style="font-family:'Rajdhani',sans-serif;font-size:clamp(22px,4vw,34px);font-weight:700;color:var(--navy);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+      <h1 style="font-family:'Rajdhani',sans-serif;font-size:clamp(22px,4vw,34px);font-weight:700;color:var(--text-main);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
         <i class="fas fa-clipboard-check" style="color:var(--sky);"></i>Vehicle Inspection Checklist
       </h1>
       <p style="font-size:13px;color:var(--gray);margin-bottom:20px;line-height:1.6;">Bring this checklist with you when inspecting a used vehicle in person. Your progress is saved automatically on this device, so you can close the page and pick up where you left off.</p>
@@ -806,7 +1145,7 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
 
       <div class="checklist-progress-wrap">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
-          <strong id="checklistProgressLabel" style="font-size:12px;color:#334155;">0 / 0 checked (0%)</strong>
+          <strong id="checklistProgressLabel" style="font-size:12px;color:var(--text-secondary);">0 / 0 checked (0%)</strong>
           <button class="vbtn-cancel" style="font-size:11px;padding:6px 12px;" onclick="resetChecklist()"><i class="fas fa-rotate-left" style="margin-right:5px;"></i>Reset checklist</button>
         </div>
         <div class="checklist-progress-bar-bg"><div class="checklist-progress-bar-fg" id="checklistProgressBar" style="width:0%;"></div></div>
@@ -822,9 +1161,79 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
     <div class="grid" id="savedGrid"></div>
   </div>
 
+  <div id="vChatHub" class="view">
+    <div class="stitle"><i class="fas fa-comments"></i>Groups &amp; Messaging</div>
+
+    <div class="chat-workspace" id="chatWorkspace">
+      <!-- LEFT SIDEBAR -->
+      <aside class="chat-sidebar">
+        <div class="chat-tabswitch">
+          <button class="chat-tabbtn active" id="chatTabBtnDirect" onclick="switchChatHubTab('direct')">Direct Chats</button>
+          <button class="chat-tabbtn" id="chatTabBtnGroups" onclick="switchChatHubTab('groups')">Group Communities</button>
+        </div>
+
+        <div class="chat-sidebar-search">
+          <i class="fas fa-magnifying-glass"></i>
+          <input type="text" id="chatSidebarSearchIn" placeholder="Search groups..." oninput="san(this);onChatSidebarSearchInput()">
+        </div>
+
+        <div id="chatAdminPanel" style="display:none;"></div>
+
+        <div id="chatSidebarList" class="chat-sidebar-list"></div>
+
+        <div id="chatSidebarFooter" class="chat-sidebar-footer" style="display:none;">
+          <button class="wbtn" style="width:100%;justify-content:center;" onclick="openCreateChatGroupModal()"><i class="fas fa-plus" style="margin-right:6px;"></i>Create Group</button>
+        </div>
+      </aside>
+
+      <!-- RIGHT CHAT PANEL -->
+      <section class="chat-panel">
+        <div id="chatPanelEmpty" class="chat-panel-empty">
+          <i class="fas fa-comments"></i>
+          <p>Select a conversation to start messaging</p>
+        </div>
+
+        <div id="chatPanelActive" class="chat-panel-active" style="display:none;">
+          <div class="chat-panel-header" id="chatThreadHeader"></div>
+          <div id="chatFounderPanel" class="chat-founder-panel"></div>
+          <div id="chatMessagesList" class="chat-messages-list"></div>
+          <div id="chatComposerWrap" class="chat-composer">
+            <div id="chatSuspendedBanner" class="chat-suspended-banner" style="display:none;"><i class="fas fa-circle-exclamation" style="margin-right:6px;"></i>Your account has been suspended from sending messages due to repeated rule violations.</div>
+            <div id="chatComposerControls">
+              <div id="chatImagePreviewWrap" class="chat-image-preview-wrap">
+                <div style="position:relative;display:inline-block;">
+                  <img id="chatImagePreview" alt="Selected image" style="max-height:80px;border-radius:8px;display:block;">
+                  <button type="button" onclick="clearChatImageSelection()" class="chat-image-remove-btn">&times;</button>
+                </div>
+              </div>
+              <div class="chat-input-bar">
+                <button class="chat-input-icon-btn" type="button" onclick="document.getElementById('chatImageFileInput').click()" title="Attach an image"><i class="fas fa-camera"></i></button>
+                <input type="file" id="chatImageFileInput" accept="image/*" style="display:none;" onchange="handleChatImageSelected(event)">
+                <div class="chat-emoji-wrap">
+                  <button class="chat-input-icon-btn" type="button" onclick="event.stopPropagation();toggleEmojiPicker()" title="Emoji"><i class="fas fa-face-smile"></i></button>
+                  <div class="chat-emoji-picker" id="chatEmojiPicker"></div>
+                </div>
+                <input class="chat-text-input" type="text" id="chatMessageInput" placeholder="Type a message..." maxlength="500" onkeydown="if(event.key==='Enter'){sendThreadMessage();}">
+                <button class="chat-send-btn" onclick="sendThreadMessage()">Send<i class="fas fa-paper-plane" style="margin-left:7px;"></i></button>
+              </div>
+              <p id="chatModerationNote" style="font-size:11px;color:var(--err);margin-top:6px;display:none;"><i class="fas fa-triangle-exclamation" style="margin-right:5px;"></i>Your message was blocked for violating the chat rules (no hate speech, insults, or explicit language).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Lightbox for viewing chat images full-size -->
+  <div id="chatLightbox" class="chat-lightbox" onclick="closeChatLightbox()">
+    <span class="chat-lightbox-close" onclick="closeChatLightbox()">&times;</span>
+    <img id="chatLightboxImg" src="" alt="Full size image" onclick="event.stopPropagation()">
+  </div>
+
+
   <div id="vMarket" class="view">
     <div style="max-width:960px;margin:0 auto;">
-      <h1 style="font-family:'Rajdhani',sans-serif;font-size:clamp(22px,4vw,34px);font-weight:700;color:var(--navy);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+      <h1 style="font-family:'Rajdhani',sans-serif;font-size:clamp(22px,4vw,34px);font-weight:700;color:var(--text-main);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
         <i class="fas fa-shop" style="color:var(--sky);"></i>Marketplace
       </h1>
       <p style="font-size:13px;color:var(--gray);margin-bottom:24px;line-height:1.6;">Buy and sell cars, motorcycles, and boats directly with other users. Listings are covered by our <a onclick="go({view:'terms'})" style="color:var(--sky);cursor:pointer;">Terms</a>.</p>
@@ -869,6 +1278,41 @@ footer a{color:var(--aqua);text-decoration:none;cursor:pointer;}
 
 <script>
 'use strict';
+
+// ═══ AI MODERATION CONFIG (Google Gemini — free tier) ═══
+// Paste your own key below to enable AI-assisted moderation. Leave the
+// placeholder as-is to skip it entirely — chat still works normally either
+// way, since the built-in server-side regex/spam filter (see
+// 07_groups_and_chats.sql) always runs as the safety net regardless of
+// whether this is configured.
+//
+// ⚠️ SECURITY NOTE: this is a plain client-side app with no backend, so
+// ANY key placed here is fully visible to anyone who views the page
+// source — there is no way to hide it. Use a key with usage limits/quota
+// caps you're comfortable with, and consider proxying this call through a
+// server (e.g. a Supabase Edge Function) instead if you want the key to
+// stay private.
+const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
+const GEMINI_MODEL = "gemini-1.5-flash";
+const GEMINI_SYSTEM_PROMPT = "You are an automated strict chat moderator for Auto Encyclopedia. Evaluate if the message contains explicit toxicity, severe harassment, violent threats, adult/explicit images, or external advertising/spam. Return JSON: { safe: boolean, reason: string }.";
+
+// ═══ LIGHT / DARK THEME ═══
+// The actual theme was already applied to <html> by an inline script in
+// <head> (before first paint, to avoid a flash of the wrong theme). This
+// just keeps the toggle button's visual state in sync and handles clicks.
+function getCurrentTheme(){
+  return document.documentElement.getAttribute('data-theme')==='dark' ? 'dark' : 'light';
+}
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme==='dark' ? 'dark' : 'light');
+  try{ localStorage.setItem('ae_theme', theme); }catch(e){}
+  const btn=document.getElementById('themeToggleBtn');
+  if(btn) btn.setAttribute('aria-pressed', theme==='dark' ? 'true' : 'false');
+}
+function toggleTheme(){
+  applyTheme(getCurrentTheme()==='dark' ? 'light' : 'dark');
+}
+document.addEventListener('DOMContentLoaded', ()=>{ applyTheme(getCurrentTheme()); });
 
 // ═══ COOKIE CONSENT ═══
 function cookieChoice(choice){
@@ -987,6 +1431,8 @@ async function checkUserSession() {
     isAdmin = false;
     isPro = false;
     FAVORITE_KEYS=new Set();FAVORITES_CACHE=[];
+    unsubscribeThread();CHAT_MY_MEMBERSHIPS=[];CHAT_PENDING_ADMIN_GROUPS=[];DM_CONVERSATIONS=[];
+    teardownPresence();
     onAdminStateChanged();
     return;
   }
@@ -995,8 +1441,10 @@ async function checkUserSession() {
   updateUserUI(session);
   authUser = user;
   isAdmin = !!(user.email && user.email.toLowerCase() === ADMIN_EMAIL);
+  await ensureProfileExists(user);
   await refreshProStatus(user);
   await loadFavorites();
+  initPresence();
   onAdminStateChanged();
 
   supabaseClient.auth.onAuthStateChange(async (event, session) => {
@@ -1006,18 +1454,36 @@ async function checkUserSession() {
       isAdmin = false;
       isPro = false;
       FAVORITE_KEYS=new Set();FAVORITES_CACHE=[];
+      unsubscribeThread();CHAT_MY_MEMBERSHIPS=[];CHAT_PENDING_ADMIN_GROUPS=[];DM_CONVERSATIONS=[];
+      teardownPresence();
     } else {
       updateUserUI(session);
       const u = session.user;
       authUser = u;
       isAdmin = !!(u && u.email && u.email.toLowerCase() === ADMIN_EMAIL);
+      await ensureProfileExists(u);
       await refreshProStatus(u);
       await loadFavorites();
+      initPresence();
     }
     onAdminStateChanged();
   });
 }
 window.addEventListener('DOMContentLoaded', checkUserSession);
+
+// Guarantees a public.profiles row exists for the signed-in user before any
+// feature that foreign-keys to it (favorites, chat groups/messages) runs.
+// Normally the on_auth_user_created DB trigger handles this at signup time,
+// but this is a client-side safety net for accounts created before that
+// trigger existed, or any other edge case where it didn't fire.
+async function ensureProfileExists(user){
+  try{
+    await supabaseClient.from('profiles').upsert(
+      { id: user.id, email: user.email },
+      { onConflict: 'id', ignoreDuplicates: true }
+    );
+  }catch(e){ /* best-effort — profile-dependent features will just show their own errors if this fails */ }
+}
 
 function isLoggedIn(){ return !!authUser; }
 
@@ -1105,7 +1571,7 @@ async function loadProfileView(){
       proHtml = `<div class="panel" style="margin-top:14px;background:linear-gradient(135deg,#f0fdf4,#d1fae5);border-color:var(--ok);">
         <h3><i class="fas fa-crown"></i>PRO Account</h3>
         <span class="badge" style="background:#d1fae5;color:#065f46;margin-bottom:8px;"><i class="fas fa-check-circle" style="margin-right:4px;"></i>Active</span>
-        <p style="font-size:12px;color:#334155;margin-top:8px;">PRO active until: <strong>${esc(expiryText)}</strong></p>
+        <p style="font-size:12px;color:var(--text-secondary);margin-top:8px;">PRO active until: <strong>${esc(expiryText)}</strong></p>
         ${profile.cancel_at_period_end
           ? `<p style="font-size:11px;color:var(--gray);margin-top:6px;"><i class="fas fa-circle-info" style="margin-right:5px;"></i>Auto-renewal is OFF. Your PRO access will end on this date and your account will revert to the Free plan — you won't be charged again.</p>`
           : `<p style="font-size:11px;color:var(--gray);margin-top:6px;"><i class="fas fa-rotate" style="margin-right:5px;"></i>Auto-renewal is ON — your plan will renew automatically on this date.</p>
@@ -1424,6 +1890,1368 @@ async function removeSavedFavorite(favId,vehicleKey){
   FAVORITES_CACHE=FAVORITES_CACHE.filter(f=>f.id!==favId);
   updateStarButtonsInDom(vehicleKey);
   buildSavedView();
+}
+
+// ═══ GROUPS & MESSAGING ═══
+let CHAT_HUB_TAB='direct';          // 'direct' | 'groups' — which sidebar tab is active
+let CHAT_MY_MEMBERSHIPS=[];         // this user's chat_group_members rows (with embedded group info + memberCount)
+let CHAT_PENDING_ADMIN_GROUPS=[];   // admin only: groups awaiting approval
+let CHAT_CONTEXT={type:null,id:null,groupRow:null}; // the thread currently open: type='group'|'dm'
+let CHAT_GROUP_MEMBERS=[];          // founder-only: members of the open group, for ban/kick management
+let THREAD_MESSAGES=[];             // messages of whichever thread is currently open
+let CHAT_MEMBER_INFO={};            // userId -> {name,avatar} cache (group threads; realtime rows arrive without the profiles join)
+let DM_CONVERSATIONS=[];            // derived list of direct-message conversations
+let threadChannel=null;             // active Supabase Realtime subscription for the open thread
+let pendingChatImageFile=null;      // image queued in the composer, not yet sent
+let presenceChannel=null;           // shared "who's online" Realtime Presence channel
+let ONLINE_USER_IDS=new Set();      // userIds currently online, per Presence
+let CHAT_OTHER_BLOCKED=false;       // whether *I* have blocked the person in the currently open DM
+let CHAT_SELF_SUSPENDED=false;      // whether *my own* account is currently suspended from messaging
+let chatSidebarSearchTimer=null;    // debounce timer for the unified sidebar search box
+
+const QUICK_EMOJIS=['😀','😂','😍','😎','👍','👎','🙏','🔥','🎉','❤️','😢','😡','🚗','🏍️','⛵','🚀','✅','❌','😊','🤔','👏','💯','🥳','😴'];
+
+// Generic "..." dropdown menu used for member/user options throughout this module.
+function toggleKebabMenu(btn){
+  const menu=btn.nextElementSibling;
+  document.querySelectorAll('.chat-kebab-menu.open').forEach(m=>{ if(m!==menu) m.classList.remove('open'); });
+  menu.classList.toggle('open');
+}
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.chat-kebab-wrap')) document.querySelectorAll('.chat-kebab-menu.open').forEach(m=>m.classList.remove('open'));
+  if(!e.target.closest('.chat-emoji-wrap')) document.querySelectorAll('.chat-emoji-picker.open').forEach(p=>p.classList.remove('open'));
+});
+
+// ─────────────────────────────────────────────────────────
+// EMOJI PICKER
+// ─────────────────────────────────────────────────────────
+function toggleEmojiPicker(){
+  const picker=document.getElementById('chatEmojiPicker');
+  if(!picker.dataset.built){
+    picker.innerHTML=QUICK_EMOJIS.map(e=>`<button type="button" onclick="insertEmoji('${e}')">${e}</button>`).join('');
+    picker.dataset.built='1';
+  }
+  document.querySelectorAll('.chat-emoji-picker.open').forEach(p=>{ if(p!==picker) p.classList.remove('open'); });
+  picker.classList.toggle('open');
+}
+function insertEmoji(e){
+  const input=document.getElementById('chatMessageInput');
+  if(input){ input.value+=e; input.focus(); }
+}
+
+// ─────────────────────────────────────────────────────────
+// PRESENCE (online status badges)
+// ─────────────────────────────────────────────────────────
+function initPresence(){
+  if(presenceChannel || !authUser) return;
+  presenceChannel=supabaseClient.channel('online-users',{config:{presence:{key:authUser.id}}});
+  presenceChannel
+    .on('presence',{event:'sync'},()=>{
+      const state=presenceChannel.presenceState();
+      ONLINE_USER_IDS=new Set(Object.keys(state));
+      updateOnlineIndicatorsInDom();
+    })
+    .subscribe(async status=>{
+      if(status==='SUBSCRIBED') await presenceChannel.track({online_at:new Date().toISOString()});
+    });
+}
+function teardownPresence(){
+  if(presenceChannel){ supabaseClient.removeChannel(presenceChannel); presenceChannel=null; }
+  ONLINE_USER_IDS=new Set();
+}
+function updateOnlineIndicatorsInDom(){
+  if(!currentState) return;
+  if(currentState.view==='chathub' && CHAT_HUB_TAB==='direct' && !CHAT_CONTEXT.type){
+    renderChatSidebarList();
+  }
+}
+
+function tryOpenChatHub(){
+  if(!isLoggedIn()){ openAuthRequiredModal('Sign in to access Groups & Messaging.'); return; }
+  go({view:'chathub'});
+}
+
+function unsubscribeThread(){
+  if(threadChannel){ supabaseClient.removeChannel(threadChannel); threadChannel=null; }
+}
+function setWorkspaceThreadState(open){
+  const ws=document.getElementById('chatWorkspace');
+  if(ws) ws.classList.toggle('show-thread',!!open);
+}
+
+// ─────────────────────────────────────────────────────────
+// HUB: tab switcher + sidebar (unified list for both tabs)
+// ─────────────────────────────────────────────────────────
+async function buildChatHubView(){
+  switchChatHubTab(CHAT_HUB_TAB,true);
+  document.getElementById('chatSidebarSearchIn').value='';
+  showChatPanelEmptyState();
+  await refreshChatSidebarData();
+}
+
+async function refreshChatSidebarData(){
+  await loadDmConversations();
+  await loadMyChatMemberships();
+  if(isAdmin) await loadPendingAdminGroups();
+  renderChatSidebarList();
+}
+
+function switchChatHubTab(tab,silent){
+  CHAT_HUB_TAB=tab;
+  document.getElementById('chatTabBtnDirect').classList.toggle('active',tab==='direct');
+  document.getElementById('chatTabBtnGroups').classList.toggle('active',tab==='groups');
+  document.getElementById('chatSidebarSearchIn').placeholder=tab==='direct'?'Find someone to message...':'Search groups...';
+  document.getElementById('chatSidebarFooter').style.display=tab==='groups'?'block':'none';
+  if(!silent){
+    document.getElementById('chatSidebarSearchIn').value='';
+    renderChatSidebarList();
+  }
+}
+
+function onChatSidebarSearchInput(){
+  clearTimeout(chatSidebarSearchTimer);
+  chatSidebarSearchTimer=setTimeout(renderChatSidebarList,250);
+}
+
+// Renders ONE unified sidebar list: whichever tab is active, and — if the
+// search box has a query — search results instead of the default list.
+async function renderChatSidebarList(){
+  const q=document.getElementById('chatSidebarSearchIn').value.trim();
+  const el=document.getElementById('chatSidebarList');
+  const adminWrap=document.getElementById('chatAdminPanel');
+
+  if(CHAT_HUB_TAB==='groups'){
+    if(adminWrap){
+      if(isAdmin && CHAT_PENDING_ADMIN_GROUPS.length){
+        adminWrap.style.display='block';
+        adminWrap.innerHTML=`<div class="panel" style="border-left:3px solid var(--gold);margin-bottom:12px;">
+          <h3 style="font-size:10px;"><i class="fas fa-shield-halved"></i>Pending Approvals</h3>
+          ${CHAT_PENDING_ADMIN_GROUPS.map(g=>`<div class="ust" style="border-left-color:var(--gold);padding:8px 10px;">
+            <h5 style="color:var(--text-main);text-transform:none;font-weight:800;font-size:11px;">${esc(g.name)}</h5>
+            <div style="display:flex;gap:6px;margin-top:6px;">
+              <button class="wbtn" style="padding:5px 9px;font-size:9px;" onclick="approveAdminGroup('${esc(g.id)}')">Approve</button>
+              <button class="wbtn" style="padding:5px 9px;font-size:9px;background:var(--err);" onclick="rejectAdminGroup('${esc(g.id)}')">Reject</button>
+            </div>
+          </div>`).join('')}
+        </div>`;
+      } else { adminWrap.style.display='none';adminWrap.innerHTML=''; }
+    }
+
+    if(q){
+      const {data,error}=await supabaseClient.from('chat_groups').select('*').eq('status','active').ilike('name','%'+q+'%').limit(20);
+      el.innerHTML=error?`<p class="empty-note">Search failed.</p>`:groupSearchResultsHtml(data||[]);
+    } else {
+      const suggestions=await loadSuggestedGroups();
+      el.innerHTML=myGroupsHtml()+sidebarDividerHtml()+sidebarSectionHeaderHtml('Suggested Groups')+suggestedGroupsHtml(suggestions);
+    }
+  } else {
+    if(adminWrap){ adminWrap.style.display='none'; adminWrap.innerHTML=''; }
+    if(q){
+      const {data,error}=await supabaseClient.from('profiles').select('id,display_name,avatar_url').ilike('display_name','%'+q+'%').neq('id',authUser.id).limit(15);
+      el.innerHTML=error?'':userSearchResultsHtml(data||[]);
+    } else {
+      const suggestions=await loadSuggestedUsers();
+      el.innerHTML=dmConversationsHtml()+sidebarDividerHtml()+sidebarSectionHeaderHtml('Suggested People')+suggestedUsersHtml(suggestions);
+    }
+  }
+}
+
+function sidebarDividerHtml(){ return `<div class="chat-sidebar-divider"></div>`; }
+function sidebarSectionHeaderHtml(text){ return `<div class="chat-sidebar-section-label">${esc(text)}</div>`; }
+
+function myGroupsHtml(){
+  if(!CHAT_MY_MEMBERSHIPS.length) return '';
+  return CHAT_MY_MEMBERSHIPS.map(m=>{
+    const g=m.chat_groups||{};
+    const isActive=CHAT_CONTEXT.type==='group' && CHAT_CONTEXT.id===g.id;
+    const canOpen=g.status==='active';
+    let statusTag='';
+    if(g.status==='pending_admin') statusTag=`<span class="badge" style="background:#fef3c7;color:#92400e;font-size:8px;">Pending approval</span>`;
+    else if(g.status==='rejected') statusTag=`<span class="badge" style="background:#fee2e2;color:#991b1b;font-size:8px;">Rejected</span>`;
+    const founderBadge=m.role==='founder'?`<span class="chat-founder-badge">Founder</span>`:'';
+    const muted=isGroupMuted(g.id);
+    return `<div class="chat-group-card ${isActive?'active-thread':''}" ${canOpen?`onclick="go({view:'chatthread',kind:'group',id:'${esc(g.id)}'})"`:''} style="${canOpen?'':'cursor:default;opacity:.7;'}">
+      ${groupAvatarHtml(g)}
+      <div class="chat-group-meta">
+        <div class="chat-group-name">${esc(g.name||'')}</div>
+        <div class="chat-group-sub">${canOpen?`<span>${m.memberCount||1} member${(m.memberCount||1)===1?'':'s'}</span>`:''}${founderBadge}${statusTag}</div>
+      </div>
+      ${canOpen?`<button class="chat-bell-btn ${muted?'muted':''}" onclick="toggleGroupMute(event,'${esc(g.id)}')" title="${muted?'Unmute notifications':'Mute notifications'}"><i class="fas ${muted?'fa-bell-slash':'fa-bell'}"></i></button>`:''}
+    </div>`;
+  }).join('');
+}
+
+function groupSearchResultsHtml(list){
+  if(!list.length) return `<p class="empty-note">No groups found.</p>`;
+  return list.map(g=>{
+    const mine=CHAT_MY_MEMBERSHIPS.find(m=>m.group_id===g.id);
+    const action=mine
+      ?`onclick="go({view:'chatthread',kind:'group',id:'${esc(g.id)}'})"`
+      :`onclick="joinChatGroup('${esc(g.id)}')"`;
+    return `<div class="chat-group-card" ${action}>
+      ${groupAvatarHtml(g)}
+      <div class="chat-group-meta">
+        <div class="chat-group-name">${esc(g.name)}</div>
+        <div class="chat-group-sub">${esc(g.description||'Tap to '+(mine?'open':'join'))}</div>
+      </div>
+      ${!mine?'<i class="fas fa-circle-plus" style="color:var(--sky);font-size:16px;"></i>':''}
+    </div>`;
+  }).join('');
+}
+
+function dmConversationsHtml(){
+  if(!DM_CONVERSATIONS.length) return '';
+  return DM_CONVERSATIONS.map(c=>{
+    const isActive=CHAT_CONTEXT.type==='dm' && CHAT_CONTEXT.id===c.otherId;
+    return `<div class="chat-group-card ${isActive?'active-thread':''}" onclick="go({view:'chatthread',kind:'dm',id:'${esc(c.otherId)}'})">
+      <div class="dm-avatar-wrap">
+        <img class="chat-group-avatar" style="object-fit:cover;" src="${esc(c.otherAvatar||fallbackAvatarFor(c.otherName))}" referrerpolicy="no-referrer" alt="">
+        ${ONLINE_USER_IDS.has(c.otherId)?'<span class="online-dot"></span>':''}
+      </div>
+      <div class="chat-group-meta">
+        <div class="chat-group-name">${esc(c.otherName)}</div>
+        <div class="chat-group-sub"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px;">${esc(c.lastMessage)}</span></div>
+      </div>
+      <div style="font-size:9px;color:var(--gray2);flex-shrink:0;">${esc(shortRelativeTime(c.lastAt))}</div>
+    </div>`;
+  }).join('');
+}
+
+function userSearchResultsHtml(list){
+  if(!list.length) return `<p class="empty-note">No users found.</p>`;
+  return list.map(u=>`<div class="chat-group-card" onclick="go({view:'chatthread',kind:'dm',id:'${esc(u.id)}'})">
+    <div class="dm-avatar-wrap">
+      <img class="chat-group-avatar" style="object-fit:cover;" src="${esc(u.avatar_url||fallbackAvatarFor(u.display_name))}" referrerpolicy="no-referrer" alt="">
+      ${ONLINE_USER_IDS.has(u.id)?'<span class="online-dot"></span>':''}
+    </div>
+    <div class="chat-group-meta"><div class="chat-group-name">${esc(u.display_name||'User')}</div><div class="chat-group-sub">Start a conversation</div></div>
+    <i class="fas fa-arrow-right" style="color:var(--gray2);font-size:11px;"></i>
+  </div>`).join('');
+}
+
+// ─────────────────────────────────────────────────────────
+// SUGGESTIONS — shown below the divider whenever the sidebar search is
+// empty, so people always have somewhere to start even before searching.
+// ─────────────────────────────────────────────────────────
+async function loadSuggestedUsers(){
+  const {data,error}=await supabaseClient.from('profiles').select('id,display_name,avatar_url,created_at').order('created_at',{ascending:false}).limit(30);
+  if(error || !data) return [];
+  const excludeSet=new Set([authUser.id, ...DM_CONVERSATIONS.map(c=>c.otherId)]);
+  return data.filter(u=>!excludeSet.has(u.id)).slice(0,6);
+}
+async function loadSuggestedGroups(){
+  const {data,error}=await supabaseClient.from('chat_groups').select('*').eq('status','active').order('created_at',{ascending:false}).limit(30);
+  if(error || !data) return [];
+  const memberGroupIds=new Set(CHAT_MY_MEMBERSHIPS.map(m=>m.group_id));
+  return data.filter(g=>!memberGroupIds.has(g.id)).slice(0,6);
+}
+function suggestedUsersHtml(list){
+  if(!list.length) return `<p class="empty-note">No suggestions right now.</p>`;
+  return list.map(u=>`<div class="chat-group-card" onclick="go({view:'chatthread',kind:'dm',id:'${esc(u.id)}'})">
+    <div class="dm-avatar-wrap">
+      <img class="chat-group-avatar" style="object-fit:cover;" src="${esc(u.avatar_url||fallbackAvatarFor(u.display_name))}" referrerpolicy="no-referrer" alt="">
+      ${ONLINE_USER_IDS.has(u.id)?'<span class="online-dot"></span>':''}
+    </div>
+    <div class="chat-group-meta"><div class="chat-group-name">${esc(u.display_name||'User')}</div><div class="chat-group-sub">Start a conversation</div></div>
+  </div>`).join('');
+}
+function suggestedGroupsHtml(list){
+  if(!list.length) return `<p class="empty-note">No suggestions right now.</p>`;
+  return list.map(g=>`<div class="chat-group-card" onclick="joinChatGroup('${esc(g.id)}')">
+    ${groupAvatarHtml(g)}
+    <div class="chat-group-meta"><div class="chat-group-name">${esc(g.name)}</div><div class="chat-group-sub">Join group</div></div>
+  </div>`).join('');
+}
+
+// Deterministic color for a group's monogram avatar, drawn only from the
+// site's existing palette so it stays visually consistent.
+function groupAvatarColor(name){
+  const palette=['var(--sky)','var(--sky-deep)','var(--gold)','var(--navy2)','var(--ok)'];
+  let hash=0;
+  for(const ch of (name||'?')) hash=(hash*31+ch.charCodeAt(0))>>>0;
+  return palette[hash%palette.length];
+}
+// Renders a group's avatar: the uploaded image if set, otherwise a colored monogram.
+function groupAvatarHtml(group,extraStyle){
+  const style=extraStyle||'';
+  if(group && group.avatar_url){
+    return `<img class="chat-group-avatar" style="object-fit:cover;${style}" src="${esc(group.avatar_url)}" alt="">`;
+  }
+  return `<div class="chat-group-avatar" style="background:${groupAvatarColor(group&&group.name)};${style}">${esc(((group&&group.name)||'?').charAt(0).toUpperCase())}</div>`;
+}
+function fallbackAvatarFor(name){
+  return 'https://ui-avatars.com/api/?name='+encodeURIComponent(name||'User')+'&background=64748b&color=fff';
+}
+function isGroupMuted(groupId){
+  try{ return localStorage.getItem('ae_muted_group_'+groupId)==='1'; }catch(e){ return false; }
+}
+function toggleGroupMute(evt,groupId){
+  if(evt) evt.stopPropagation();
+  const muted=!isGroupMuted(groupId);
+  try{ localStorage.setItem('ae_muted_group_'+groupId, muted?'1':'0'); }catch(e){}
+  renderChatSidebarList();
+}
+
+// ─────────────────────────────────────────────────────────
+// DIRECT CHATS — data loading
+// ─────────────────────────────────────────────────────────
+async function loadDmConversations(){
+  DM_CONVERSATIONS=[];
+  if(!authUser) return;
+  const {data,error}=await supabaseClient
+    .from('direct_messages')
+    .select('*, sender:profiles!direct_messages_sender_id_fkey(display_name,avatar_url), recipient:profiles!direct_messages_recipient_id_fkey(display_name,avatar_url)')
+    .or(`sender_id.eq.${authUser.id},recipient_id.eq.${authUser.id}`)
+    .order('created_at',{ascending:false})
+    .limit(300);
+  if(error || !data) return;
+  const seen=new Set();
+  data.forEach(r=>{
+    const mine=r.sender_id===authUser.id;
+    const otherId=mine?r.recipient_id:r.sender_id;
+    if(seen.has(otherId)) return;
+    seen.add(otherId);
+    const otherProfile=mine?r.recipient:r.sender;
+    DM_CONVERSATIONS.push({
+      otherId,
+      otherName:(otherProfile&&otherProfile.display_name)||'User',
+      otherAvatar:(otherProfile&&otherProfile.avatar_url)||'',
+      lastMessage:(mine?'You: ':'')+(r.image_url?'📷 Photo':(r.content||'')),
+      lastAt:r.created_at
+    });
+  });
+}
+
+function shortRelativeTime(iso){
+  const d=new Date(iso);
+  const diffMin=Math.round((Date.now()-d.getTime())/60000);
+  if(diffMin<1) return 'now';
+  if(diffMin<60) return diffMin+'m';
+  if(diffMin<1440) return Math.round(diffMin/60)+'h';
+  return Math.round(diffMin/1440)+'d';
+}
+
+// ─────────────────────────────────────────────────────────
+// GROUP COMMUNITIES — data loading
+// ─────────────────────────────────────────────────────────
+async function loadMyChatMemberships(){
+  if(!authUser){ CHAT_MY_MEMBERSHIPS=[]; return; }
+  const {data,error}=await supabaseClient
+    .from('chat_group_members')
+    .select('*, chat_groups(id,name,description,status,founder_id,avatar_url)')
+    .eq('user_id',authUser.id)
+    .order('created_at',{ascending:false});
+  CHAT_MY_MEMBERSHIPS=(!error && data)?data:[];
+
+  const activeGroupIds=CHAT_MY_MEMBERSHIPS.filter(m=>m.chat_groups && m.chat_groups.status==='active').map(m=>m.group_id);
+  await Promise.all(activeGroupIds.map(async gid=>{
+    const count=await getGroupMemberCount(gid);
+    CHAT_MY_MEMBERSHIPS.filter(m=>m.group_id===gid).forEach(m=>{ m.memberCount=count; });
+  }));
+}
+async function getGroupMemberCount(groupId){
+  const {count}=await supabaseClient.from('chat_group_members').select('*',{count:'exact',head:true}).eq('group_id',groupId);
+  return count||0;
+}
+
+async function loadPendingAdminGroups(){
+  const {data,error}=await supabaseClient.from('chat_groups').select('*').eq('status','pending_admin').order('created_at',{ascending:true});
+  CHAT_PENDING_ADMIN_GROUPS=(!error && data)?data:[];
+}
+
+// Joining is immediate — no founder approval needed. The server-side RLS
+// policy still independently blocks this if the user is banned from the
+// group, so this can't be bypassed even if the client were tampered with.
+async function joinChatGroup(groupId){
+  if(!isLoggedIn()){ openAuthRequiredModal('Sign in to join a group.'); return; }
+  const {error}=await supabaseClient.from('chat_group_members').insert({group_id:groupId,user_id:authUser.id,role:'member'});
+  if(error){
+    alert(/row-level security|permission/i.test(error.message||'')?'You cannot join this group (you may be banned from it).':('Could not join: '+error.message));
+    return;
+  }
+  await loadMyChatMemberships();
+  renderChatSidebarList();
+  go({view:'chatthread',kind:'group',id:groupId});
+}
+
+let pendingGroupAvatarFile=null;
+
+function openCreateChatGroupModal(){
+  if(!isLoggedIn()){ openAuthRequiredModal('Sign in to create a group.'); return; }
+  document.getElementById('newChatGroupName').value='';
+  document.getElementById('newChatGroupDesc').value='';
+  pendingGroupAvatarFile=null;
+  document.getElementById('newChatGroupAvatarInput').value='';
+  document.getElementById('newChatGroupAvatarPreview').innerHTML='<i class="fas fa-users"></i>';
+  document.getElementById('newChatGroupAvatarPreview').style.backgroundImage='';
+  document.getElementById('createChatGroupModal').classList.add('open');
+}
+function closeCreateChatGroupModal(){ document.getElementById('createChatGroupModal').classList.remove('open'); }
+
+function handleNewGroupAvatarSelected(e){
+  const file=e.target.files && e.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){ alert('Please choose an image file.'); e.target.value=''; return; }
+  if(file.size>5*1024*1024){ alert('Image must be smaller than 5MB.'); e.target.value=''; return; }
+  pendingGroupAvatarFile=file;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const el=document.getElementById('newChatGroupAvatarPreview');
+    el.innerHTML='';
+    el.style.backgroundImage=`url('${reader.result}')`;
+    el.style.backgroundSize='cover';
+    el.style.backgroundPosition='center';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function uploadGroupAvatar(file){
+  const ext=((file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,''))||'jpg';
+  const path=`${authUser.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+  const {error}=await supabaseClient.storage.from('group-avatars').upload(path,file,{cacheControl:'3600',upsert:false});
+  if(error) throw error;
+  const {data}=supabaseClient.storage.from('group-avatars').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+async function submitCreateChatGroup(){
+  const name=document.getElementById('newChatGroupName').value.trim();
+  const description=document.getElementById('newChatGroupDesc').value.trim();
+  if(!name){ alert('Please enter a group name.'); return; }
+
+  let avatarUrl=null;
+  if(pendingGroupAvatarFile){
+    try{ avatarUrl=await uploadGroupAvatar(pendingGroupAvatarFile); }
+    catch(err){ alert('Could not upload group avatar: '+err.message); return; }
+  }
+
+  const {error}=await supabaseClient.from('chat_groups').insert({name,description:description||null,avatar_url:avatarUrl,founder_id:authUser.id});
+  if(error){ alert('Could not create group: '+error.message); return; }
+  closeCreateChatGroupModal();
+  await loadMyChatMemberships();
+  renderChatSidebarList();
+  alert('Your group has been submitted for admin approval!');
+}
+
+async function approveAdminGroup(groupId){
+  const {error}=await supabaseClient.from('chat_groups').update({status:'active'}).eq('id',groupId);
+  if(error){ alert('Could not approve: '+error.message); return; }
+  await loadPendingAdminGroups();
+  renderChatSidebarList();
+}
+async function rejectAdminGroup(groupId){
+  if(!confirm('Reject this group?')) return;
+  const {error}=await supabaseClient.from('chat_groups').update({status:'rejected'}).eq('id',groupId);
+  if(error){ alert('Could not reject: '+error.message); return; }
+  await loadPendingAdminGroups();
+  renderChatSidebarList();
+}
+
+// ─────────────────────────────────────────────────────────
+// RIGHT PANEL — unified thread view for both Group chat and Direct Messages
+// ─────────────────────────────────────────────────────────
+function showChatPanelEmptyState(){
+  unsubscribeThread();
+  CHAT_CONTEXT={type:null,id:null};
+  document.getElementById('chatPanelEmpty').style.display='flex';
+  document.getElementById('chatPanelActive').style.display='none';
+  applyWallpaperToMessagesList(null,null);
+  setWorkspaceThreadState(false);
+}
+
+function closeChatThreadAndGoBack(){
+  go({view:'chathub'});
+}
+
+function chatSenderLabel(m){
+  if(m.profiles && m.profiles.display_name) return m.profiles.display_name;
+  if(m.sender && m.sender.display_name) return m.sender.display_name;
+  const senderId=m.user_id||m.sender_id;
+  if(CHAT_MEMBER_INFO[senderId]) return CHAT_MEMBER_INFO[senderId].name;
+  return 'User';
+}
+function chatSenderAvatar(m,mine){
+  if(mine){
+    const el=document.getElementById('uAvt');
+    if(el && el.src) return el.src;
+    return fallbackAvatarFor(authUser.email||'Me');
+  }
+  if(CHAT_CONTEXT.type==='dm'){
+    return (CHAT_CONTEXT.otherProfile&&CHAT_CONTEXT.otherProfile.avatar_url)||fallbackAvatarFor(chatSenderLabel(m));
+  }
+  if(m.profiles && m.profiles.avatar_url) return m.profiles.avatar_url;
+  const senderId=m.user_id||m.sender_id;
+  if(CHAT_MEMBER_INFO[senderId] && CHAT_MEMBER_INFO[senderId].avatar) return CHAT_MEMBER_INFO[senderId].avatar;
+  return fallbackAvatarFor(chatSenderLabel(m));
+}
+function formatMsgTime(iso){
+  try{ return new Date(iso).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; }
+}
+
+let CHAT_SELF_BAN_UNTIL=null; // Date object, or null — when the current user's platform-wide ban lifts
+
+async function checkOwnSuspension(){
+  const {data}=await supabaseClient.from('profiles').select('banned_until').eq('id',authUser.id).maybeSingle();
+  const until=(data && data.banned_until)?new Date(data.banned_until):null;
+  CHAT_SELF_BAN_UNTIL=until;
+  CHAT_SELF_SUSPENDED=!!(until && until.getTime()>Date.now());
+  return CHAT_SELF_SUSPENDED;
+}
+
+// Formats a future Date into a short "X hours/days/years" string for ban banners.
+function formatBanRemaining(untilDate){
+  if(!untilDate) return '';
+  const ms=untilDate.getTime()-Date.now();
+  if(ms<=0) return '0 hours';
+  const hours=Math.ceil(ms/3600000);
+  if(hours<24) return hours+' hour'+(hours===1?'':'s');
+  const days=Math.ceil(hours/24);
+  if(days<365) return days+' day'+(days===1?'':'s');
+  const years=Math.ceil(days/365);
+  return years+' year'+(years===1?'':'s');
+}
+
+async function openChatThread(kind,id,push){
+  if(push===undefined) push=true;
+  if(push) go({view:'chatthread',kind,id});
+  unsubscribeThread();
+  clearChatImageSelection();
+  const note=document.getElementById('chatModerationNote');
+  if(note) note.style.display='none';
+
+  document.getElementById('chatPanelEmpty').style.display='none';
+  document.getElementById('chatPanelActive').style.display='flex';
+  setWorkspaceThreadState(true);
+
+  await checkOwnSuspension();
+
+  if(kind==='group'){
+    await openGroupThread(id);
+  } else {
+    await openDmThread(id);
+  }
+
+  if(CHAT_SELF_SUSPENDED){
+    document.getElementById('chatSuspendedBanner').innerHTML=`<i class="fas fa-circle-exclamation" style="margin-right:6px;"></i>You are banned for ${esc(formatBanRemaining(CHAT_SELF_BAN_UNTIL))} due to repeated violations. Access returns ${esc(CHAT_SELF_BAN_UNTIL.toLocaleString())}.`;
+    document.getElementById('chatSuspendedBanner').style.display='block';
+    document.getElementById('chatComposerControls').style.display='none';
+  } else {
+    document.getElementById('chatSuspendedBanner').style.display='none';
+    document.getElementById('chatComposerControls').style.display='block';
+  }
+
+  renderChatSidebarList();
+}
+
+function chatBackButtonHtml(){
+  return `<button class="chat-thread-back-btn" onclick="closeChatThreadAndGoBack()"><i class="fas fa-arrow-left"></i></button>`;
+}
+
+async function openGroupThread(groupId){
+  const {data:groupData}=await supabaseClient.from('chat_groups').select('*').eq('id',groupId).single();
+  if(!groupData || groupData.status!=='active'){
+    CHAT_CONTEXT={type:null,id:null,groupRow:null};
+    document.getElementById('chatThreadHeader').innerHTML=`${chatBackButtonHtml()}<p class="empty-note">This group isn't available.</p>`;
+    document.getElementById('chatComposerWrap').style.display='none';
+    document.getElementById('chatFounderPanel').innerHTML='';
+    document.getElementById('chatMessagesList').innerHTML='';
+    return;
+  }
+  const {data:memberRow}=await supabaseClient.from('chat_group_members').select('*').eq('group_id',groupId).eq('user_id',authUser.id).maybeSingle();
+  if(!memberRow){
+    CHAT_CONTEXT={type:null,id:null,groupRow:null};
+    document.getElementById('chatThreadHeader').innerHTML=`${chatBackButtonHtml()}<div class="chat-panel-header-user"><h2>${esc(groupData.name)}</h2></div>`;
+    document.getElementById('chatMessagesList').innerHTML=`<p class="empty-note">You're not a member of this group yet. Go back and tap it to join.</p>`;
+    document.getElementById('chatComposerWrap').style.display='none';
+    document.getElementById('chatFounderPanel').innerHTML='';
+    return;
+  }
+
+  const memberCount=await getGroupMemberCount(groupId);
+  CHAT_CONTEXT={type:'group',id:groupId,groupRow:groupData,role:memberRow.role};
+
+  const canDeleteGroup=memberRow.role==='founder' || isAdmin;
+  const leaveOption=memberRow.role!=='founder'?`<button class="danger" onclick="leaveChatGroup()"><i class="fas fa-right-from-bracket" style="margin-right:6px;"></i>Leave Group</button>`:'';
+  const deleteOption=canDeleteGroup?`<button class="danger" onclick="confirmDeleteChatGroup('${esc(groupId)}')"><i class="fas fa-trash" style="margin-right:6px;"></i>Delete Group</button>`:'';
+  const optionsMenu=`<div class="chat-kebab-wrap">
+      <button class="chat-kebab-btn" onclick="event.stopPropagation();toggleKebabMenu(this)"><i class="fas fa-gear"></i></button>
+      <div class="chat-kebab-menu">
+        <button onclick="openGroupProfileModal('${esc(groupId)}')"><i class="fas fa-circle-info" style="margin-right:6px;"></i>Group Info</button>
+        <button onclick="openWallpaperModal('group','${esc(groupId)}')"><i class="fas fa-image" style="margin-right:6px;"></i>Chat Wallpaper</button>
+        ${leaveOption}
+        ${deleteOption}
+      </div>
+    </div>`;
+
+  document.getElementById('chatThreadHeader').innerHTML=`
+    ${chatBackButtonHtml()}
+    <div class="chat-panel-header-user chat-clickable-name" onclick="openGroupProfileModal('${esc(groupId)}')">
+      ${groupAvatarHtml(groupData,'width:38px;height:38px;font-size:14px;')}
+      <div>
+        <h2>${esc(groupData.name)}</h2>
+        <div class="chat-panel-header-sub">${memberCount} member${memberCount===1?'':'s'}</div>
+      </div>
+    </div>
+    ${optionsMenu}`;
+  document.getElementById('chatComposerWrap').style.display='block';
+
+  await loadChatMemberInfo(groupId);
+  await loadThreadMessages();
+  renderThreadMessages();
+  await loadAndApplyWallpaper('group',groupId);
+
+  if(['founder','admin','moderator'].includes(memberRow.role)){
+    await loadFounderModerationData(groupId);
+    renderFounderPanel();
+  } else {
+    document.getElementById('chatFounderPanel').innerHTML='';
+  }
+
+  subscribeThread();
+}
+
+async function openDmThread(otherUserId){
+  const {data:otherProfile}=await supabaseClient.from('profiles').select('id,display_name,avatar_url').eq('id',otherUserId).maybeSingle();
+  CHAT_CONTEXT={type:'dm',id:otherUserId,otherProfile:otherProfile||null};
+  const name=(otherProfile&&otherProfile.display_name)||'User';
+  const avatarUrl=(otherProfile&&otherProfile.avatar_url)||fallbackAvatarFor(name);
+
+  const {data:blockRow}=await supabaseClient.from('user_blocks').select('id').eq('blocker_id',authUser.id).eq('blocked_id',otherUserId).maybeSingle();
+  CHAT_OTHER_BLOCKED=!!blockRow;
+
+  document.getElementById('chatThreadHeader').innerHTML=`
+    ${chatBackButtonHtml()}
+    <div class="chat-panel-header-user chat-clickable-name" onclick="openUserProfileModal('${esc(otherUserId)}')">
+      <div class="dm-avatar-wrap">
+        <img class="chat-group-avatar" style="object-fit:cover;width:38px;height:38px;" src="${esc(avatarUrl)}" referrerpolicy="no-referrer" alt="">
+        ${ONLINE_USER_IDS.has(otherUserId)?'<span class="online-dot"></span>':''}
+      </div>
+      <div><h2>${esc(name)}</h2><div class="chat-panel-header-sub">${ONLINE_USER_IDS.has(otherUserId)?'Online':'Direct message'}</div></div>
+    </div>
+    <div class="chat-kebab-wrap">
+      <button class="chat-kebab-btn" onclick="event.stopPropagation();toggleKebabMenu(this)"><i class="fas fa-gear"></i></button>
+      <div class="chat-kebab-menu">
+        <button onclick="openUserProfileModal('${esc(otherUserId)}')"><i class="fas fa-circle-info" style="margin-right:6px;"></i>View Profile</button>
+        <button onclick="openWallpaperModal('dm','${esc(otherUserId)}')"><i class="fas fa-image" style="margin-right:6px;"></i>Chat Wallpaper</button>
+        <button class="danger" onclick="toggleBlockUser()"><i class="fas fa-ban" style="margin-right:6px;"></i>${CHAT_OTHER_BLOCKED?'Unblock User':'Block User'}</button>
+      </div>
+    </div>`;
+  document.getElementById('chatFounderPanel').innerHTML='';
+  document.getElementById('chatComposerWrap').style.display='block';
+
+  await loadThreadMessages();
+  renderThreadMessages();
+  await loadAndApplyWallpaper('dm',otherUserId);
+  subscribeThread();
+}
+
+async function toggleBlockUser(){
+  if(CHAT_CONTEXT.type!=='dm') return;
+  if(CHAT_OTHER_BLOCKED){
+    if(!confirm('Unblock this user? They will be able to message you again.')) return;
+    const {error}=await supabaseClient.from('user_blocks').delete().eq('blocker_id',authUser.id).eq('blocked_id',CHAT_CONTEXT.id);
+    if(error){ alert(error.message); return; }
+  } else {
+    if(!confirm('Block this user? They will no longer be able to send you messages.')) return;
+    const {error}=await supabaseClient.from('user_blocks').insert({blocker_id:authUser.id,blocked_id:CHAT_CONTEXT.id});
+    if(error){ alert(error.message); return; }
+  }
+  openChatThread('dm',CHAT_CONTEXT.id,false);
+}
+
+async function loadThreadMessages(){
+  THREAD_MESSAGES=[];
+  if(CHAT_CONTEXT.type==='group'){
+    const {data,error}=await supabaseClient.from('chat_group_messages').select('*, profiles(display_name,avatar_url)').eq('group_id',CHAT_CONTEXT.id).order('created_at',{ascending:true}).limit(200);
+    THREAD_MESSAGES=(!error && data)?data:[];
+  } else if(CHAT_CONTEXT.type==='dm'){
+    const {data,error}=await supabaseClient.from('direct_messages').select('*')
+      .or(`and(sender_id.eq.${authUser.id},recipient_id.eq.${CHAT_CONTEXT.id}),and(sender_id.eq.${CHAT_CONTEXT.id},recipient_id.eq.${authUser.id})`)
+      .order('created_at',{ascending:true}).limit(200);
+    THREAD_MESSAGES=(!error && data)?data:[];
+  }
+}
+
+async function loadChatMemberInfo(groupId){
+  CHAT_MEMBER_INFO={};
+  const {data}=await supabaseClient.from('chat_group_members').select('user_id, profiles(display_name,avatar_url)').eq('group_id',groupId);
+  (data||[]).forEach(r=>{ CHAT_MEMBER_INFO[r.user_id]={name:(r.profiles&&r.profiles.display_name)||'User',avatar:(r.profiles&&r.profiles.avatar_url)||''}; });
+}
+
+function renderThreadMessages(){
+  const el=document.getElementById('chatMessagesList');
+  const myId=authUser.id;
+  const visible=THREAD_MESSAGES.filter(m=>{
+    const senderId=m.user_id||m.sender_id;
+    return !m.is_blocked || senderId===myId;
+  });
+  if(!visible.length){ el.innerHTML=`<p class="empty-note">No messages yet — say hello!</p>`; return; }
+  const canModerateGroup=CHAT_CONTEXT.type==='group' && (['founder','admin','moderator'].includes(CHAT_CONTEXT.role) || isAdmin);
+  const founderId=CHAT_CONTEXT.type==='group' && CHAT_CONTEXT.groupRow ? CHAT_CONTEXT.groupRow.founder_id : null;
+  el.innerHTML=visible.map(m=>{
+    const senderId=m.user_id||m.sender_id;
+    const mine=senderId===myId;
+    const canDelete=mine||canModerateGroup;
+    const blockedNote=(m.is_blocked && mine)?`<div style="font-size:9px;color:var(--err);margin-top:3px;"><i class="fas fa-eye-slash" style="margin-right:3px;"></i>Only visible to you — blocked by the chat filter</div>`:'';
+    const imgHtml=m.image_url?`<div class="chat-bubble-img-wrap"><img src="${esc(m.image_url)}" class="chat-bubble-img" onclick="event.stopPropagation();openChatLightbox('${esc(m.image_url)}')" alt="Shared image" loading="lazy"></div>`:'';
+    const textHtml=m.content?`<div>${esc(m.content)}</div>`:'';
+    const deleteBtn=canDelete?`<button class="chat-msg-delete" onclick="event.stopPropagation();deleteThreadMessage('${esc(m.id)}')" title="Delete message"><i class="fas fa-trash"></i></button>`:'';
+    const founderTag=(CHAT_CONTEXT.type==='group' && senderId===founderId)?'<span class="chat-founder-tag">Founder</span>':'';
+    const senderRow=!mine?`<div class="chat-bubble-sender-name chat-clickable-name" onclick="openUserProfileModal('${esc(senderId)}')">${esc(chatSenderLabel(m))}${founderTag}</div>`:'';
+    const avatarClick=mine?'':` onclick="openUserProfileModal('${esc(senderId)}')"`;
+    return `<div class="chat-bubble-row ${mine?'mine':'theirs'}">
+      <img class="chat-bubble-avatar ${mine?'':'chat-clickable-avatar'}" src="${esc(chatSenderAvatar(m,mine))}" referrerpolicy="no-referrer" alt=""${avatarClick}>
+      <div class="chat-bubble-col">
+        ${senderRow}
+        <div class="chat-bubble ${mine?'mine':'theirs'}">${textHtml}${imgHtml}${blockedNote}</div>
+        <div class="chat-bubble-time">${esc(formatMsgTime(m.created_at))}</div>
+      </div>
+      ${deleteBtn}
+    </div>`;
+  }).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+async function deleteThreadMessage(id){
+  if(!confirm('Delete this message?')) return;
+  const table=CHAT_CONTEXT.type==='group'?'chat_group_messages':'direct_messages';
+  const {error}=await supabaseClient.from(table).delete().eq('id',id);
+  if(error){ alert('Could not delete: '+error.message); return; }
+  THREAD_MESSAGES=THREAD_MESSAGES.filter(m=>m.id!==id);
+  renderThreadMessages();
+}
+
+function openChatLightbox(url){
+  document.getElementById('chatLightboxImg').src=url;
+  document.getElementById('chatLightbox').classList.add('open');
+}
+function closeChatLightbox(){
+  document.getElementById('chatLightbox').classList.remove('open');
+  document.getElementById('chatLightboxImg').src='';
+}
+
+// ─────────────────────────────────────────────────────────
+// CLIENT-SIDE IMAGE CONTENT FILTER (best-effort)
+// Loads TensorFlow.js + nsfwjs lazily (only when someone first tries to
+// attach an image), so the ~ few MB model never slows down the rest of the
+// site. This runs entirely in the browser — there's no backend in this app
+// to do server-side image moderation, so this is a best-effort check, not
+// a guarantee: it can be bypassed by a modified client, and like any ML
+// classifier it can occasionally misjudge an image. If the model fails to
+// load (e.g. offline, ad-blocker, CDN issue) the check fails OPEN — the
+// image is allowed through rather than blocking sharing entirely.
+// ─────────────────────────────────────────────────────────
+let nsfwModelPromise=null;
+function loadExternalScript(src){
+  return new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src=src;s.onload=resolve;s.onerror=reject;
+    document.head.appendChild(s);
+  });
+}
+async function ensureNsfwModel(){
+  if(nsfwModelPromise) return nsfwModelPromise;
+  nsfwModelPromise=(async()=>{
+    try{
+      if(typeof tf==='undefined') await loadExternalScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js');
+      if(typeof nsfwjs==='undefined') await loadExternalScript('https://cdn.jsdelivr.net/npm/nsfwjs@4.1.0/dist/nsfwjs.min.js');
+      return await nsfwjs.load();
+    }catch(e){
+      console.warn('Image content filter unavailable — proceeding without it.',e);
+      return null;
+    }
+  })();
+  return nsfwModelPromise;
+}
+function fileToImageElement(file){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>resolve(img);
+    img.onerror=reject;
+    img.src=URL.createObjectURL(file);
+  });
+}
+async function isImageUnsafe(file){
+  try{
+    const model=await ensureNsfwModel();
+    if(!model) return false;
+    const imgEl=await fileToImageElement(file);
+    const predictions=await model.classify(imgEl);
+    const bad=predictions.find(p=>['Porn','Hentai','Sexy'].includes(p.className) && p.probability>0.75);
+    return !!bad;
+  }catch(e){
+    console.warn('Image content check failed — proceeding without it.',e);
+    return false;
+  }
+}
+
+async function handleChatImageSelected(e){
+  const file=e.target.files && e.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){ alert('Please choose an image file.'); e.target.value=''; return; }
+  if(file.size>5*1024*1024){ alert('Image must be smaller than 5MB.'); e.target.value=''; return; }
+
+  const attachBtn=document.querySelector('.chat-input-icon-btn');
+  if(attachBtn) attachBtn.classList.add('chat-attach-checking');
+  const unsafe=await isImageUnsafe(file);
+  if(attachBtn) attachBtn.classList.remove('chat-attach-checking');
+
+  if(unsafe){
+    alert('This image looks like it may contain explicit content and cannot be sent.');
+    e.target.value='';
+    return;
+  }
+
+  pendingChatImageFile=file;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    document.getElementById('chatImagePreview').src=reader.result;
+    document.getElementById('chatImagePreviewWrap').style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+function clearChatImageSelection(){
+  pendingChatImageFile=null;
+  const fi=document.getElementById('chatImageFileInput'); if(fi) fi.value='';
+  const wrap=document.getElementById('chatImagePreviewWrap'); if(wrap) wrap.style.display='none';
+}
+
+async function uploadChatImage(file){
+  const ext=((file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,''))||'jpg';
+  const path=`${authUser.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+  const {error}=await supabaseClient.storage.from('chat-attachments').upload(path,file,{cacheControl:'3600',upsert:false});
+  if(error) throw error;
+  const {data}=supabaseClient.storage.from('chat-attachments').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+// ─────────────────────────────────────────────────────────
+// AI MODERATION — Google Gemini (free tier), best-effort pre-check
+// ─────────────────────────────────────────────────────────
+// Isolated helper: evaluates text and/or an already-uploaded image URL
+// against Gemini before a message is allowed to save. Returns:
+//   { safe: true }                    — content is fine
+//   { safe: false, reason: "..." }    — content should be rejected
+//   null                              — AI check unavailable (no key
+//                                        configured, rate-limited, network
+//                                        error, or malformed response) —
+//                                        caller should fall back to the
+//                                        existing server-side regex filter,
+//                                        which always runs regardless.
+async function moderateWithGemini(text, imageUrl){
+  if(!GEMINI_API_KEY || GEMINI_API_KEY==='YOUR_GEMINI_API_KEY_HERE') return null;
+
+  try{
+    const parts=[{text: GEMINI_SYSTEM_PROMPT+'\n\nMessage to evaluate: '+(text||'(no text — image only)')}];
+
+    if(imageUrl){
+      try{
+        const imgResp=await fetch(imageUrl);
+        const blob=await imgResp.blob();
+        const base64=await new Promise((resolve,reject)=>{
+          const reader=new FileReader();
+          reader.onloadend=()=>resolve(String(reader.result).split(',')[1]||'');
+          reader.onerror=reject;
+          reader.readAsDataURL(blob);
+        });
+        if(base64) parts.push({inlineData:{mimeType:blob.type||'image/jpeg', data:base64}});
+      }catch(imgErr){
+        console.warn('AI moderator: could not load image, checking text only.',imgErr);
+      }
+    }
+
+    const controller=new AbortController();
+    const timeoutId=setTimeout(()=>controller.abort(),8000);
+    let resp;
+    try{
+      resp=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{parts}],generationConfig:{responseMimeType:'application/json'}}),
+        signal:controller.signal
+      });
+    } finally { clearTimeout(timeoutId); }
+
+    if(!resp.ok){
+      console.warn('AI moderator unavailable ('+resp.status+') — falling back to built-in filter.');
+      return null;
+    }
+
+    const data=await resp.json();
+    const raw=data && data.candidates && data.candidates[0] && data.candidates[0].content
+      && data.candidates[0].content.parts && data.candidates[0].content.parts[0]
+      && data.candidates[0].content.parts[0].text;
+    if(!raw) return null;
+
+    const parsed=JSON.parse(raw);
+    if(typeof parsed.safe!=='boolean') return null;
+    return {safe:parsed.safe, reason:parsed.reason||'Flagged by AI moderator'};
+  }catch(e){
+    console.warn('AI moderator unavailable — falling back to built-in filter.',e);
+    return null;
+  }
+}
+
+// Narrow, safe RPC call — always logs against the CALLER's own account
+// server-side (see log_ai_moderation_violation in the SQL), so this can
+// never be used to log a violation against someone else.
+async function logAiModerationViolation(reason){
+  const groupId=CHAT_CONTEXT.type==='group'?CHAT_CONTEXT.id:null;
+  const context=CHAT_CONTEXT.type==='group'?'group':'dm';
+  try{
+    await supabaseClient.rpc('log_ai_moderation_violation',{p_group_id:groupId,p_context:context,p_reason:'AI moderator: '+reason});
+  }catch(e){ console.warn('Could not log AI moderation violation.',e); }
+}
+
+async function sendThreadMessage(){
+  const input=document.getElementById('chatMessageInput');
+  const text=input.value.trim();
+  if(!text && !pendingChatImageFile) return;
+  if(!CHAT_CONTEXT.type) return;
+
+  input.value='';
+  const fileToSend=pendingChatImageFile;
+  clearChatImageSelection();
+
+  let imageUrl=null;
+  if(fileToSend){
+    try{ imageUrl=await uploadChatImage(fileToSend); }
+    catch(err){ alert('Could not upload image: '+err.message); return; }
+  }
+
+  // AI pre-check — best-effort. If Gemini isn't configured or is
+  // unavailable, aiResult is null and we proceed straight to the normal
+  // insert, where the server-side regex/spam trigger still runs as always.
+  const sendBtn=document.querySelector('#chatComposerControls .chat-send-btn');
+  if(sendBtn) sendBtn.classList.add('chat-attach-checking');
+  const aiResult=await moderateWithGemini(text,imageUrl);
+  if(sendBtn) sendBtn.classList.remove('chat-attach-checking');
+
+  if(aiResult && aiResult.safe===false){
+    if(imageUrl){
+      // Best-effort cleanup of the now-rejected upload.
+      try{
+        const path=imageUrl.split('/chat-attachments/')[1];
+        if(path) await supabaseClient.storage.from('chat-attachments').remove([decodeURIComponent(path)]);
+      }catch(e){ /* non-critical */ }
+    }
+    alert('Message blocked by AI Moderator: '+aiResult.reason);
+    await logAiModerationViolation(aiResult.reason);
+    const nowBanned=await checkOwnSuspension();
+    const note=document.getElementById('chatModerationNote');
+    if(note) note.style.display='block';
+    if(nowBanned){
+      alert('You have been banned from messaging for '+formatBanRemaining(CHAT_SELF_BAN_UNTIL)+' due to repeated rule violations.');
+      openChatThread(CHAT_CONTEXT.type,CHAT_CONTEXT.id,false);
+    }
+    return;
+  }
+
+  let result;
+  if(CHAT_CONTEXT.type==='group'){
+    result=await supabaseClient.from('chat_group_messages').insert({group_id:CHAT_CONTEXT.id,user_id:authUser.id,content:text||null,image_url:imageUrl}).select('*, profiles(display_name,avatar_url)').single();
+  } else {
+    result=await supabaseClient.from('direct_messages').insert({sender_id:authUser.id,recipient_id:CHAT_CONTEXT.id,content:text||null,image_url:imageUrl}).select('*').single();
+  }
+  const {data,error}=result;
+  if(error){ alert('Could not send message: '+error.message); return; }
+
+  if(!THREAD_MESSAGES.some(m=>m.id===data.id)) THREAD_MESSAGES.push(data);
+  renderThreadMessages();
+  await handleModerationFeedback(data);
+
+  if(CHAT_CONTEXT.type==='dm'){ loadDmConversations().then(()=>{ if(CHAT_HUB_TAB==='direct') renderChatSidebarList(); }); }
+}
+
+async function handleModerationFeedback(msg){
+  const note=document.getElementById('chatModerationNote');
+  if(!msg.is_blocked){ if(note) note.style.display='none'; return; }
+  if(note) note.style.display='block';
+
+  const nowBanned=await checkOwnSuspension();
+  if(nowBanned){
+    alert('You have been banned from messaging for '+formatBanRemaining(CHAT_SELF_BAN_UNTIL)+' due to repeated rule violations.');
+    openChatThread(CHAT_CONTEXT.type,CHAT_CONTEXT.id,false);
+    return;
+  }
+
+  if(CHAT_CONTEXT.type==='group'){
+    const {data:mem}=await supabaseClient.from('chat_group_members').select('*').eq('group_id',CHAT_CONTEXT.id).eq('user_id',authUser.id).maybeSingle();
+    if(!mem){
+      alert('You have been banned from this group for repeated rule violations.');
+      openChatThread('group',CHAT_CONTEXT.id,false);
+    }
+  }
+}
+
+function subscribeThread(){
+  unsubscribeThread();
+  if(CHAT_CONTEXT.type==='group'){
+    threadChannel=supabaseClient.channel('group-'+CHAT_CONTEXT.id)
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_group_messages',filter:'group_id=eq.'+CHAT_CONTEXT.id},payload=>{
+        if(THREAD_MESSAGES.some(m=>m.id===payload.new.id)) return;
+        THREAD_MESSAGES.push(payload.new);
+        renderThreadMessages();
+      })
+      .on('postgres_changes',{event:'DELETE',schema:'public',table:'chat_group_messages',filter:'group_id=eq.'+CHAT_CONTEXT.id},payload=>{
+        THREAD_MESSAGES=THREAD_MESSAGES.filter(m=>m.id!==payload.old.id);
+        renderThreadMessages();
+      })
+      .subscribe();
+  } else if(CHAT_CONTEXT.type==='dm'){
+    const otherId=CHAT_CONTEXT.id;
+    threadChannel=supabaseClient.channel('dm-'+[authUser.id,otherId].sort().join('-'))
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'direct_messages',filter:'sender_id=eq.'+otherId},payload=>{
+        if(payload.new.recipient_id!==authUser.id) return;
+        if(THREAD_MESSAGES.some(m=>m.id===payload.new.id)) return;
+        THREAD_MESSAGES.push(payload.new);
+        renderThreadMessages();
+      })
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'direct_messages',filter:'sender_id=eq.'+authUser.id},payload=>{
+        if(payload.new.recipient_id!==otherId) return;
+        if(THREAD_MESSAGES.some(m=>m.id===payload.new.id)) return;
+        THREAD_MESSAGES.push(payload.new);
+        renderThreadMessages();
+      })
+      .on('postgres_changes',{event:'DELETE',schema:'public',table:'direct_messages',filter:'sender_id=eq.'+otherId},payload=>{
+        THREAD_MESSAGES=THREAD_MESSAGES.filter(m=>m.id!==payload.old.id);
+        renderThreadMessages();
+      })
+      .on('postgres_changes',{event:'DELETE',schema:'public',table:'direct_messages',filter:'sender_id=eq.'+authUser.id},payload=>{
+        THREAD_MESSAGES=THREAD_MESSAGES.filter(m=>m.id!==payload.old.id);
+        renderThreadMessages();
+      })
+      .subscribe();
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// FOUNDER MODERATION (group threads only)
+// ─────────────────────────────────────────────────────────
+async function loadFounderModerationData(groupId){
+  const {data}=await supabaseClient.from('chat_group_members').select('*, profiles(display_name,avatar_url)').eq('group_id',groupId).order('created_at',{ascending:true});
+  CHAT_GROUP_MEMBERS=data||[];
+  const {data:violations}=await supabaseClient.from('user_violations').select('user_id').eq('group_id',groupId).eq('context','group');
+  const counts={};
+  (violations||[]).forEach(v=>{ counts[v.user_id]=(counts[v.user_id]||0)+1; });
+  CHAT_GROUP_MEMBERS.forEach(m=>{ m.violationCount=counts[m.user_id]||0; });
+}
+
+function roleBadgeHtml(role){
+  if(role==='admin') return '<span class="chat-role-badge admin">Admin</span>';
+  if(role==='moderator') return '<span class="chat-role-badge moderator">Mod</span>';
+  return '';
+}
+
+function renderFounderPanel(){
+  const el=document.getElementById('chatFounderPanel');
+  const members=CHAT_GROUP_MEMBERS.filter(m=>m.role!=='founder');
+  const viewerIsFounder=CHAT_CONTEXT.role==='founder';
+  el.innerHTML=`<div class="panel"><h3><i class="fas fa-users-gear"></i>Members${members.length?' ('+members.length+')':''}</h3>${
+    members.length?members.map(m=>`
+      <div class="trow chat-member-row">
+        <span class="chat-clickable-name" onclick="openUserProfileModal('${esc(m.user_id)}')">${esc((m.profiles&&m.profiles.display_name)||'User')}${roleBadgeHtml(m.role)}${m.violationCount?` <span style="color:var(--err);font-size:10px;">(${m.violationCount} strike${m.violationCount>1?'s':''})</span>`:''}</span>
+        <div class="chat-kebab-wrap">
+          <button class="chat-kebab-btn" onclick="event.stopPropagation();toggleKebabMenu(this)"><i class="fas fa-ellipsis-vertical"></i></button>
+          <div class="chat-kebab-menu">
+            ${viewerIsFounder?`
+            ${m.role!=='admin'?`<button onclick="setMemberRole('${esc(m.user_id)}','admin')"><i class="fas fa-user-shield" style="margin-right:6px;"></i>Make Admin</button>`:''}
+            ${m.role!=='moderator'?`<button onclick="setMemberRole('${esc(m.user_id)}','moderator')"><i class="fas fa-user-gear" style="margin-right:6px;"></i>Make Moderator</button>`:''}
+            ${m.role!=='member'?`<button onclick="setMemberRole('${esc(m.user_id)}','member')"><i class="fas fa-user" style="margin-right:6px;"></i>Set as Member</button>`:''}
+            `:''}
+            <button onclick="kickChatMember('${esc(m.user_id)}')"><i class="fas fa-right-from-bracket" style="margin-right:6px;"></i>Kick from group</button>
+            <button class="danger" onclick="banChatMember('${esc(m.user_id)}')"><i class="fas fa-ban" style="margin-right:6px;"></i>Ban permanently</button>
+          </div>
+        </div>
+      </div>`).join('')
+    :'<p style="font-size:12px;color:var(--gray);">No members yet besides you.</p>'
+  }</div>`;
+}
+
+// Promote/demote — only ever reachable via a founder-only menu in the UI,
+// and independently enforced server-side (RLS only allows the actual
+// founder_id to update role, and only to admin/moderator/member — never
+// 'founder').
+async function setMemberRole(userId,newRole){
+  const {error}=await supabaseClient.from('chat_group_members').update({role:newRole}).eq('group_id',CHAT_CONTEXT.id).eq('user_id',userId);
+  if(error){ alert('Could not update role: '+error.message); return; }
+  await loadFounderModerationData(CHAT_CONTEXT.id);
+  renderFounderPanel();
+}
+
+// Kick: removes membership only — they're free to rejoin later with a single click.
+async function kickChatMember(userId){
+  if(!confirm('Remove this member from the group? They can rejoin later if they want.')) return;
+  const {error}=await supabaseClient.from('chat_group_members').delete().eq('group_id',CHAT_CONTEXT.id).eq('user_id',userId);
+  if(error){ alert(error.message); return; }
+  await loadFounderModerationData(CHAT_CONTEXT.id);
+  renderFounderPanel();
+}
+
+// Ban: permanent — recorded in banned_users, which also removes their membership via a DB trigger and blocks re-joining.
+async function banChatMember(userId){
+  if(!confirm('Ban this member from the group? They will no longer be able to read or send messages here, and cannot rejoin.')) return;
+  const {error}=await supabaseClient.from('banned_users').insert({group_id:CHAT_CONTEXT.id,user_id:userId,banned_by:authUser.id,reason:'Banned by group staff'});
+  if(error){ alert(error.message); return; }
+  await loadFounderModerationData(CHAT_CONTEXT.id);
+  renderFounderPanel();
+}
+
+async function leaveChatGroup(){
+  if(CHAT_CONTEXT.type!=='group') return;
+  if(!confirm('Leave this group?')) return;
+  const {error}=await supabaseClient.from('chat_group_members').delete().eq('group_id',CHAT_CONTEXT.id).eq('user_id',authUser.id);
+  if(error){ alert(error.message); return; }
+  closeChatThreadAndGoBack();
+}
+
+// ─────────────────────────────────────────────────────────
+// GROUP DELETION (founder or admin only — enforced again server-side by RLS)
+// ─────────────────────────────────────────────────────────
+let pendingDeleteChatGroupId=null;
+
+function confirmDeleteChatGroup(groupId){
+  document.querySelectorAll('.chat-kebab-menu.open').forEach(m=>m.classList.remove('open'));
+  pendingDeleteChatGroupId=groupId;
+  document.getElementById('deleteChatGroupModal').classList.add('open');
+}
+function closeDeleteChatGroupModal(){
+  pendingDeleteChatGroupId=null;
+  document.getElementById('deleteChatGroupModal').classList.remove('open');
+}
+async function performDeleteChatGroup(){
+  if(!pendingDeleteChatGroupId) return;
+  const groupId=pendingDeleteChatGroupId;
+  // chat_group_members / chat_group_messages / banned_users all cascade-delete
+  // automatically via their foreign keys — a single delete here is enough.
+  const {error}=await supabaseClient.from('chat_groups').delete().eq('id',groupId);
+  closeDeleteChatGroupModal();
+  if(error){ alert('Could not delete group: '+error.message); return; }
+  if(CHAT_CONTEXT.type==='group' && CHAT_CONTEXT.id===groupId){
+    closeChatThreadAndGoBack();
+  } else {
+    await loadMyChatMemberships();
+    renderChatSidebarList();
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// GROUP PROFILE MODAL (info + founder/admin management)
+// ─────────────────────────────────────────────────────────
+let editingGroupAvatarFile=null;
+
+async function openGroupProfileModal(groupId){
+  document.querySelectorAll('.chat-kebab-menu.open').forEach(m=>m.classList.remove('open'));
+  editingGroupAvatarFile=null;
+  const body=document.getElementById('groupProfileModalBody');
+  body.innerHTML=`<div class="spin"><i class="fas fa-circle-notch"></i><p>Loading group info...</p></div>`;
+  document.getElementById('groupProfileModal').classList.add('open');
+
+  const {data:group}=await supabaseClient.from('chat_groups').select('*').eq('id',groupId).single();
+  if(!group){ body.innerHTML=`<p class="empty-note">Group not found.</p>`; return; }
+  const {data:members}=await supabaseClient.from('chat_group_members').select('*, profiles(display_name,avatar_url)').eq('group_id',groupId).order('role',{ascending:true});
+  const canManage=(group.founder_id===authUser.id)||isAdmin;
+  const createdDate=new Date(group.created_at).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+  body.innerHTML=`
+    <div class="group-profile-header">
+      <div class="group-profile-avatar-wrap">
+        <div id="groupProfileAvatarPreview">${groupAvatarHtml(group,'width:76px;height:76px;font-size:26px;')}</div>
+        ${canManage?`<div class="group-profile-avatar-edit" onclick="document.getElementById('groupProfileAvatarInput').click()"><i class="fas fa-pencil"></i></div>
+        <input type="file" id="groupProfileAvatarInput" accept="image/*" style="display:none;" onchange="handleGroupProfileAvatarSelected(event)">`:''}
+      </div>
+      ${canManage
+        ?`<input id="groupProfileNameInput" class="sinp" style="text-align:center;font-weight:800;font-size:15px;max-width:260px;" value="${esc(group.name)}">`
+        :`<div class="group-profile-name">${esc(group.name)}</div>`}
+      <div class="group-profile-meta"><i class="fas fa-calendar-days" style="margin-right:4px;"></i>Created ${esc(createdDate)} · ${members?members.length:0} member${(members&&members.length===1)?'':'s'}</div>
+      ${canManage
+        ?`<textarea id="groupProfileDescInput" class="sinp" style="width:100%;margin-top:10px;" rows="2" placeholder="Group description">${esc(group.description||'')}</textarea>
+           <button class="wbtn" style="margin-top:10px;" onclick="saveGroupProfileEdits('${esc(groupId)}')"><i class="fas fa-floppy-disk" style="margin-right:6px;"></i>Save Changes</button>`
+        :`<div class="group-profile-desc">${esc(group.description||'No description provided.')}</div>`}
+    </div>
+    <div class="ftitle" style="margin-top:6px;"><i class="fas fa-users"></i>Members</div>
+    <div class="group-member-list">
+      ${(members||[]).map(m=>`<div class="group-member-row chat-clickable-name" onclick="closeGroupProfileModal();openUserProfileModal('${esc(m.user_id)}')">
+        <img src="${esc((m.profiles&&m.profiles.avatar_url)||fallbackAvatarFor(m.profiles&&m.profiles.display_name))}" referrerpolicy="no-referrer" alt="">
+        <span style="flex:1;font-size:12px;font-weight:600;">${esc((m.profiles&&m.profiles.display_name)||'User')}</span>
+        ${m.role==='founder'?'<span class="chat-founder-badge">Founder</span>':roleBadgeHtml(m.role)}
+      </div>`).join('')}
+    </div>
+    ${canManage?`<button class="wbtn" style="background:var(--err);width:100%;justify-content:center;margin-top:14px;" onclick="closeGroupProfileModal();confirmDeleteChatGroup('${esc(groupId)}')"><i class="fas fa-trash" style="margin-right:6px;"></i>Delete Group</button>`:''}`;
+}
+function closeGroupProfileModal(){ document.getElementById('groupProfileModal').classList.remove('open'); }
+
+function handleGroupProfileAvatarSelected(e){
+  const file=e.target.files && e.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){ alert('Please choose an image file.'); e.target.value=''; return; }
+  if(file.size>5*1024*1024){ alert('Image must be smaller than 5MB.'); e.target.value=''; return; }
+  editingGroupAvatarFile=file;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    document.getElementById('groupProfileAvatarPreview').innerHTML=`<img class="chat-group-avatar" style="width:76px;height:76px;font-size:26px;object-fit:cover;" src="${reader.result}" alt="">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveGroupProfileEdits(groupId){
+  const name=document.getElementById('groupProfileNameInput').value.trim();
+  const description=document.getElementById('groupProfileDescInput').value.trim();
+  if(!name){ alert('Group name cannot be empty.'); return; }
+
+  const payload={name,description:description||null};
+  if(editingGroupAvatarFile){
+    try{ payload.avatar_url=await uploadGroupAvatar(editingGroupAvatarFile); }
+    catch(err){ alert('Could not upload avatar: '+err.message); return; }
+  }
+
+  const {error}=await supabaseClient.from('chat_groups').update(payload).eq('id',groupId);
+  if(error){ alert('Could not save: '+error.message); return; }
+
+  closeGroupProfileModal();
+  await loadMyChatMemberships();
+  renderChatSidebarList();
+  if(CHAT_CONTEXT.type==='group' && CHAT_CONTEXT.id===groupId) openChatThread('group',groupId,false);
+}
+
+// ─────────────────────────────────────────────────────────
+// USER PROFILE MODAL (clickable from any avatar/username in chat)
+// ─────────────────────────────────────────────────────────
+async function openUserProfileModal(userId){
+  document.querySelectorAll('.chat-kebab-menu.open').forEach(m=>m.classList.remove('open'));
+  const body=document.getElementById('userProfileModalBody');
+  body.innerHTML=`<div class="spin"><i class="fas fa-circle-notch"></i><p>Loading profile...</p></div>`;
+  document.getElementById('userProfileModal').classList.add('open');
+
+  const {data:profile}=await supabaseClient.from('profiles').select('*').eq('id',userId).maybeSingle();
+  if(!profile){ body.innerHTML=`<p class="empty-note">User not found.</p>`; return; }
+
+  const {data:listings}=await supabaseClient.from('marketplace_listings').select('*').eq('seller_id',userId).eq('status','active').order('created_at',{ascending:false}).limit(6);
+  const joinDate=new Date(profile.created_at).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const isSelf=userId===authUser.id;
+  const avatarUrl=profile.avatar_url||fallbackAvatarFor(profile.display_name);
+
+  let blocked=false;
+  if(!isSelf){
+    const {data:blockRow}=await supabaseClient.from('user_blocks').select('id').eq('blocker_id',authUser.id).eq('blocked_id',userId).maybeSingle();
+    blocked=!!blockRow;
+  }
+
+  body.innerHTML=`
+    <div class="user-profile-header">
+      <img class="user-profile-avatar" src="${esc(avatarUrl)}" referrerpolicy="no-referrer" alt="">
+      <div class="user-profile-name">${esc(profile.display_name||'User')}</div>
+      <div class="user-profile-meta"><i class="fas fa-calendar-days" style="margin-right:4px;"></i>Member since: ${esc(joinDate)}</div>
+      ${!isSelf?`<div class="user-profile-actions">
+        <button class="wbtn" onclick="closeUserProfileModal();go({view:'chatthread',kind:'dm',id:'${esc(userId)}'})"><i class="fas fa-paper-plane" style="margin-right:6px;"></i>Send Message</button>
+        <button class="wbtn" style="background:var(--err);" onclick="blockUserFromProfileModal('${esc(userId)}')"><i class="fas fa-ban" style="margin-right:6px;"></i>${blocked?'Unblock':'Block'}</button>
+      </div>`:''}
+    </div>
+    <div class="user-profile-listings">
+      <div class="ftitle" style="margin-top:0;"><i class="fas fa-car"></i>Listed Vehicles</div>
+      ${listings&&listings.length
+        ?`<div class="user-profile-listings-grid">${listings.map(l=>`<div class="user-listing-card">
+            ${l.image_url?`<img src="${esc(l.image_url)}" alt="${esc(l.title)}">`:`<div style="height:56px;background:var(--off);display:flex;align-items:center;justify-content:center;"><i class="fas fa-car" style="color:var(--gray2);"></i></div>`}
+            <div class="ulc-body"><div class="ulc-title">${esc(l.title)}</div>${l.price?`<div class="ulc-price">$${esc(String(l.price))}</div>`:''}</div>
+          </div>`).join('')}</div>`
+        :`<p class="empty-note" style="padding:14px 0;">No active listings yet.</p>`}
+    </div>`;
+}
+function closeUserProfileModal(){ document.getElementById('userProfileModal').classList.remove('open'); }
+
+async function blockUserFromProfileModal(userId){
+  const {data:blockRow}=await supabaseClient.from('user_blocks').select('id').eq('blocker_id',authUser.id).eq('blocked_id',userId).maybeSingle();
+  if(blockRow){
+    if(!confirm('Unblock this user? They will be able to message you again.')) return;
+    const {error}=await supabaseClient.from('user_blocks').delete().eq('id',blockRow.id);
+    if(error){ alert(error.message); return; }
+  } else {
+    if(!confirm('Block this user? They will no longer be able to send you messages.')) return;
+    const {error}=await supabaseClient.from('user_blocks').insert({blocker_id:authUser.id,blocked_id:userId});
+    if(error){ alert(error.message); return; }
+  }
+  openUserProfileModal(userId);
+  if(CHAT_CONTEXT.type==='dm' && CHAT_CONTEXT.id===userId) openChatThread('dm',userId,false);
+}
+
+// ─────────────────────────────────────────────────────────
+// CHAT WALLPAPERS (per user, per group OR per DM conversation)
+// ─────────────────────────────────────────────────────────
+const WALLPAPER_SWATCHES=['#eef4fb','#f0fdf4','#fef3c7','#fdf2f8','#f1f5f9','#0c1a3a'];
+let CHAT_WALLPAPER_TARGET=null; // {scopeType,scopeId}
+
+function openWallpaperModal(scopeType,scopeId){
+  document.querySelectorAll('.chat-kebab-menu.open').forEach(m=>m.classList.remove('open'));
+  CHAT_WALLPAPER_TARGET={scopeType,scopeId};
+  const wrap=document.getElementById('wallpaperColorSwatches');
+  wrap.innerHTML=WALLPAPER_SWATCHES.map(c=>`<div class="wallpaper-swatch" style="background:${c};" onclick="selectWallpaperColor('${c}')" title="${c}"></div>`).join('');
+  document.getElementById('wallpaperModal').classList.add('open');
+}
+function closeWallpaperModal(){ document.getElementById('wallpaperModal').classList.remove('open'); }
+
+async function saveWallpaperSetting(background_type,background_value){
+  if(!CHAT_WALLPAPER_TARGET) return;
+  const {scopeType,scopeId}=CHAT_WALLPAPER_TARGET;
+  const {error}=await supabaseClient.from('user_chat_settings').upsert({
+    user_id:authUser.id,scope_type:scopeType,scope_id:scopeId,background_type,background_value
+  },{onConflict:'user_id,scope_type,scope_id'});
+  if(error){ alert('Could not save wallpaper: '+error.message); return; }
+  applyWallpaperToMessagesList(background_type,background_value);
+  closeWallpaperModal();
+}
+function selectWallpaperColor(hex){ saveWallpaperSetting('color',hex); }
+
+async function handleWallpaperUpload(e){
+  const file=e.target.files && e.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){ alert('Please choose an image file.'); e.target.value=''; return; }
+  if(file.size>5*1024*1024){ alert('Image must be smaller than 5MB.'); e.target.value=''; return; }
+  try{
+    const url=await uploadChatImage(file); // reuse the chat-attachments uploader (wallpapers/*)
+    await saveWallpaperSetting('image',url);
+  }catch(err){ alert('Could not upload wallpaper: '+err.message); }
+  e.target.value='';
+}
+
+async function resetWallpaper(){
+  if(!CHAT_WALLPAPER_TARGET) return;
+  const {scopeType,scopeId}=CHAT_WALLPAPER_TARGET;
+  await supabaseClient.from('user_chat_settings').delete().eq('user_id',authUser.id).eq('scope_type',scopeType).eq('scope_id',scopeId);
+  applyWallpaperToMessagesList(null,null);
+  closeWallpaperModal();
+}
+
+async function loadAndApplyWallpaper(scopeType,scopeId){
+  const {data}=await supabaseClient.from('user_chat_settings').select('*').eq('user_id',authUser.id).eq('scope_type',scopeType).eq('scope_id',scopeId).maybeSingle();
+  if(data) applyWallpaperToMessagesList(data.background_type,data.background_value);
+  else applyWallpaperToMessagesList(null,null);
+}
+// Applies to the WHOLE right-hand chat panel (header, member list, message
+// area, and composer all sit on top of it) rather than just the scrollable
+// message box, so the wallpaper flows seamlessly behind everything. For
+// uploaded images, a semi-transparent white wash is layered on top of the
+// image itself (stacked backgrounds) purely for contrast — bubbles, the
+// header, the member list panel, and the input bar all additionally have
+// their own frosted/opaque backgrounds (see CSS) so text stays fully
+// readable regardless of how busy the chosen wallpaper is.
+function applyWallpaperToMessagesList(type,value){
+  const el=document.getElementById('chatPanelActive');
+  const legacyEl=document.getElementById('chatMessagesList');
+  if(legacyEl){ legacyEl.style.background=''; legacyEl.style.backgroundImage=''; } // clear any stale wallpaper from a previous version
+  if(!el) return;
+  if(type==='color' && value){
+    el.style.backgroundImage='';
+    el.style.background=value;
+  } else if(type==='image' && value){
+    el.style.background='';
+    el.style.backgroundImage=`linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.6)), url('${value}')`;
+    el.style.backgroundSize='cover';
+    el.style.backgroundPosition='center';
+    el.style.backgroundRepeat='no-repeat';
+  } else {
+    el.style.background='';
+    el.style.backgroundImage='';
+  }
 }
 
 // Dynamic (Supabase-backed) groups, brands, vehicles (models) & engines, cached client-side
@@ -2516,15 +4344,40 @@ const FALLBACKS={
 };
 async function buildFeatured(){
   const sec=document.getElementById('featSec');
-  const items=FEAT[curCat];const fallbacks=FALLBACKS[curCat];
-  if(!items){sec.innerHTML='';return;}
-  sec.innerHTML=`<div class="ftitle"><i class="fas fa-fire"></i>Most checked before buying</div>
-    <div class="frow">${items.map((f,i)=>`<div class="fcard" id="fc${i}" onclick="openReportDirect('${esc(f.b)}','${esc(f.m)}')">
-      <img id="fi${i}" src="${fallbacks[i]}" alt="${esc(f.label)}" loading="lazy">
+  const items=FEAT[curCat]||[];
+  const fallbacks=FALLBACKS[curCat]||[];
+  const catLabel=CAT_LABELS[curCat];
+  const dynItems=DYN_VEHICLES.filter(v=>v.homepage_section==='featured' && v.category===catLabel);
+  if(!items.length && !dynItems.length && !isAdmin){ sec.innerHTML=''; return; }
+
+  const catIcon=CAT[curCat] ? CAT[curCat].icon : 'fa-car';
+
+  const staticHtml=items.map((f,i)=>`<div class="fcard" id="fc${i}" onclick="openReportDirect('${esc(f.b)}','${esc(f.m)}')">
+      <img id="fi${i}" src="${esc(fallbacks[i]||'')}" alt="${esc(f.label)}" loading="lazy">
       <div class="fov"></div>
       <div class="fbody"><h4>${esc(f.label)}</h4><p>${esc(f.sub)}</p></div>
-    </div>`).join('')}
+    </div>`).join('');
+
+  const dynHtml=dynItems.map(v=>{
+    const imgHtml=v.image_url
+      ?`<img src="${esc(v.image_url)}" alt="${esc(v.model_name)}" loading="lazy">`
+      :`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--navy2);"><i class="fas ${catIcon}" style="font-size:30px;color:#fff;opacity:.5;"></i></div>`;
+    const adminBtns=isAdmin?`<div class="admin-actions"><button class="aicon aedit" onclick="event.stopPropagation();openVehicleModal('${v.id}')"><i class="fas fa-pencil"></i></button><button class="aicon adel" onclick="event.stopPropagation();confirmDeleteVehicle('${v.id}')"><i class="fas fa-trash"></i></button></div>`:'';
+    return `<div class="fcard" onclick="openFeaturedVehicleReport('${v.id}')">
+      ${imgHtml}
+      <div class="fov"></div>
+      ${adminBtns}
+      <div class="fbody"><h4>${esc(v.model_name)}</h4><p>${esc(v.homepage_badge||'')}</p></div>
     </div>`;
+  }).join('');
+
+  const addCardHtml=isAdmin?`<div class="fcard add-tile-vertical" onclick="openQuickAddVehicleModal('featured')">
+      <div class="add-tile-icon"><i class="fas fa-plus"></i></div>
+      <span>Add New Car</span>
+    </div>`:'';
+
+  sec.innerHTML=`<div class="ftitle"><i class="fas fa-fire"></i>Most checked before buying</div>
+    <div class="frow">${staticHtml}${dynHtml}${addCardHtml}</div>`;
   items.forEach(async(f,i)=>{
     const img=await getImg(f.b, f.m);
     if(img){const el=document.getElementById('fi'+i);if(el)el.src=img;}
@@ -2540,22 +4393,39 @@ function openReportDirect(b,m){
 
 // ═══ POPULAR SECTION ═══
 function buildPopular(){
-  if(curCat!=='cars'){document.getElementById('popSec').innerHTML='';return;}
-  const popular=[
+  const sec=document.getElementById('popSec');
+  const popular=curCat==='cars'?[
     {l:'Audi A4 B8',s:'2008-2015 · Diesel/petrol · Best years: 2010+',g:'Volkswagen Group',b:'Audi',m:'A4'},
     {l:'BMW Seria 3 E90',s:'2005-2012 · I6 is best · Avoid the N47 2.0d',g:'BMW Group',b:'BMW',m:'Seria 3 ⭐'},
     {l:'VW Passat B6/B7',s:'2005-2014 · Wagon and saloon · Cheap to service',g:'Volkswagen Group',b:'Volkswagen',m:'Passat ⭐'},
     {l:'Toyota Corolla E12',s:'2002-2007 · Reliable · Minimal running costs',g:'Toyota Group',b:'Toyota',m:'Corolla ⭐'},
     {l:'Skoda Octavia II',s:'2004-2013 · Best value for money',g:'Volkswagen Group',b:'Škoda',m:'Octavia ⭐'},
     {l:'Ford Focus Mk2',s:'2004-2011 · 1.6 TDCi · Avoid the 1.0 EcoBoost 2012-15',g:'Ford Motor',b:'Ford',m:'Focus ⭐'}
-  ];
-  document.getElementById('popSec').innerHTML=
-    `<div class="ftitle" style="margin-top:4px;"><i class="fas fa-chart-bar"></i>Popular with buyers – click to check</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:28px;">
-      ${popular.map((p,i)=>`<div class="pop-card" onclick="openReport('${esc(p.b)}','${esc(p.m)}','${esc(p.g)}')">
+  ]:[];
+  const catLabel=CAT_LABELS[curCat];
+  const dynItems=DYN_VEHICLES.filter(v=>v.homepage_section==='popular' && v.category===catLabel);
+
+  if(!popular.length && !dynItems.length && !isAdmin){ sec.innerHTML=''; return; }
+
+  const staticHtml=popular.map((p,i)=>`<div class="pop-card" onclick="openReport('${esc(p.b)}','${esc(p.m)}','${esc(p.g)}')">
         <div class="pop-num">${i+1}</div>
         <div><h4>${esc(p.l)}</h4><p>${esc(p.s)}</p></div>
-      </div>`).join('')}
+      </div>`).join('');
+  const dynHtml=dynItems.map(v=>{
+    const adminBtns=isAdmin?`<div class="admin-actions" style="opacity:1;position:static;margin-left:auto;"><button class="aicon aedit" onclick="event.stopPropagation();openVehicleModal('${v.id}')"><i class="fas fa-pencil"></i></button><button class="aicon adel" onclick="event.stopPropagation();confirmDeleteVehicle('${v.id}')"><i class="fas fa-trash"></i></button></div>`:'';
+    return `<div class="pop-card" onclick="openFeaturedVehicleReport('${v.id}')">
+        <div class="pop-num"><i class="fas fa-star"></i></div>
+        <div style="flex:1;"><h4>${esc(v.model_name)}</h4><p>${esc(v.homepage_badge||'')}</p></div>
+        ${adminBtns}
+      </div>`;
+  }).join('');
+  const addCardHtml=isAdmin?`<div class="pop-card" style="cursor:pointer;border:2px dashed var(--gray3);" onclick="openQuickAddVehicleModal('popular')">
+        <div class="add-tile-icon"><i class="fas fa-plus"></i></div><div><h4 style="margin:0;">Add New Car</h4></div>
+      </div>`:'';
+
+  sec.innerHTML=`<div class="ftitle" style="margin-top:4px;"><i class="fas fa-chart-bar"></i>Popular with buyers – click to check</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:28px;">
+      ${staticHtml}${dynHtml}${addCardHtml}
     </div>`;
 }
 
@@ -2657,11 +4527,11 @@ async function renderVinContent(vin){
         ${w.url?`<a href="${esc(w.url)}" target="_blank" rel="noopener noreferrer" class="wbtn"><i class="fas fa-arrow-up-right-from-square"></i>Wikipedia</a>`:''}</div>`;
     }
     c.innerHTML=`
-      <div style="background:#fffbeb;border:1.5px solid var(--gold);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#92400e;font-weight:600;display:flex;align-items:center;gap:8px;"><i class="fas fa-triangle-exclamation"></i>This is a demo version. Technical data comes from the NHTSA database (US government). It does not replace a full vehicle history report.</div>
-      <h2 style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:9px;"><i class="fas fa-id-card" style="color:var(--sky);"></i>VIN decoding result</h2>
+      <div style="background:var(--surface)beb;border:1.5px solid var(--gold);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#92400e;font-weight:600;display:flex;align-items:center;gap:8px;"><i class="fas fa-triangle-exclamation"></i>This is a demo version. Technical data comes from the NHTSA database (US government). It does not replace a full vehicle history report.</div>
+      <h2 style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--text-main);margin-bottom:12px;display:flex;align-items:center;gap:9px;"><i class="fas fa-id-card" style="color:var(--sky);"></i>VIN decoding result</h2>
       <p style="font-size:11px;color:var(--gray);margin-bottom:14px;">VIN: <strong>${esc(vin)}</strong> &bull; NHTSA.gov (USA)</p>
       <div class="panel"><h3><i class="fas fa-database"></i>Technical data</h3>${rows||'<p style="font-size:12px;color:var(--gray);">No data found in the NHTSA database for this VIN.</p>'}</div>
-      <div class="panel" style="background:#fffbeb;border-left-color:var(--gold);margin-top:12px;">
+      <div class="panel" style="background:var(--surface)beb;border-left-color:var(--gold);margin-top:12px;">
         <h3><i class="fas fa-clock-rotate-left"></i>Vehicle history</h3>
         <p style="font-size:12px;margin-bottom:12px;">Full history (accidents, inspections, mileage) via official services:</p>
         <a href="https://www.vehiclehistory.com/vin-search?vin=${esc(vin)}" target="_blank" rel="noopener noreferrer" class="wbtn"><i class="fas fa-globe"></i>VehicleHistory</a>
@@ -2797,45 +4667,6 @@ async function performDelete(){
   if(currentState) render(currentState);
 }
 
-// Shows/labels the "Add Group" / "Add Brand" / "Add Model" / "Add Engine" toolbar
-// button depending on the current view, and hides it entirely for non-admins or
-// irrelevant views.
-function updateAdminToolbar(state){
-  const bar=document.getElementById('adminToolbar');
-  if(!bar) return;
-  if(!isAdmin || !state){ bar.classList.remove('show'); return; }
-
-  if(state.view==='groups'){
-    bar.classList.add('show');
-    document.getElementById('adminAddLabel').textContent='Add Group';
-    document.getElementById('adminAddBtn').onclick=()=>openGroupModal(null);
-  } else if(state.view==='brands'){
-    const dynG=findDynGroupByName(CAT_LABELS[curCat],state.group);
-    if(dynG){
-      bar.classList.add('show');
-      document.getElementById('adminAddLabel').textContent='Add Brand';
-      document.getElementById('adminAddBtn').onclick=()=>openBrandModal(null);
-    } else {
-      bar.classList.remove('show');
-    }
-  } else if(state.view==='models'){
-    const dynB=findDynBrandForCurrent();
-    if(dynB){
-      bar.classList.add('show');
-      document.getElementById('adminAddLabel').textContent='Add Model';
-      document.getElementById('adminAddBtn').onclick=()=>openVehicleModal(null);
-    } else {
-      bar.classList.remove('show');
-    }
-  } else if(state.view==='engines'){
-    bar.classList.add('show');
-    document.getElementById('adminAddLabel').textContent='Add Engine';
-    document.getElementById('adminAddBtn').onclick=()=>openEngineModal(null);
-  } else {
-    bar.classList.remove('show');
-  }
-}
-
 // ═══ ADMIN CRUD: Models (vehicles table) ═══
 let editingVehicleId=null; // id being edited, or null when adding
 
@@ -2908,6 +4739,8 @@ function openVehicleModal(id){
   renderKVEditor('vmDimensions', v?v.dimensions_weight:null);
   document.getElementById('vmProdDate').value=v?(v.production_date_facelift||''):'';
   document.getElementById('vmTowing').value=v?(v.towing_capacity||''):'';
+  document.getElementById('vmHomepageSection').value=v?(v.homepage_section||''):'';
+  document.getElementById('vmHomepageBadge').value=v?(v.homepage_badge||''):'';
   document.getElementById('vehicleModal').classList.add('open');
 }
 function closeVehicleModal(){
@@ -2937,7 +4770,9 @@ async function saveVehicleModal(){
     interior_quality_space: document.getElementById('vmInterior').value.trim()||null,
     dimensions_weight: collectKVData('vmDimensions'),
     production_date_facelift: document.getElementById('vmProdDate').value.trim()||null,
-    towing_capacity: document.getElementById('vmTowing').value.trim()||null
+    towing_capacity: document.getElementById('vmTowing').value.trim()||null,
+    homepage_section: document.getElementById('vmHomepageSection').value||null,
+    homepage_badge: document.getElementById('vmHomepageBadge').value.trim()||null
   };
 
   if(editingVehicleId){
@@ -2952,6 +4787,92 @@ async function saveVehicleModal(){
   closeVehicleModal();
   await loadDynamicData();
   if(currentState) render(currentState);
+  buildFeatured();
+  buildPopular();
+}
+
+// ─────────────────────────────────────────────────────────
+// QUICK-ADD VEHICLE (homepage "Most checked" / "Popular" sections)
+// A lighter-weight alternative to the full vehicle modal above — saves
+// straight into the same vehicles table with just the essentials, and
+// updates the homepage sections immediately without a page reload.
+// ─────────────────────────────────────────────────────────
+function openQuickAddVehicleModal(defaultSection){
+  if(!isAdmin) return;
+  document.getElementById('qavTitle').value='';
+  document.getElementById('qavBadge').value='';
+  document.getElementById('qavImageUrl').value='';
+  document.getElementById('qavImageFile').value='';
+  updateQavPreview('');
+  populateQavBrandOptions();
+  document.getElementById('qavSection').value=defaultSection||'featured';
+  document.getElementById('quickAddVehicleModal').classList.add('open');
+}
+function closeQuickAddVehicleModal(){
+  document.getElementById('quickAddVehicleModal').classList.remove('open');
+}
+function populateQavBrandOptions(){
+  const sel=document.getElementById('qavBrand');
+  const catLabel=CAT_LABELS[curCat];
+  const brands=DYN_BRANDS.filter(b=>b.category===catLabel);
+  if(!brands.length){
+    sel.innerHTML='<option value="">No brands yet in this category</option>';
+    return;
+  }
+  sel.innerHTML=brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');
+}
+function updateQavPreview(url){
+  const wrap=document.getElementById('qavPreviewWrap'),img=document.getElementById('qavPreview');
+  if(!wrap||!img) return;
+  if(url){ img.src=url; wrap.style.display='block'; } else { wrap.style.display='none'; img.src=''; }
+}
+function handleQavFileChange(e){
+  const file=e.target.files && e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    document.getElementById('qavImageUrl').value=reader.result;
+    updateQavPreview(reader.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveQuickAddVehicle(){
+  if(!isAdmin){ alert('Admin access required.'); return; }
+  const title=document.getElementById('qavTitle').value.trim();
+  if(!title){ alert('Please enter a vehicle title.'); return; }
+  const brandId=document.getElementById('qavBrand').value;
+  if(!brandId){ alert('Please select a brand. If none exist yet for this category, add one first via "Add Group" / "Add Brand" on the catalog pages.'); return; }
+
+  const payload={
+    model_name:title,
+    brand_id:brandId,
+    category:CAT_LABELS[curCat],
+    image_url:document.getElementById('qavImageUrl').value.trim()||null,
+    homepage_section:document.getElementById('qavSection').value,
+    homepage_badge:document.getElementById('qavBadge').value.trim()||null
+  };
+
+  const {error}=await supabaseClient.from('vehicles').upsert(payload);
+  if(error){ alert('Could not save: '+error.message); return; }
+  closeQuickAddVehicleModal();
+  await loadDynamicData();
+  buildFeatured();
+  buildPopular();
+}
+
+// Resolves a DB vehicle's brand/group names and routes to the normal
+// openReport() flow — the same mechanism buildModGrid() already uses for
+// database-backed vehicles, so the report page renders exactly as usual.
+function openFeaturedVehicleReport(vehicleId){
+  const v=DYN_VEHICLES.find(x=>x.id===vehicleId);
+  if(!v){ alert('This vehicle could not be found — it may have been removed.'); return; }
+  const brandRow=DYN_BRANDS.find(b=>b.id===v.brand_id);
+  const groupRow=brandRow?DYN_GROUPS.find(g=>g.id===brandRow.group_id):null;
+  if(!brandRow||!groupRow){ alert('Could not locate this vehicle\'s catalog entry.'); return; }
+  const catKey=Object.keys(CAT_LABELS).find(k=>CAT_LABELS[k]===v.category);
+  if(catKey) curCat=catKey;
+  openReport(brandRow.name, v.model_name, groupRow.name);
 }
 
 // Renders the full structured report for a DB-backed model into #rContent,
@@ -3001,7 +4922,7 @@ async function renderAdminVehicleReport(id){
 
     ${adminBtns}
 
-    ${v.rating_verdict?`<div class="scorecard"><h4><i class="fas fa-gavel"></i>Rating / Verdict</h4><p style="font-size:12px;line-height:1.7;color:#334155;">${esc(v.rating_verdict)}</p></div>`:''}
+    ${v.rating_verdict?`<div class="scorecard"><h4><i class="fas fa-gavel"></i>Rating / Verdict</h4><p style="font-size:12px;line-height:1.7;color:var(--text-secondary);">${esc(v.rating_verdict)}</p></div>`:''}
 
     <div class="r2col">
       <div>
@@ -3214,6 +5135,13 @@ async function buildGroups(){
       })(sid,firstBrand,ico);
     }
   }
+  if(isAdmin){
+    const addCard=document.createElement('div');
+    addCard.className='card card-add add-tile-vertical';
+    addCard.innerHTML=`<div class="add-tile-icon"><i class="fas fa-plus"></i></div><span>Add New Group</span>`;
+    addCard.onclick=()=>openGroupModal(null);
+    g.appendChild(addCard);
+  }
 }
 
 async function showBrands(grp,push=true){
@@ -3228,7 +5156,7 @@ async function showBrands(grp,push=true){
   const dynGroupForThis=findDynGroupByName(catLabel,grp);
   const brandKeys=Object.keys(db[grp]);
   if(!brandKeys.length){
-    g.innerHTML=`<p class="empty-note">No brands yet${isAdmin?' — use "Add Brand" above to create the first one.':'.'}</p>`;
+    g.innerHTML=`<p class="empty-note">No brands yet${isAdmin?' — use the "Add New Brand" tile below to create the first one.':'.'}</p>`;
   }
   for(const b of brandKeys){
     const mc=Object.keys(db[grp][b]).length;
@@ -3251,6 +5179,13 @@ async function showBrands(grp,push=true){
       })(sid,cleanB,ico);
     }
   }
+  if(isAdmin && dynGroupForThis){
+    const addCard=document.createElement('div');
+    addCard.className='card card-add add-tile-vertical';
+    addCard.innerHTML=`<div class="add-tile-icon"><i class="fas fa-plus"></i></div><span>Add New Brand</span>`;
+    addCard.onclick=()=>openBrandModal(null);
+    g.appendChild(addCard);
+  }
   showV('vBrands');
   if(push) go({view:'brands',cat:curCat,group:grp});
 }
@@ -3268,13 +5203,16 @@ function showModels(grp,brand,push=true){
 }
 function buildModGrid(grp,brand){
   const db=getDb(),g=document.getElementById('mGrid');g.innerHTML='';
+  const dynB=findDynBrandForCurrent();
   if(!db[grp]||!db[grp][brand]){
     g.innerHTML=`<p class="empty-note">No models found for this brand yet.</p>`;
+    appendAddModelTile(g,dynB);
     return;
   }
   const modelKeys=Object.keys(db[grp][brand]);
   if(!modelKeys.length){
-    g.innerHTML=`<p class="empty-note">No models added yet for this brand${isAdmin?' — use "Add Model" above to create the first one.':'.'}</p>`;
+    g.innerHTML=`<p class="empty-note">No models added yet for this brand${isAdmin?' — use the "Add New Model" tile below to create the first one.':'.'}</p>`;
+    appendAddModelTile(g,dynB);
     return;
   }
   const ico=CAT[curCat].icon;
@@ -3312,6 +5250,16 @@ function buildModGrid(grp,brand){
       })(sid,cleanB,cleanM,ico,card);
     }
   });
+  appendAddModelTile(g,dynB);
+}
+// Shared by both the empty and populated branches of buildModGrid().
+function appendAddModelTile(g,dynB){
+  if(!isAdmin || !dynB) return;
+  const addCard=document.createElement('div');
+  addCard.className='card card-add add-tile-vertical';
+  addCard.innerHTML=`<div class="add-tile-icon"><i class="fas fa-plus"></i></div><span>Add New Model</span>`;
+  addCard.onclick=()=>openVehicleModal(null);
+  g.appendChild(addCard);
 }
 function sortModels(){
   const v=document.getElementById('mSort').value;
@@ -3498,6 +5446,14 @@ async function buildEnginesGrid(){
       if(img){const el=document.getElementById(id);if(el)el.innerHTML=`<img src="${esc(img)}" alt="${esc(eng.name)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'cph\'><i class=\'fas fa-gears\'></i></div>'">`;}
     })(sid,e);
   }
+
+  if(isAdmin){
+    const addCard=document.createElement('div');
+    addCard.className='card card-add add-tile-vertical';
+    addCard.innerHTML=`<div class="add-tile-icon"><i class="fas fa-plus"></i></div><span>Add New Engine</span>`;
+    addCard.onclick=()=>openEngineModal(null);
+    g.appendChild(addCard);
+  }
 }
 async function openEngineReport(eng,push=true){
   showV('vEngReport');
@@ -3571,6 +5527,7 @@ function render(state){
     else if(state.view==='engines' || state.view==='engReport') b.classList.toggle('active', b.dataset.cat==='engines');
     else if(state.view==='market') b.classList.toggle('active', b.dataset.cat==='market');
     else if(state.view==='saved') b.classList.toggle('active', b.dataset.cat==='saved');
+    else if(state.view==='chathub' || state.view==='chatthread') b.classList.toggle('active', b.dataset.cat==='chat');
     else b.classList.remove('active');
   });
 
@@ -3641,13 +5598,35 @@ function render(state){
         buildSavedView();showV('vSaved');
       }
       break;
+    case 'chathub':
+      if(!isLoggedIn()){
+        openAuthRequiredModal('Sign in to access Groups & Messaging.');
+        history.replaceState({view:'groups',cat:curCat},'');
+        currentState={view:'groups',cat:curCat};
+        renderCatChrome(curCat);showV('vGroups');buildGroups();buildFeatured();buildPopular();
+      } else {
+        showV('vChatHub');buildChatHubView();
+      }
+      break;
+    case 'chatthread':
+      if(!isLoggedIn() || !state.id || !state.kind){
+        openAuthRequiredModal('Sign in to access Groups & Messaging.');
+        history.replaceState({view:'groups',cat:curCat},'');
+        currentState={view:'groups',cat:curCat};
+        renderCatChrome(curCat);showV('vGroups');buildGroups();buildFeatured();buildPopular();
+      } else {
+        showV('vChatHub');
+        switchChatHubTab(state.kind==='dm'?'direct':'groups',true);
+        refreshChatSidebarData();
+        openChatThread(state.kind,state.id,false);
+      }
+      break;
     default:
       renderCatChrome('cars');
       showV('vGroups');
       buildGroups();buildFeatured();buildPopular();
   }
 
-  updateAdminToolbar(state);
   applyProUi();
 }
 
