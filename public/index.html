@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head>git 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CarEncyclopedia 2026 – Is it a bargain or a bottomless money pit?</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.51/bundle/libphonenumber-js.min.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
 <style>
 :root{
   --navy:#0c1a3a;--navy2:#0f2554;
@@ -80,6 +82,23 @@ html[data-theme="dark"]{
 
 *{transition:background .3s ease,color .3s ease,box-shadow .3s ease,border-color .3s ease;}
 *{box-sizing:border-box;margin:0;padding:0;}
+/* Marketplace Standard/VIP toggle must be 100% instant in both
+   directions — zero transition, zero animation, no exceptions. This
+   overrides the universal *{transition:...} rule above specifically for
+   html/body/header and everything inside #vMarket. Applied
+   UNCONDITIONALLY (not scoped to .vip-mode-active) because a
+   class-scoped override stops applying the instant the class is
+   removed — meaning "leaving VIP mode" would fall straight back to the
+   universal .3s rule for that specific frame, which is exactly the kind
+   of one-directional gap that kept causing this. One disclosed
+   consequence: this also removes the (separate, unrelated, never
+   reported as broken) light/dark theme toggle's own smooth fade on
+   html/body/header, since that used the same universal rule. */
+html,body,header,
+#vMarket,#vMarket *,#vMarket *::before,#vMarket *::after{
+  transition:none !important;
+  animation:none !important;
+}
 html{scroll-behavior:smooth;background:var(--bg-main);min-height:100%;}
 body{font-family:'Inter',sans-serif;background:var(--bg-main);color:var(--text-main);overflow-x:hidden;min-height:100vh;margin:0;display:flex;flex-direction:column;}
 header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:999;box-shadow:0 2px 20px rgba(0,0,0,.35);height:60px;border-bottom:2px solid var(--sky);gap:8px;}
@@ -119,6 +138,12 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .srow{display:flex;gap:8px;}
 .sinp{flex:1;padding:11px 14px;border:1.5px solid var(--gray3);border-radius:8px;font-size:13px;font-weight:500;outline:none;font-family:'Inter',sans-serif;transition:var(--t);min-width:0;background:var(--surface);color:var(--text-main);}
 .sinp:focus{border-color:var(--sky);box-shadow:var(--input-focus-glow);}
+.field-invalid{border-color:var(--err) !important;box-shadow:0 0 0 3px rgba(239,68,68,.12) !important;}
+/* Forced centering utilities for the Profile page — !important on purpose,
+   so nothing else in the cascade (prose defaults, inherited text-align,
+   etc.) can override it. */
+.force-center-wrap{display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;text-align:center !important;width:100% !important;margin:0 auto !important;}
+.force-center-block{display:block !important;margin-left:auto !important;margin-right:auto !important;text-align:center !important;}
 .sbtn{background:var(--navy);color:#fff;border:none;padding:0 18px;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer;white-space:nowrap;transition:var(--t);box-shadow:var(--btn-glow);}
 .sbtn:hover{box-shadow:var(--btn-glow-hover);}
 .sbtn:hover{background:var(--sky-d);}
@@ -136,9 +161,384 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .finp:focus{border-color:var(--sky);box-shadow:var(--input-focus-glow);}
 .fsel{padding:9px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;font-weight:600;outline:none;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
-.card{background:var(--surface);border-radius:11px;border:1px solid var(--card-border);overflow:hidden;cursor:pointer;transition:var(--t);position:relative;}
+.card{background:var(--surface);border-radius:11px;border:1px solid var(--card-border);overflow:hidden;cursor:pointer;position:relative;}
 .card-add{min-height:172px;}
-.card:hover{transform:translateY(-3px);border-color:var(--sky);box-shadow:var(--card-glow);}
+
+/* ═══ MARKETPLACE ═══ */
+.mkt-card{background:var(--surface);border-radius:15px;border:1px solid var(--card-border);overflow:hidden;cursor:pointer;position:relative;box-shadow:0 2px 10px rgba(15,23,42,.06);}
+.mkt-card:hover{transform:translateY(-4px);box-shadow:var(--card-glow),0 10px 25px rgba(0,0,0,.3);}
+.mkt-card.mkt-sold{cursor:default;}
+.mkt-sold-overlay{position:absolute;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(1.5px);display:flex;align-items:center;justify-content:center;z-index:3;border-radius:15px;}
+.mkt-sold-stamp{border:3px solid #fff;color:#fff;font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:800;letter-spacing:4px;padding:6px 22px;border-radius:8px;transform:rotate(-8deg);text-transform:uppercase;}
+.mkt-thumb{height:160px;background:var(--off);position:relative;overflow:hidden;}
+.mkt-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.mkt-card:hover .mkt-thumb img{transform:scale(1.06);}
+.mkt-thumb .cph{height:100%;}
+.mkt-status-badge{position:absolute;top:10px;left:10px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:4px 10px;border-radius:20px;color:#fff;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.25);}
+.mkt-status-badge.pending{background:var(--gold);color:#1e293b;}
+.mkt-status-badge.approved{background:var(--ok);}
+.mkt-status-badge.sold{background:#334155;}
+.mkt-status-badge.expired{background:var(--gray);}
+.mkt-status-badge.rejected{background:var(--err);}
+.mkt-accident-badge{position:absolute;top:10px;right:10px;font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;padding:4px 9px;border-radius:20px;background:rgba(16,185,129,.92);color:#fff;z-index:2;display:flex;align-items:center;gap:4px;}
+
+.mkt-save-star{position:absolute;bottom:10px;left:10px;z-index:3;width:30px;height:30px;border-radius:50%;border:none;background:rgba(15,23,42,.55);color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--t);}
+.mkt-save-star:hover{background:rgba(15,23,42,.8);transform:scale(1.08);}
+.mkt-save-star.saved{color:var(--gold);}
+.mkt-compare-checkbox-wrap{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--text-secondary);margin-top:8px;cursor:pointer;}
+.mkt-compare-checkbox-wrap input{width:15px;height:15px;accent-color:var(--sky);cursor:pointer;}
+.mkt-compare-bar{align-items:center;justify-content:space-between;gap:12px;background:var(--off);border-radius:10px;padding:10px 14px;margin-bottom:14px;}
+.mkt-compare-locked-btn{background:var(--off) !important;color:var(--text-secondary) !important;box-shadow:none !important;width:100%;justify-content:center;}
+.mkt-compare-header-row{display:grid;grid-template-columns:120px 1fr 1fr;gap:10px;margin-bottom:10px;}
+.mkt-compare-vehicle-head{text-align:center;font-size:12px;}
+.mkt-compare-vehicle-head img{width:100%;height:90px;object-fit:cover;border-radius:8px;margin-bottom:6px;}
+.mkt-compare-table{width:100%;border-collapse:collapse;font-size:12px;}
+.mkt-compare-table th{text-align:left;padding:9px 8px;font-weight:700;color:var(--gray);border-top:1px solid var(--gray3);width:120px;}
+.mkt-compare-table td{text-align:center;padding:9px 8px;font-weight:600;color:var(--text-main);border-top:1px solid var(--gray3);}
+.mkt-body{padding:13px 15px;}
+.mkt-body h3{font-family:'Rajdhani',sans-serif;font-size:15.5px;font-weight:700;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mkt-price{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--sky),var(--sky-deep));-webkit-background-clip:text;background-clip:text;color:transparent;margin-top:3px;}
+.mkt-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;}
+.mkt-pill{background:var(--off);color:var(--text-secondary);font-size:9.5px;font-weight:700;padding:4px 9px;border-radius:20px;display:flex;align-items:center;gap:4px;}
+.mkt-pill i{color:var(--sky-d);font-size:9px;}
+.mkt-card-owner-actions{display:flex;gap:6px;padding:0 15px 13px;}
+.mkt-card-owner-actions button{flex:1;font-size:10px;padding:7px 0;border-radius:8px;border:none;font-weight:700;cursor:pointer;transition:var(--t);}
+.mkt-mark-sold-btn{background:var(--ok);color:#fff;}
+.mkt-mark-sold-btn:hover{background:#0d9668;}
+
+.mkt-filter-bar{background:var(--surface);border:1px solid var(--card-border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--panel-shadow);}
+.mkt-filter-field{display:flex;flex-direction:column;gap:5px;}
+.mkt-filter-field label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);}
+.mkt-filter-field input,.mkt-filter-field select{padding:9px 11px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;background:var(--surface);color:var(--text-main);outline:none;width:100%;}
+.mkt-filter-field input:focus,.mkt-filter-field select:focus{border-color:var(--sky);box-shadow:var(--input-focus-glow);}
+.mkt-filter-range-row{display:flex;align-items:center;gap:6px;}
+.mkt-filter-range-row input{width:0;flex:1;}
+.mkt-filter-range-row span{color:var(--gray);font-size:11px;}
+.mkt-sort-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+
+.mkt-location-pin{font-size:11.5px;color:var(--text-secondary);font-weight:600;}
+
+.mkt-gallery-main{border-radius:14px;overflow:hidden;height:340px;background:var(--off);margin-bottom:10px;}
+.mkt-gallery-main img{width:100%;height:100%;object-fit:cover;cursor:zoom-in;}
+.mkt-gallery-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.mkt-gallery-thumbs img{width:64px;height:64px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:var(--t);}
+.mkt-gallery-thumbs img.active-thumb{border-color:var(--sky);}
+.mkt-spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+.mkt-spec-item{background:var(--off);border-radius:9px;padding:9px 12px;}
+.mkt-spec-item label{display:block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:3px;}
+.mkt-spec-item span{font-size:12.5px;font-weight:700;color:var(--text-main);}
+
+.mkt-form-sec{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--sky-d);margin:20px 0 10px;padding-bottom:7px;border-bottom:2px solid var(--gray3);display:flex;align-items:center;gap:8px;}
+.mkt-form-sec:first-child{margin-top:0;}
+.mkt-form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;}
+.mkt-checkbox-row{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:12.5px;color:var(--text-secondary);}
+.mkt-checkbox-row input{width:16px;height:16px;accent-color:var(--sky);}
+.mkt-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-top:10px;}
+.mkt-photo-thumb{position:relative;border-radius:9px;overflow:hidden;height:84px;background:var(--off);cursor:grab;border:2px solid transparent;transition:var(--t);}
+.mkt-photo-thumb.dragging{opacity:.4;}
+.mkt-photo-thumb.drag-over{border-color:var(--sky);}
+.mkt-photo-thumb img{width:100%;height:100%;object-fit:cover;pointer-events:none;}
+.mkt-photo-order-badge{position:absolute;bottom:3px;left:3px;background:rgba(0,0,0,.65);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:8px;}
+.mkt-photo-remove{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.6);color:#fff;border:none;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:12px;line-height:1;}
+.mkt-photo-add{border:2px dashed var(--gray3);border-radius:9px;height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--sky-d);cursor:pointer;font-size:10px;font-weight:700;gap:4px;}
+.mkt-photo-add i{font-size:18px;}
+.mkt-vin-msg{font-size:10px;margin-top:3px;min-height:13px;}
+.mkt-vip-eligible{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(56,189,248,.1));border:1.5px solid var(--gold);border-radius:10px;padding:12px 14px;margin-top:12px;}
+.mkt-vip-eligible .mkt-vip-icon{font-size:20px;}
+.mkt-vip-eligible strong{color:#92400e;}
+html[data-theme="dark"] .mkt-vip-eligible strong{color:var(--gold);}
+.mkt-vip-blocked{display:flex;align-items:center;gap:10px;background:rgba(239,68,68,.08);border:1.5px solid var(--err);border-radius:10px;padding:12px 14px;margin-top:12px;}
+.mkt-vip-gold-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#f5c542,#8a6d1f);color:#1a1400;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:4px 11px;border-radius:20px;box-shadow:0 0 14px rgba(245,197,66,.6);}
+.vip-nav-btn{position:relative;border:1px solid rgba(212,175,55,.45) !important;border-radius:6px;margin:6px 3px;background:linear-gradient(135deg,rgba(212,175,55,.06),rgba(0,0,0,.12)) !important;}
+.vip-nav-btn i{background:linear-gradient(135deg,#fff6d9,#ffd700,#b8860b,#fff6d9);-webkit-background-clip:text;background-clip:text;color:transparent !important;}
+.vip-nav-btn .vip-nav-label{background:linear-gradient(135deg,#fff6d9,#e8c766,#ffd700);-webkit-background-clip:text;background-clip:text;color:transparent !important;}
+.vip-nav-btn:hover,.vip-nav-btn.active{
+  box-shadow:0 0 0 1px rgba(212,175,55,.8),0 0 16px rgba(212,175,55,.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VIP MARKETPLACE — full-page Gold & Black takeover.
+
+   Scoped-to-#vMarket overrides couldn't reach the persistent site
+   header (a SIBLING of #vMarket, not a descendant) or anything using
+   hardcoded colors instead of the theme's CSS variables — which is
+   exactly why "Browse"/"My Listings"/the sign-in button/the theme
+   toggle stayed white-and-blue before. Fixed properly this time by
+   overriding the same semantic CSS variables the whole app (including
+   the header) already builds on — the identical mechanism the
+   light/dark theme toggle uses — plus a short list of targeted fixes
+   for the handful of genuinely hardcoded exceptions.
+
+   No masking overlay here — a single continuous CSS transition directly
+   on background-color/color/border-color/opacity, applied via the
+   vip-mode-active class toggle below. This means the fade genuinely
+   passes through intermediate colors while switching, but that's a
+   deliberate trade-off: it reads as one fluid motion rather than the
+   overlay's abrupt "snap to solid black, then fade" sequence.
+   ═══════════════════════════════════════════════════════════════ */
+
+body.vip-mode-active{
+  --page-bg:#08080a;
+  --surface:#111115;
+  --surface-2:#08080a;
+  --text-main:#ffd700;
+  --text-secondary:#d4af37;
+  --sky:#d4af37;--sky-d:#f39c12;--sky-deep:#b38728;
+  --navy:#000000;--navy2:#08080a;
+  --gray:#9c8a55;--gray2:#7a6c42;--gray3:#d4af37;
+  --off:#111115;
+  --card-border:rgba(212,175,55,.4);
+  --glass-border:rgba(212,175,55,.3);
+  --glass-bg:rgba(17,17,21,.7);
+  --glass-bg-strong:rgba(17,17,21,.9);
+  --btn-glow:0 0 14px rgba(212,175,55,.5);
+  --btn-glow-hover:0 0 22px rgba(212,175,55,.75);
+  --input-focus-glow:0 0 0 3px rgba(212,175,55,.25);
+  --panel-shadow:0 4px 20px rgba(0,0,0,.6);
+  --card-glow:0 0 0 1px rgba(212,175,55,.35),0 0 24px rgba(212,175,55,.18);
+  --gold:#ffd700;
+  --modal-overlay:rgba(0,0,0,.8);
+}
+/* Forced pitch-black on html AND body — these needed to be separate
+   rules, not just one on body, because CSS custom properties only
+   cascade DOWN to descendants. body.vip-mode-active{--page-bg:...} can
+   never reach <html>, since html is body's ANCESTOR, not its child —
+   that's exactly why the edges stayed light before. Explicit
+   width/min-height/margin/padding added defensively per the requested
+   fix, even though the site's global *{margin:0;padding:0} reset
+   already covers most of this.
+
+   Note on selectors: #root, #app, .container, .wrapper, .main-content
+   don't exist anywhere in this codebase (checked directly) — they're
+   included below anyway as harmless no-ops in case this file is ever
+   embedded inside something that does have them. The one wrapper that
+   DOES actually exist here is <main class="wrap"> — made transparent so
+   it can never sit on top of the black body with its own paint. */
+html.vip-mode-active,
+body.vip-mode-active,
+body.vip-mode-active #root,
+body.vip-mode-active #app,
+body.vip-mode-active .container,
+body.vip-mode-active .wrapper,
+body.vip-mode-active .main-content{
+  background-color:#08080a !important;
+  background:#08080a !important;
+  box-shadow:none !important;
+  width:100% !important;
+  min-height:100vh !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+body.vip-mode-active header{background-color:#08080a !important;border-bottom:1px solid #d4af37;box-shadow:0 2px 20px rgba(212,175,55,.15);}
+body.vip-mode-active #vMarket{background-color:#08080a !important;}
+body.vip-mode-active main,body.vip-mode-active .wrap{background:transparent !important;box-shadow:none !important;}
+
+/* One background, swapped instantly, no fade — every previous attempt to
+   animate this transition (overlay, shimmer, color cross-fade, opacity
+   fade) ended up visible mid-transition looking broken (a wash of gray
+   between black and white, tiling artifacts, desynced colors). Removing
+   the animation removes the category of bug entirely: the mode class
+   toggles, background-color changes with it, done in one frame. */
+
+/* Hardcoded (non-variable) exceptions the cascade above can't reach. */
+body.vip-mode-active #gBtn button{background:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728,#fbf5b7);color:#1a1400 !important;}
+body.vip-mode-active .theme-toggle{background:rgba(212,175,55,.18);}
+body.vip-mode-active .theme-toggle-knob{background:#141418;}
+body.vip-mode-active .chat-tabswitch{background:rgba(212,175,55,.08);}
+body.vip-mode-active .chat-tabbtn.active{background-color:#111115 !important;color:#ffd700 !important;box-shadow:0 2px 10px rgba(212,175,55,.25);}
+body.vip-mode-active .add-tile-icon{background:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728,#fbf5b7);color:#1a1400;}
+body.vip-mode-active select,body.vip-mode-active input{border-color:#d4af37 !important;color:#ffd700 !important;background-color:#111115 !important;}
+body.vip-mode-active select:focus,body.vip-mode-active input:focus{border-color:#ffd700 !important;box-shadow:0 0 0 3px rgba(212,175,55,.25) !important;}
+/* Direct, explicit fix for the filter sidebar rendering as a light gray
+   box instead of blending into the black page — same approach as the
+   select/input rule above (!important, not relying on --surface
+   inheritance), for certainty regardless of the exact cause. */
+body.vip-mode-active .mkt-filter-bar{background-color:#111115 !important;border-color:rgba(212,175,55,.35) !important;box-shadow:none !important;padding:13px !important;gap:9px !important;}
+body.vip-mode-active .mkt-filter-field label{letter-spacing:.6px !important;}
+body.vip-mode-active #mktResultsCount{color:#c9b57a !important;}
+
+/* Marketplace-specific bespoke touches beyond what the variable cascade
+   alone gives you — metallic card gradients and gold-gradient price text. */
+#vMarket.vip-mode{background:#08080a;}
+
+/* Wider, more spacious grid specifically for VIP — fewer, larger cards
+   read as more exclusive than a dense standard grid. */
+#vMarket.vip-mode #marketGrid{grid-template-columns:repeat(3,1fr);gap:22px;}
+@media(max-width:900px){#vMarket.vip-mode #marketGrid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));}}
+
+/* Card entry animation — VIP cards only, transform+opacity only (cheap,
+   GPU-composited, never touches background/html/body/wrappers). Staggered
+   via the --card-index custom property set per-card in renderMarketGrid(),
+   not hardcoded nth-child rules, so it scales to any number of results. */
+@keyframes vipCardReveal{
+  from{opacity:0;transform:translateY(15px);}
+  to{opacity:1;transform:translateY(0);}
+}
+/* !important here is deliberate: the earlier fix locks EVERYTHING inside
+   #vMarket to transition:none/animation:none (that's what finally made
+   the background/theme switch instant and bug-free). This is a scoped,
+   intentional exception for cards specifically — transform/opacity/
+   box-shadow only, never background-color/border-color — so the entry
+   animation actually plays instead of being silently swallowed by that
+   blanket rule. Applies in BOTH Standard and VIP mode (no .vip-mode
+   requirement on this specific rule) — only the gold/dark VIP-exclusive
+   card styling below stays mode-gated. */
+#vMarket .mkt-card{
+  transition:transform .25s cubic-bezier(.4,0,.2,1),box-shadow .25s ease !important;
+  animation:vipCardReveal .6s ease-out backwards !important;
+  animation-delay:calc(var(--card-index,0) * 0.08s) !important;
+}
+/* Explicit, mode-specific duplicate of the rule above — the general
+   #vMarket .mkt-card rule already covers Standard mode (no .vip-mode
+   requirement on it), but adding this redundant, more specific version
+   removes any possible doubt: even if some other rule somewhere manages
+   to win over the general one specifically while NOT in VIP mode, this
+   one — higher specificity, same !important — takes precedence back. */
+#vMarket:not(.vip-mode) .mkt-card{
+  animation:vipCardReveal .6s ease-out backwards !important;
+  animation-delay:calc(var(--card-index,0) * 0.08s) !important;
+}
+
+#vMarket.vip-mode .mkt-card{background:#121216;border:1px solid rgba(212,175,55,.3);position:relative;}
+/* Glowing gold accent line across the top of every VIP card. */
+#vMarket.vip-mode .mkt-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;z-index:2;
+  background:linear-gradient(90deg,#8a6d1f,#ffd700,#8a6d1f);
+  box-shadow:0 0 8px rgba(255,215,0,.5);
+}
+#vMarket.vip-mode .mkt-card:hover{transform:translateY(-6px) !important;box-shadow:0 12px 30px rgba(212,175,55,.15) !important;}
+#vMarket.vip-mode .mkt-price{background:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728,#fbf5b7);-webkit-background-clip:text;background-clip:text;color:transparent;}
+#vMarket.vip-mode .mkt-mark-sold-btn{background:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728,#fbf5b7);color:#1a1400;}
+
+/* Featured spotlight for the top VIP listing — makes the #1 result
+   genuinely stand out (wider card, ribbon badge) instead of just being
+   another tile in the grid. Only the very first card, only in VIP mode. */
+#vMarket.vip-mode #marketGrid .mkt-card:first-child{
+  grid-column:span 2;
+  border-color:rgba(255,215,0,.55);
+  box-shadow:0 0 24px rgba(212,175,55,.2);
+}
+#vMarket.vip-mode #marketGrid .mkt-card:first-child .mkt-thumb{height:260px;}
+#vMarket.vip-mode #marketGrid .mkt-card:first-child .mkt-thumb::after{
+  content:'★ FEATURED VIP';position:absolute;bottom:12px;right:12px;z-index:3;
+  background:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728,#fbf5b7);
+  color:#1a1400;font-size:9.5px;font-weight:800;letter-spacing:.5px;
+  padding:5px 12px;border-radius:20px;box-shadow:0 0 14px rgba(255,215,0,.6);
+}
+@media(max-width:900px){#vMarket.vip-mode #marketGrid .mkt-card:first-child{grid-column:span 1;}#vMarket.vip-mode #marketGrid .mkt-card:first-child .mkt-thumb{height:160px;}}
+
+/* Silver/bronze "podium" ranking for the 2nd and 3rd VIP listings —
+   extends the same pattern as the #1 featured spotlight, just smaller
+   accents rather than a full spotlight treatment. */
+#vMarket.vip-mode #marketGrid .mkt-card:nth-child(2){border-color:rgba(203,213,225,.6);}
+#vMarket.vip-mode #marketGrid .mkt-card:nth-child(2) .mkt-thumb::after{
+  content:'2';position:absolute;top:12px;left:12px;z-index:3;
+  width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#e2e8f0,#94a3b8);color:#1e293b;font-size:11px;font-weight:800;
+  box-shadow:0 0 10px rgba(203,213,225,.5);
+}
+#vMarket.vip-mode #marketGrid .mkt-card:nth-child(3){border-color:rgba(205,127,50,.6);}
+#vMarket.vip-mode #marketGrid .mkt-card:nth-child(3) .mkt-thumb::after{
+  content:'3';position:absolute;top:12px;left:12px;z-index:3;
+  width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#cd7f32,#8b5a2b);color:#fff;font-size:11px;font-weight:800;
+  box-shadow:0 0 10px rgba(205,127,50,.5);
+}
+
+/* VIP empty state — gold-styled instead of the generic gray note. */
+.mkt-vip-empty-state{grid-column:1/-1;text-align:center;padding:50px 20px;}
+.mkt-vip-empty-state i{font-size:34px;background:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728,#fbf5b7);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:14px;display:block;}
+.mkt-vip-empty-state h3{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:800;color:#f0dfa0;margin-bottom:6px;}
+.mkt-vip-empty-state p{font-size:12px;color:#9c8a55;max-width:340px;margin:0 auto;line-height:1.6;}
+
+/* VIP concierge banner — static, no animation by design (this feature
+   has a real history of bugs from decorative motion; this one is just
+   clean gold-bordered styling). */
+.mkt-vip-concierge-banner{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(212,175,55,.08),rgba(0,0,0,.2));border:1px solid rgba(212,175,55,.35);border-radius:12px;padding:14px 18px;margin-bottom:18px;}
+.mkt-vip-concierge-banner i{font-size:22px;background:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728,#fbf5b7);-webkit-background-clip:text;background-clip:text;color:transparent;flex-shrink:0;}
+.mkt-vip-concierge-banner p{font-size:12px;color:#c9b57a;margin:0;flex:1;}
+.mkt-vip-concierge-banner strong{color:#f0dfa0;}
+
+/* Metallic shimmer on the VIP GOLD badge — deliberately built with
+   transform (not background-position), and overflow:hidden clips it to
+   the badge's own small bounds. background-position sweeps caused real
+   tiling artifacts earlier in this project; this technique can't do that
+   since it's a composited transform on a strictly clipped pseudo-element. */
+@keyframes badgeShimmerSweep{
+  0%{transform:translateX(-120%) skewX(-20deg);}
+  100%{transform:translateX(220%) skewX(-20deg);}
+}
+.mkt-vip-gold-badge{position:relative;overflow:hidden;}
+.mkt-vip-gold-badge::after{
+  content:'';position:absolute;top:0;left:0;width:30%;height:100%;
+  background:linear-gradient(115deg,transparent,rgba(255,255,255,.55),transparent);
+  animation:badgeShimmerSweep 3.2s ease-in-out infinite !important;
+}
+
+.mkt-sell-vip-btn{background:#111115 !important;color:#ffd700 !important;font-weight:700;border:1px solid rgba(212,175,55,.5) !important;box-shadow:0 0 15px rgba(212,175,55,.4);}
+.mkt-sell-vip-btn i{color:#f1c40f !important;}
+.mkt-sell-vip-btn:hover{box-shadow:0 0 24px rgba(212,175,55,.65);border-color:#ffd700 !important;}
+
+/* Gold paywall modal */
+.mkt-vip-paywall-overlay{backdrop-filter:blur(6px);background:rgba(5,5,3,.75);}
+.mkt-vip-paywall-panel{
+  background:linear-gradient(145deg,#111115 0%,#08080a 100%) !important;
+  border:1px solid rgba(212,175,55,.35) !important;
+  box-shadow:0 20px 50px rgba(0,0,0,.8),0 0 40px rgba(212,175,55,.18) !important;
+  position:relative;overflow:hidden;
+}
+/* Subtle diagonal texture — a static, low-opacity repeating pattern, not
+   an animated sweep, so it can't tile-artifact the way a moving
+   background-position gradient did earlier in this project. */
+.mkt-vip-paywall-panel::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(135deg,rgba(212,175,55,.025) 0px,rgba(212,175,55,.025) 1px,transparent 1px,transparent 14px);
+}
+/* Ornamental corner brackets — the classic "certificate of exclusivity"
+   visual motif, fully static. */
+.mkt-vip-paywall-panel::after{
+  content:'';position:absolute;inset:14px;pointer-events:none;z-index:0;
+  border:1px solid rgba(212,175,55,.15);border-radius:8px;
+}
+.mkt-vip-paywall-panel .vmodal-body{position:relative;z-index:1;}
+
+.mkt-vip-paywall-panel h3{background:linear-gradient(135deg,#fff6d9,#f1d382,#b8860b,#fff6d9);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.mkt-vip-paywall-panel p{color:#a39472;}
+.mkt-vip-paywall-icon-wrap{width:72px;height:72px;margin:0 auto 14px;border-radius:50%;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(212,175,55,.22) 0%,transparent 70%);border:1px solid rgba(212,175,55,.25);}
+.mkt-vip-paywall-icon{font-size:32px;background:linear-gradient(135deg,#bf953f,#fcf6ba,#b38728,#fbf5b7);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 12px rgba(212,175,55,.6));position:relative;z-index:1;}
+/* Same transform+overflow:hidden shimmer technique already proven safe
+   on the VIP GOLD badge — reused here rather than inventing a new
+   effect, since this exact pattern is known not to tile or bleed. */
+.mkt-vip-paywall-icon-wrap::after{
+  content:'';position:absolute;top:0;left:0;width:40%;height:100%;
+  background:linear-gradient(115deg,transparent,rgba(255,255,255,.4),transparent);
+  animation:badgeShimmerSweep 3.5s ease-in-out infinite !important;
+}
+.mkt-vip-paywall-eyebrow{font-size:9.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#8a7a4a;margin-bottom:6px;}
+.mkt-vip-paywall-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.35),transparent);margin:16px 0;}
+.mkt-vip-paywall-features{list-style:none;text-align:left;margin:14px 0;padding:0;}
+.mkt-vip-paywall-features li{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:#c9b57a;padding:5px 0;}
+.mkt-vip-paywall-features li i{color:#f1d382;font-size:11px;margin-top:2px;flex-shrink:0;}
+.mkt-vip-paywall-btn-primary{background:#1a1a1f !important;color:#f1d382 !important;border:1px solid rgba(212,175,55,.4) !important;box-shadow:0 0 12px rgba(212,175,55,.15) !important;}
+.mkt-vip-paywall-btn-primary:hover{box-shadow:0 0 18px rgba(212,175,55,.35) !important;}
+.mkt-vip-paywall-btn-secondary{background:transparent !important;color:#a39472 !important;border:1px solid rgba(163,148,114,.3) !important;box-shadow:none !important;}
+.mkt-vip-paywall-btn-secondary:hover{background:rgba(212,175,55,.08) !important;}
+
+/* VIP-themed submission form — already inherits body.vip-mode-active's
+   variables for the surrounding page, this adds the modal's own dark
+   panel background since .vmodal normally uses a light-mode-agnostic
+   var(--surface) that would otherwise stay whatever the base theme is
+   behind the modal overlay. */
+#marketFormModal.vip-form-theme .vmodal{background:linear-gradient(160deg,#141210,#050503);}
+#marketFormModal.vip-form-theme .vbtn-save{background:#111115 !important;color:#ffd700 !important;font-weight:700;border:1px solid rgba(212,175,55,.5) !important;box-shadow:0 0 15px rgba(212,175,55,.4);}
+.mkt-fullscreen-overlay{padding:0;align-items:stretch;justify-content:stretch;}
+.mkt-fullscreen-panel{max-width:100vw;width:100vw;height:100vh;max-height:100vh;border-radius:0;margin:0;display:flex;flex-direction:column;}
+.mkt-fullscreen-panel .vmodal-body{flex:1;max-width:760px;width:100%;margin:0 auto;}
+@media(max-width:700px){
+  .mkt-filter-bar{padding:12px;}
+}
+
+.card:hover{transform:translateY(-4px);border-color:var(--sky);box-shadow:var(--card-glow),0 10px 25px rgba(0,0,0,.3);}
 .admin-actions{position:absolute;top:8px;right:8px;display:flex;gap:6px;opacity:0;transition:opacity .15s;z-index:5;}
 .card:hover .admin-actions{opacity:1;}
 .aicon{width:27px;height:27px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3);}
@@ -170,12 +570,14 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .check-item:hover{background:var(--off);}
 .check-item input[type="checkbox"]{width:18px;height:18px;flex-shrink:0;margin-top:1px;accent-color:var(--sky);cursor:pointer;}
 .check-item input[type="checkbox"]:checked ~ span{color:var(--gray);text-decoration:line-through;}
-.pro-plan-card{border:1.5px solid var(--gray3);border-radius:12px;padding:18px;position:relative;background:var(--surface);}
-.pro-plan-card.featured{border-color:var(--gold);background:var(--surface)beb;}
+.pro-plan-card{border:1.5px solid var(--gray3);border-radius:14px;padding:22px 18px 18px;position:relative;background:var(--surface);transition:var(--t);}
+.pro-plan-card.featured{border-color:var(--gold);background:linear-gradient(160deg,var(--surface),rgba(245,158,11,.07));box-shadow:0 0 26px rgba(245,158,11,.16);}
 .pro-plan-badge{position:absolute;top:-10px;right:14px;background:var(--gold);color:#1e293b;font-size:9px;font-weight:800;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;}
+.pro-discount-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--ok),#0d9668);color:#fff;font-size:10px;font-weight:800;padding:5px 15px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;box-shadow:0 0 18px rgba(16,185,129,.55);white-space:nowrap;z-index:2;}
 .pro-plan-card h4{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--text-main);margin-bottom:6px;}
-.pro-plan-price{font-size:24px;font-weight:800;color:var(--text-main);margin-bottom:12px;}
+.pro-plan-price{font-size:24px;font-weight:800;color:var(--text-main);margin-bottom:4px;}
 .pro-plan-price span{font-size:11px;font-weight:600;color:var(--gray);}
+.pro-plan-subtext{font-size:10.5px;color:var(--sky-d);font-weight:700;margin-bottom:12px;}
 .pro-plan-features{list-style:none;margin-bottom:14px;}
 .pro-plan-features li{font-size:11px;color:#475569;padding:4px 0;display:flex;align-items:center;gap:7px;}
 .pro-plan-features li i{color:var(--ok);font-size:10px;}
@@ -282,7 +684,7 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .chat-lightbox.open{display:flex;}
 .chat-lightbox img{max-width:92vw;max-height:88vh;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5);cursor:default;}
 .chat-lightbox-close{position:absolute;top:18px;right:26px;color:#fff;font-size:34px;cursor:pointer;line-height:1;}
-.sbtn:active{transform:scale(.93);}
+.sbtn:active{transform:scale(.97);}
 .chat-clickable-avatar{cursor:pointer;transition:transform .15s;}
 .chat-clickable-avatar:hover{transform:scale(1.08);}
 .chat-clickable-name{cursor:pointer;}
@@ -303,13 +705,6 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .user-profile-meta{font-size:11px;color:var(--gray);margin-top:3px;}
 .user-profile-actions{display:flex;gap:8px;margin-top:14px;width:100%;}
 .user-profile-actions button{flex:1;justify-content:center;}
-.user-profile-listings{margin-top:18px;}
-.user-profile-listings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;}
-.user-listing-card{border:1px solid var(--gray3);border-radius:10px;overflow:hidden;background:var(--surface);}
-.user-listing-card img{width:100%;height:56px;object-fit:cover;display:block;}
-.user-listing-card .ulc-body{padding:6px;}
-.user-listing-card .ulc-title{font-size:9px;font-weight:700;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.user-listing-card .ulc-price{font-size:9px;color:var(--sky-d);font-weight:800;}
 .wallpaper-swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:6px;}
 .wallpaper-swatch{width:100%;aspect-ratio:1;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:var(--t);}
 .wallpaper-swatch:hover{transform:scale(1.08);}
@@ -358,6 +753,7 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .trow span{color:var(--text-main);font-weight:500;text-align:right;font-size:11px;}
 .wbtn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--navy);color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:11px;margin-top:10px;cursor:pointer;transition:var(--t);border:none;box-shadow:var(--btn-glow);}
 .wbtn:hover{box-shadow:var(--btn-glow-hover);}
+.wbtn:active{transform:scale(.97);}
 .wbtn:hover{background:var(--sky-d);}
 .scorecard{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1px solid var(--sky);border-radius:11px;padding:16px;margin-bottom:14px;}
 .scorecard h4{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--sky-deep);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
@@ -418,6 +814,37 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .prosoon ul li i{color:var(--gold);}
 .btnsoon{background:transparent;border:2px solid var(--aqua);color:var(--aqua);border-radius:8px;padding:9px 22px;font-weight:700;font-size:11px;cursor:default;opacity:.7;font-family:'Inter',sans-serif;}
 .badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:9px;font-weight:800;text-transform:uppercase;}
+.pro-glow-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;background:linear-gradient(135deg,var(--gold),var(--sky));color:#fff;box-shadow:0 0 10px rgba(245,158,11,.5),0 0 10px rgba(56,189,248,.35);}
+
+/* ═══ VIN DECODER TOOL ═══ */
+.vin-matrix{display:flex;flex-wrap:wrap;gap:4px;margin:14px 0 8px;}
+.vin-cell{width:30px;height:38px;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:15px;border-radius:6px;color:#fff;transition:var(--t);}
+.vin-cell:hover{transform:translateY(-3px);}
+.vin-cell.wmi{background:var(--sky);}
+.vin-cell.vds{background:var(--gold);color:#1e293b;}
+.vin-cell.vis{background:var(--ok);}
+.vin-legend{display:flex;gap:18px;flex-wrap:wrap;font-size:11px;margin-bottom:6px;color:var(--text-secondary);}
+.vin-legend-item{display:flex;align-items:center;gap:6px;}
+.vin-legend-dot{width:11px;height:11px;border-radius:3px;display:inline-block;flex-shrink:0;}
+.vin-legend-dot.wmi{background:var(--sky);}
+.vin-legend-dot.vds{background:var(--gold);}
+.vin-legend-dot.vis{background:var(--ok);}
+
+.vin-checklist-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--gray3);}
+.vin-checklist-item:last-child{border-bottom:none;}
+.vin-checklist-icon{width:34px;height:34px;border-radius:9px;background:var(--off);display:flex;align-items:center;justify-content:center;color:var(--sky-d);flex-shrink:0;font-size:14px;}
+.vin-checklist-text h5{font-size:12.5px;font-weight:700;color:var(--text-main);margin-bottom:2px;}
+.vin-checklist-text p{font-size:11px;color:var(--gray);line-height:1.5;}
+
+.vin-locked-card{position:relative;border-radius:14px;overflow:hidden;border:1.5px solid var(--gold);background:linear-gradient(160deg,var(--surface),rgba(245,158,11,.07));}
+.vin-locked-list{padding:16px;}
+.vin-locked-item{display:flex;align-items:center;gap:10px;padding:10px 0;filter:blur(2.5px);opacity:.55;user-select:none;}
+.vin-locked-item i:first-child{color:var(--gray);width:16px;text-align:center;}
+.vin-locked-item .vlbl{font-size:12px;font-weight:700;color:var(--text-main);}
+.vin-locked-item .vph{font-size:10.5px;color:var(--gray);margin-left:auto;}
+.vin-locked-overlay{position:absolute;inset:0;background:rgba(15,23,42,.4);backdrop-filter:blur(1px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;text-align:center;padding:20px;}
+.vin-locked-overlay i{font-size:28px;color:var(--gold);}
+.vin-locked-overlay p{font-size:11.5px;color:#fff;font-weight:600;max-width:260px;line-height:1.5;}
 .badge-free{background:#eff6ff;color:var(--sky-d);}
 .spin{text-align:center;padding:50px;color:var(--sky);}
 .spin i{font-size:28px;animation:rot 1s linear infinite;}
@@ -499,6 +926,9 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
     <button class="nav-btn" onclick="openPage('terms')"><i class="fas fa-file-contract" style="margin-right:4px;"></i>Terms</button>
   </div>
   <div class="hright">
+  <button id="marketAdminNavBtn" onclick="go({view:'marketadmin'})" style="display:none;background:var(--navy2);color:#fff;border:1px solid rgba(255,255,255,.15);padding:8px 14px;border-radius:20px;font-weight:800;font-size:11px;cursor:pointer;align-items:center;gap:6px;font-family:'Inter',sans-serif;white-space:nowrap;">
+    <i class="fas fa-shield-halved"></i> Admin Panel
+  </button>
   <button id="themeToggleBtn" class="theme-toggle" onclick="toggleTheme()" title="Switch theme" aria-label="Toggle light/dark theme">
     <i class="fas fa-sun theme-toggle-icon sun"></i>
     <i class="fas fa-moon theme-toggle-icon moon"></i>
@@ -516,7 +946,7 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
     <img id="uAvt" class="uavt" src="" alt="user" onclick="toggleUM()">
     <div class="umenu" id="uMenu">
       <div id="adminBadge" style="display:none;padding:10px 16px;font-size:10px;font-weight:800;color:var(--gold);border-bottom:1px solid rgba(255,255,255,.06);letter-spacing:.5px;text-transform:uppercase;"><i class="fas fa-shield-halved" style="margin-right:6px;"></i>Admin access</div>
-      <div id="proBadge" style="display:none;padding:10px 16px;font-size:10px;font-weight:800;color:var(--ok);border-bottom:1px solid rgba(255,255,255,.06);letter-spacing:.5px;text-transform:uppercase;"><i class="fas fa-crown" style="margin-right:6px;"></i>PRO unlocked</div>
+      <div id="proBadge" style="display:none;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.06);"><span class="pro-glow-badge"><i class="fas fa-crown"></i>PRO unlocked</span></div>
       <a onclick="openSettings()"><i class="fas fa-user"></i>Profile</a>
       <a class="lo" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i>Sign out</a>
     </div>
@@ -532,6 +962,7 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
   <button class="ctab" data-cat="saved" onclick="tryOpenSaved()"><i class="fas fa-star"></i>Saved</button>
   <button class="ctab" data-cat="chat" onclick="tryOpenChatHub()"><i class="fas fa-comments"></i>Groups &amp; Messaging</button>
   <button class="ctab" data-cat="market" onclick="tryOpenMarket()"><i class="fas fa-shop"></i>Marketplace</button>
+  <button class="ctab vip-nav-btn" data-cat="vipmarket" onclick="tryOpenVipMarket()"><i class="fas fa-crown"></i><span class="vip-nav-label">VIP Marketplace</span></button>
 </nav>
 
 <div id="homeSection">
@@ -556,11 +987,12 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
         <i class="fas fa-circle-info"></i>Technical data from NHTSA.gov (US government). Full VIN history — coming soon in the full version!
       </div>
       <div class="srow">
-        <input class="sinp" type="text" id="vinIn" placeholder="e.g. 1HGBH41JXMN109186" maxlength="17" oninput="san(this)">
+        <input class="sinp" type="text" id="vinIn" placeholder="e.g. 1HGBH41JXMN109186" maxlength="17" oninput="onVinInputLive(this)">
         <button class="sbtn" onclick="decodeVin()"><i class="fas fa-search" style="margin-right:5px;"></i>Check</button>
       </div>
-      <p style="font-size:10px;color:var(--gray);margin-top:7px;">
-        Sample VIN: <strong style="cursor:pointer;color:var(--sky);" onclick="document.getElementById('vinIn').value='1HGBH41JXMN109186'">1HGBH41JXMN109186</strong> (Honda Civic)
+      <p id="vinLiveMsg" style="font-size:10px;color:var(--gray);margin-top:5px;min-height:13px;">0/17 characters</p>
+      <p style="font-size:10px;color:var(--gray);margin-top:2px;">
+        Sample VIN: <strong style="cursor:pointer;color:var(--sky);" onclick="document.getElementById('vinIn').value='1HGBH41JXMN109186';onVinInputLive(document.getElementById('vinIn'))">1HGBH41JXMN109186</strong> (Honda Civic)
       </p>
     </div>
     <div class="scard">
@@ -669,9 +1101,9 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
       <p>Depending on how you use the service, we may process the following data:</p>
       <ul>
         <li><strong>Google OAuth 2.0 login data:</strong> name, email address, profile picture.</li>
-        <li><strong>Phone number:</strong> only if voluntarily provided when using contact features or Marketplace listings.</li>
-        <li><strong>Location data:</strong> an approximate location (e.g. city/region) used only to show regionally relevant listings or content.</li>
-        <li><strong>Payment data (Stripe):</strong> for a PRO subscription or Marketplace transaction, payments are handled by Stripe, Inc. We do not store card numbers — they are processed directly by Stripe under its own privacy policy and the PCI-DSS standard.</li>
+        <li><strong>Phone number:</strong> only if voluntarily provided when using contact features.</li>
+        <li><strong>Location data:</strong> an approximate location (e.g. city/region) used only to show regionally relevant content.</li>
+        <li><strong>Payment data (Stripe):</strong> for a PRO subscription, payments are handled by Stripe, Inc. We do not store card numbers — they are processed directly by Stripe under its own privacy policy and the PCI-DSS standard.</li>
         <li><strong>VIN numbers:</strong> not stored — sent directly and anonymously to the public NHTSA.gov (US government) API.</li>
         <li><strong>Cookies:</strong> see the section below.</li>
       </ul>
@@ -680,7 +1112,7 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
       <p>The service uses essential Supabase authentication session cookies (required for login to work) and, once you consent, third-party cookies including Stripe (for payments). Your choice is remembered locally in your browser.</p>
 
       <h2><i class="fas fa-scale-balanced"></i>Legal basis and purpose of processing</h2>
-      <p>We process data based on: user consent (login, cookies), necessity for performance of a contract (PRO subscription, Marketplace), and the controller's legitimate interest (security, fraud prevention).</p>
+      <p>We process data based on: user consent (login, cookies), necessity for performance of a contract (PRO subscription), and the controller's legitimate interest (security, fraud prevention).</p>
 
       <h2><i class="fas fa-share-nodes"></i>Data sharing</h2>
       <p>Data may be shared with third parties only to the extent necessary to provide the service: Supabase (hosting, authentication), Stripe (payments), Google (OAuth login). Data is not sold or shared for marketing purposes without separate consent.</p>
@@ -719,15 +1151,7 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
       </div>
 
       <h2><i class="fas fa-gavel"></i>General provisions</h2>
-      <p>By using the AutoEncyclopedia Engine service ("the Service"), you accept the following terms. The Service is provided for informational purposes and, for registered users, for use of the Marketplace and PRO subscription features.</p>
-
-      <h2><i class="fas fa-shop"></i>Marketplace / Listings</h2>
-      <ul>
-        <li>Users publishing a listing are responsible for the accuracy and legality of the content and photos they post.</li>
-        <li>It is forbidden to publish misleading listings, or listings for stolen vehicles or vehicles that do not match their description.</li>
-        <li>The administrator reserves the right to remove any listing that violates these terms without prior notice.</li>
-        <li>The Service is not a party to transactions between users and is not responsible for their outcome.</li>
-      </ul>
+      <p>By using the AutoEncyclopedia Engine service ("the Service"), you accept the following terms. The Service is provided for informational purposes and, for registered users, for use of the PRO subscription features.</p>
 
       <h2><i class="fas fa-crown"></i>PRO Subscription</h2>
       <ul>
@@ -754,7 +1178,9 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
 
   <div id="vSettings" class="view">
     <div class="prose">
-      <h1><i class="fas fa-user" style="color:var(--sky);margin-right:8px;"></i>Your Profile</h1>
+      <div class="force-center-wrap">
+        <h1 class="force-center-block" style="display:flex !important;align-items:center;justify-content:center;gap:8px;text-align:center !important;margin:0 auto !important;"><i class="fas fa-user" style="color:var(--sky);"></i>Your Profile</h1>
+      </div>
       <div id="sCont"></div>
     </div>
   </div>
@@ -976,7 +1402,7 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
     </div>
   </div>
 
-  <!-- Shown whenever a guest tries to access a signed-in-only feature (Marketplace, buying PRO) -->
+  <!-- Shown whenever a guest tries to access a signed-in-only feature (Saved vehicles, Groups & Messaging, buying PRO) -->
   <div id="authRequiredModal" class="vmodal-overlay">
     <div class="vmodal" style="max-width:400px;">
       <div class="vmodal-head"><h3><i class="fas fa-lock" style="margin-right:8px;color:var(--sky);"></i>Sign in required</h3><button onclick="closeAuthRequiredModal()">&times;</button></div>
@@ -993,34 +1419,49 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
 
   <!-- PRO pricing — visible to guests too; only the purchase click checks auth -->
   <div id="proPricingModal" class="vmodal-overlay">
-    <div class="vmodal" style="max-width:640px;">
+    <div class="vmodal" style="max-width:680px;">
       <div class="vmodal-head"><h3><i class="fas fa-crown" style="margin-right:8px;color:var(--gold);"></i>Upgrade to PRO</h3><button onclick="closeProPricingModal()">&times;</button></div>
       <div class="vmodal-body">
         <p style="font-size:12px;color:#475569;margin-bottom:16px;line-height:1.6;">Unlock detailed repair costs, full VIN history, and complete technical analysis for every model.</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;">
           <div class="pro-plan-card">
             <h4>Monthly Plan</h4>
-            <div class="pro-plan-price">$9.99<span>/month</span></div>
+            <div class="pro-plan-price">15 EUR<span>/month</span></div>
+            <p class="pro-plan-subtext" style="color:var(--gray);font-weight:600;">≈ 65 PLN / 15 CHF</p>
             <ul class="pro-plan-features">
               <li><i class="fas fa-check"></i>Full repair cost database</li>
               <li><i class="fas fa-check"></i>Complete VIN history reports</li>
               <li><i class="fas fa-check"></i>Cancel auto-renewal anytime</li>
             </ul>
-            <button class="wbtn" style="width:100%;justify-content:center;" onclick="buyPro('monthly')"><i class="fas fa-cart-shopping" style="margin-right:6px;"></i>Buy PRO Monthly</button>
+            <button class="wbtn" style="width:100%;justify-content:center;" onclick="buyPro('monthly')"><i class="fas fa-cart-shopping" style="margin-right:6px;"></i>Select Monthly Plan</button>
           </div>
           <div class="pro-plan-card featured">
-            <div class="pro-plan-badge">Best Value</div>
+            <div class="pro-discount-badge"><i class="fas fa-fire" style="margin-right:4px;"></i>SAVE 10%</div>
             <h4>Yearly Plan</h4>
-            <div class="pro-plan-price">$79.99<span>/year</span></div>
+            <div class="pro-plan-price">162 EUR<span>/year</span></div>
+            <p class="pro-plan-subtext" style="color:var(--gray);font-weight:600;margin-top:-6px;">≈ 650 PLN / 150 CHF</p>
+            <p class="pro-plan-subtext">Just 13.50 EUR / month — 2 months free!</p>
             <ul class="pro-plan-features">
               <li><i class="fas fa-check"></i>Everything in Monthly</li>
               <li><i class="fas fa-check"></i>2 months free vs. paying monthly</li>
               <li><i class="fas fa-check"></i>Priority support</li>
             </ul>
-            <button class="wbtn" style="width:100%;justify-content:center;background:var(--gold);color:#1e293b;" onclick="buyPro('yearly')"><i class="fas fa-cart-shopping" style="margin-right:6px;"></i>Buy PRO Yearly</button>
+            <button class="wbtn" style="width:100%;justify-content:center;background:var(--gold);color:#1e293b;" onclick="buyPro('yearly')"><i class="fas fa-cart-shopping" style="margin-right:6px;"></i>Select Yearly Plan</button>
           </div>
         </div>
-        <p style="font-size:10px;color:var(--gray);margin-top:14px;text-align:center;line-height:1.6;">Prices shown are placeholders — set your real Stripe Payment Links in the code. No partial refunds: cancelling stops auto-renewal but keeps full PRO access until the paid period ends.</p>
+
+        <div class="panel" style="margin-bottom:14px;">
+          <h3 style="font-size:13px;"><i class="fas fa-star"></i>What's included with PRO</h3>
+          <ul class="pro-plan-features" style="margin-bottom:0;">
+            <li><i class="fas fa-check"></i>Full repair cost database &amp; complete VIN history reports</li>
+            <li><i class="fas fa-check"></i>Extended AI Car Advisor limit — 12 queries/day (vs. 5/day on Free)</li>
+            <li><i class="fas fa-check"></i>Glowing PRO badge next to your username everywhere it appears</li>
+            <li><i class="fas fa-lock" style="color:var(--gray);"></i>Full VIP Lounge access, unlimited VIP listings, saved-vehicle comparison, and price-drop alerts — <em>planned, not live yet</em></li>
+          </ul>
+        </div>
+
+        <p style="font-size:10px;color:var(--gray);text-align:center;line-height:1.6;">Set your real Stripe publishable key and Price IDs in the code before going live. No partial refunds: cancelling stops auto-renewal but keeps full PRO access until the paid period ends.</p>
       </div>
     </div>
   </div>
@@ -1031,7 +1472,7 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
       <div class="vmodal-head"><h3><i class="fas fa-star" style="margin-right:8px;color:var(--gold);"></i>Save limit reached</h3><button onclick="closeFavLimitModal()">&times;</button></div>
       <div class="vmodal-body" style="text-align:center;">
         <i class="fas fa-star-half-stroke" style="font-size:40px;color:var(--gold);margin-bottom:14px;display:block;"></i>
-        <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;">Darmowy plan pozwala na zapisanie maksymalnie 4 pojazdów. Przejdź na wersję PRO, aby zapisywać bez limitu!</p>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;">The Free plan allows saving up to 4 vehicles. Upgrade to PRO to save without limit!</p>
       </div>
       <div class="vmodal-foot">
         <button class="vbtn-cancel" onclick="closeFavLimitModal()">Cancel</button>
@@ -1230,25 +1671,258 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
     <img id="chatLightboxImg" src="" alt="Full size image" onclick="event.stopPropagation()">
   </div>
 
-
   <div id="vMarket" class="view">
-    <div style="max-width:960px;margin:0 auto;">
-      <h1 style="font-family:'Rajdhani',sans-serif;font-size:clamp(22px,4vw,34px);font-weight:700;color:var(--text-main);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
-        <i class="fas fa-shop" style="color:var(--sky);"></i>Marketplace
-      </h1>
-      <p style="font-size:13px;color:var(--gray);margin-bottom:24px;line-height:1.6;">Buy and sell cars, motorcycles, and boats directly with other users. Listings are covered by our <a onclick="go({view:'terms'})" style="color:var(--sky);cursor:pointer;">Terms</a>.</p>
-      <div class="prosoon">
-        <h4><i class="fas fa-crown" style="margin-right:6px;"></i>Marketplace – coming soon</h4>
-        <p>We're building a full peer-to-peer listings experience. Soon you'll be able to:</p>
-        <ul>
-          <li><i class="fas fa-check-circle"></i>Post listings with photos, price, and vehicle history</li>
-          <li><i class="fas fa-check-circle"></i>Message sellers directly and negotiate safely</li>
-          <li><i class="fas fa-check-circle"></i>See a full pre-purchase report right on the listing</li>
-        </ul>
-        <button class="btnsoon"><i class="fas fa-clock" style="margin-right:6px;"></i>Unlock soon</button>
+    <div style="max-width:1280px;margin:0 auto;">
+      <div class="stitle"><i class="fas fa-shop"></i>Marketplace</div>
+      <p style="font-size:13px;color:var(--gray);margin-bottom:20px;line-height:1.6;">Buy and sell cars, motorcycles, and boats directly with other users. Listings go live immediately after submitting. Covered by our <a onclick="go({view:'terms'})" style="color:var(--sky);cursor:pointer;">Terms</a>.</p>
+
+      <div id="mktVipConciergeBanner" class="mkt-vip-concierge-banner" style="display:none;">
+        <i class="fas fa-user-tie"></i>
+        <p><strong>VIP Concierge Support.</strong> Need help finding the right vehicle or arranging a private viewing? Message any VIP seller directly, or contact the marketplace team via Groups &amp; Messaging.</p>
+      </div>
+
+      <div class="chat-tabswitch" style="max-width:460px;margin-bottom:12px;">
+        <button class="chat-tabbtn active" id="marketTabBtnBrowse" onclick="switchMarketTab('browse')">Browse</button>
+        <button class="chat-tabbtn" id="marketTabBtnMine" onclick="switchMarketTab('mine')">My Listings</button>
+        <button class="chat-tabbtn" id="marketTabBtnSaved" onclick="tryOpenSavedMarketTab()">Saved Listings</button>
+      </div>
+
+      <div id="mktCompareBar" class="mkt-compare-bar" style="display:none;"></div>
+
+      <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
+        <!-- FILTER SIDEBAR -->
+        <aside style="width:280px;flex-shrink:0;">
+          <div class="mkt-filter-bar">
+            <div class="mkt-filter-field">
+              <label>Category</label>
+              <select id="mktfCategory" onchange="populateMarketBrandFilter();populateMarketModelFilter();applyMarketFilters()">
+                <option value="">All Categories</option>
+                <option value="car">Cars</option>
+                <option value="motorcycle">Motorcycles</option>
+                <option value="boat">Boats</option>
+              </select>
+            </div>
+            <div class="mkt-filter-field">
+              <label>Keyword</label>
+              <input type="text" id="mktfKeyword" placeholder="Search brand, model, location..." oninput="san(this);applyMarketFilters()">
+            </div>
+            <div class="mkt-filter-field">
+              <label>Brand</label>
+              <select id="mktfBrand" onchange="populateMarketModelFilter();applyMarketFilters()"><option value="">Any brand</option></select>
+            </div>
+            <div class="mkt-filter-field">
+              <label>Model</label>
+              <select id="mktfModel" onchange="applyMarketFilters()"><option value="">Any model</option></select>
+            </div>
+            <div class="mkt-filter-field">
+              <label>Price Range</label>
+              <div class="mkt-filter-range-row">
+                <input type="number" id="mktfPriceMin" placeholder="Min" min="0" oninput="applyMarketFilters()">
+                <span>–</span>
+                <input type="number" id="mktfPriceMax" placeholder="Max" min="0" oninput="applyMarketFilters()">
+              </div>
+            </div>
+            <div class="mkt-filter-field">
+              <label>Mileage (km)</label>
+              <div class="mkt-filter-range-row">
+                <input type="number" id="mktfMileageMin" placeholder="Min" min="0" oninput="applyMarketFilters()">
+                <span>–</span>
+                <input type="number" id="mktfMileageMax" placeholder="Max" min="0" oninput="applyMarketFilters()">
+              </div>
+            </div>
+            <div class="mkt-filter-field">
+              <label>First Registration Year</label>
+              <div class="mkt-filter-range-row">
+                <input type="number" id="mktfYearMin" placeholder="Min" min="1900" max="2100" oninput="applyMarketFilters()">
+                <span>–</span>
+                <input type="number" id="mktfYearMax" placeholder="Max" min="1900" max="2100" oninput="applyMarketFilters()">
+              </div>
+            </div>
+            <div class="mkt-filter-field">
+              <label>Currency</label>
+              <select id="mktfCurrency" onchange="applyMarketFilters()">
+                <option value="">All Currencies</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="PLN">PLN (zł)</option>
+                <option value="CHF">CHF</option>
+                <option value="USD">USD ($)</option>
+              </select>
+            </div>
+            <div class="mkt-filter-field">
+              <label>Fuel Type</label>
+              <select id="mktfFuel" onchange="applyMarketFilters()">
+                <option value="">Any fuel</option>
+                <option value="petrol">Petrol</option><option value="diesel">Diesel</option><option value="hybrid">Hybrid</option><option value="electric">Electric</option><option value="lpg">LPG</option>
+              </select>
+            </div>
+            <div class="mkt-filter-field">
+              <label>Transmission</label>
+              <select id="mktfTransmission" onchange="applyMarketFilters()">
+                <option value="">Any</option>
+                <option value="manual">Manual</option><option value="automatic">Automatic</option>
+              </select>
+            </div>
+            <div class="mkt-filter-field">
+              <label>Country</label>
+              <select id="mktfCountry" onchange="populateMarketCityFilter();applyMarketFilters()"><option value="">Any country</option></select>
+            </div>
+            <div class="mkt-filter-field">
+              <label>City</label>
+              <select id="mktfCity" onchange="applyMarketFilters()"><option value="">Any city</option></select>
+            </div>
+            <button class="wbtn" id="mktfClearBtn" style="background:var(--off);color:var(--text-secondary);box-shadow:none;" onclick="clearMarketFilters()"><i class="fas fa-rotate-left" style="margin-right:6px;"></i>Clear Filters</button>
+          </div>
+        </aside>
+
+        <!-- LISTINGS -->
+        <main style="flex:1;min-width:0;">
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;">
+            <button class="wbtn" id="sellVehicleBtnStandard" style="padding:8px 16px;font-size:11px;box-shadow:var(--btn-glow);" onclick="openMarketFormModal(null)"><i class="fas fa-circle-plus" style="margin-right:6px;"></i>Sell Vehicle</button>
+            <button class="wbtn mkt-sell-vip-btn" id="sellVipVehicleBtn" style="display:none;padding:8px 16px;font-size:11px;" onclick="openMarketFormModal(null,true)"><i class="fas fa-crown" style="margin-right:6px;"></i>Sell VIP Vehicle</button>
+          </div>
+          <div class="mkt-sort-bar">
+            <p id="mktResultsCount" style="font-size:11.5px;color:var(--gray);font-weight:600;margin:0;"></p>
+            <select id="mktSortSelect" onchange="applyMarketFilters()" style="padding:8px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;">
+              <option value="newest">Newest Listings</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="mileage_asc">Mileage: Low to High</option>
+            </select>
+          </div>
+          <div class="grid" id="marketGrid"></div>
+        </main>
       </div>
     </div>
   </div>
+
+  <div id="vMarketListing" class="view">
+    <div style="max-width:820px;margin:0 auto;">
+      <button class="wbtn" style="margin-bottom:14px;" onclick="go({view:'market'})"><i class="fas fa-arrow-left" style="margin-right:6px;"></i>Back to Marketplace</button>
+      <div id="marketListingContent"></div>
+    </div>
+  </div>
+
+  <!-- Admin-only Marketplace oversight — reachable ONLY via the "Admin Panel"
+       header button, never shown automatically on the public Marketplace
+       page. Since Gemini approves listings instantly, there's no pending
+       queue to review here anymore; this is a moderation backstop for
+       removing anything that slipped past the AI check. -->
+  <div id="vMarketAdmin" class="view">
+    <div style="max-width:820px;margin:0 auto;">
+      <button class="wbtn" style="margin-bottom:14px;" onclick="go({view:'market'})"><i class="fas fa-arrow-left" style="margin-right:6px;"></i>Back to Marketplace</button>
+      <div class="stitle"><i class="fas fa-shield-halved"></i>Marketplace Admin</div>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:18px;line-height:1.6;">Listings are approved automatically by Gemini AI content moderation at submission — nothing waits for manual review here. This panel is a backstop for taking down anything that shouldn't have gone live.</p>
+      <div id="marketAdminContent"></div>
+    </div>
+  </div>
+
+  <div id="vipPaywallModal" class="vmodal-overlay mkt-vip-paywall-overlay">
+    <div class="vmodal mkt-vip-paywall-panel" style="max-width:460px;text-align:center;">
+      <div class="vmodal-body" style="padding-top:32px;">
+        <div class="mkt-vip-paywall-icon-wrap"><i class="fas fa-crown mkt-vip-paywall-icon"></i></div>
+        <div class="mkt-vip-paywall-eyebrow">Members Only</div>
+        <h3 style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:800;margin-bottom:10px;">VIP Marketplace</h3>
+        <p style="font-size:13px;line-height:1.7;">VIP Marketplace is an exclusive zone for luxury vehicles and supercars. Upgrade to PRO to unlock access to the listings and list your own VIP vehicles.</p>
+        <ul class="mkt-vip-paywall-features">
+          <li><i class="fas fa-check-circle"></i><span>Browse the full VIP collection — vehicles listed above 400,000</span></li>
+          <li><i class="fas fa-check-circle"></i><span>List your own vehicles in the VIP Marketplace</span></li>
+          <li><i class="fas fa-check-circle"></i><span>Glowing VIP GOLD badge and featured spotlight placement</span></li>
+          <li><i class="fas fa-check-circle"></i><span>Everything else included with PRO — repair cost database, full VIN history, and more</span></li>
+        </ul>
+        <div class="mkt-vip-paywall-divider"></div>
+        <button class="wbtn mkt-vip-paywall-btn-primary" style="width:100%;justify-content:center;padding:12px 0;margin-bottom:10px;" onclick="closeVipPaywallModal();openProPricingModal();"><i class="fas fa-crown" style="margin-right:8px;"></i>Upgrade to PRO</button>
+        <button class="wbtn mkt-vip-paywall-btn-secondary" style="width:100%;justify-content:center;" onclick="closeVipPaywallModal()">Not now</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="mktCompareModal" class="vmodal-overlay">
+    <div class="vmodal" style="max-width:640px;">
+      <div class="vmodal-head"><h3><i class="fas fa-clone" style="margin-right:8px;color:var(--sky);"></i>Compare Saved Vehicles</h3><button onclick="closeCompareModal()">&times;</button></div>
+      <div class="vmodal-body" id="mktCompareModalBody"></div>
+    </div>
+  </div>
+
+  <div id="marketFormModal" class="vmodal-overlay mkt-fullscreen-overlay">
+    <div class="vmodal mkt-fullscreen-panel">
+      <div class="vmodal-head"><h3 id="mktFormTitle"><i class="fas fa-car" style="margin-right:8px;color:var(--sky);"></i>List a Vehicle</h3><button onclick="closeMarketFormModal()">&times;</button></div>
+      <div class="vmodal-body">
+
+        <div class="mkt-form-sec"><i class="fas fa-images"></i>Photos (up to 10 — drag to reorder)</div>
+        <div class="mkt-photo-grid" id="mktPhotoGrid">
+          <div class="mkt-photo-add" onclick="document.getElementById('mktPhotoInput').click()"><i class="fas fa-camera"></i><span>Add Photo</span></div>
+        </div>
+        <input type="file" id="mktPhotoInput" accept="image/*" multiple style="display:none;" onchange="handleMktPhotosSelected(event)">
+        <p style="font-size:10.5px;color:var(--gray);margin-top:6px;">JPG/PNG/WebP, up to 5MB each. The first photo (drag it to the front) becomes the cover image.</p>
+
+        <div class="mkt-form-sec"><i class="fas fa-circle-info"></i>Basic Details</div>
+        <label>Category (required)</label>
+        <select id="mktCategory">
+          <option value="">Select...</option>
+          <option value="car">Cars</option>
+          <option value="motorcycle">Motorcycles</option>
+          <option value="boat">Boats</option>
+        </select>
+        <div class="mkt-form-row" style="margin-top:10px;">
+          <div><label>Brand</label><input id="mktBrand" type="text" placeholder="e.g. Audi"></div>
+          <div><label>Model</label><input id="mktModel" type="text" placeholder="e.g. A4"></div>
+          <div><label>Generation</label><input id="mktGeneration" type="text" placeholder="e.g. B8"></div>
+          <div><label>Body Style</label><select id="mktBodyStyle">
+            <option value="">Select...</option>
+            <option value="sedan">Sedan</option><option value="wagon">Wagon</option><option value="hatchback">Hatchback</option>
+            <option value="suv">SUV</option><option value="coupe">Coupe</option><option value="convertible">Convertible</option>
+            <option value="pickup">Pickup</option><option value="van">Van</option><option value="other">Other</option>
+          </select></div>
+        </div>
+        <div class="mkt-form-row" style="margin-top:10px;">
+          <div><label>Production Year</label><input id="mktYear" type="number" min="1900" max="2100" placeholder="e.g. 2012"></div>
+          <div><label>Price</label><input id="mktPrice" type="number" min="0" placeholder="e.g. 12500" oninput="onMktPriceOrCurrencyChanged()"></div>
+          <div><label>Currency</label><select id="mktCurrency" onchange="onMktPriceOrCurrencyChanged()"><option value="EUR">EUR (€)</option><option value="PLN">PLN (zł)</option><option value="CHF">CHF</option><option value="USD">USD ($)</option></select></div>
+        </div>
+        <div id="mktVipNotice" style="display:none;"></div>
+
+        <div class="mkt-form-sec"><i class="fas fa-gears"></i>Engine &amp; Drivetrain</div>
+        <div class="mkt-form-row">
+          <div><label>Displacement (cc)</label><input id="mktDisplacement" type="number" min="0" placeholder="e.g. 1968"></div>
+          <div><label>Horsepower (HP)</label><input id="mktHorsepower" type="number" min="0" placeholder="e.g. 150"></div>
+          <div><label>Fuel Type</label><select id="mktFuelType"><option value="">Select...</option><option value="petrol">Petrol</option><option value="diesel">Diesel</option><option value="hybrid">Hybrid</option><option value="electric">Electric</option><option value="lpg">LPG</option></select></div>
+          <div><label>Transmission</label><select id="mktTransmission"><option value="">Select...</option><option value="manual">Manual</option><option value="automatic">Automatic</option></select></div>
+        </div>
+
+        <div class="mkt-form-sec"><i class="fas fa-road"></i>Mileage &amp; Condition</div>
+        <div class="mkt-form-row">
+          <div><label>Mileage (km)</label><input id="mktMileage" type="number" min="0" placeholder="e.g. 185000"></div>
+          <div><label>Condition</label><select id="mktAccidentStatus"><option value="">Select...</option><option value="accident_free">Accident-free</option><option value="minor_repairs">Minor repairs disclosed</option><option value="damaged">Damaged / has had significant repairs</option></select></div>
+        </div>
+        <label>VIN (optional)</label>
+        <input id="mktVin" type="text" maxlength="17" placeholder="e.g. 1HGBH41JXMN109186" oninput="onMktVinInput(this)">
+        <p id="mktVinMsg" class="mkt-vin-msg"></p>
+        <label>Description</label>
+        <textarea id="mktDescription" rows="3" placeholder="General description of the vehicle..."></textarea>
+        <label>Recent Repairs / Maintenance</label>
+        <textarea id="mktMaintenance" rows="2" placeholder="What's been done recently (timing belt, brakes, etc.)?"></textarea>
+
+        <div class="mkt-form-sec"><i class="fas fa-location-dot"></i>Location</div>
+        <div class="mkt-form-row">
+          <div><label>City (required)</label><input id="mktCity" type="text" placeholder="e.g. Warsaw"></div>
+          <div><label>Country (required)</label><input id="mktCountry" type="text" placeholder="e.g. Poland"></div>
+        </div>
+
+        <div class="mkt-form-sec"><i class="fas fa-handshake"></i>Seller Contact</div>
+        <label>Phone Number (required)</label>
+        <input id="mktPhone" type="text" placeholder="e.g. +49 151 2345678">
+        <div class="mkt-checkbox-row"><input type="checkbox" id="mktPhonePublic" checked><label for="mktPhonePublic">Show my phone number to visitors who aren't signed in</label></div>
+        <div class="mkt-checkbox-row"><input type="checkbox" id="mktNegotiable"><label for="mktNegotiable">Price negotiable</label></div>
+
+        <p style="font-size:11px;color:var(--gray);margin-top:16px;line-height:1.6;"><i class="fas fa-circle-info" style="margin-right:5px;"></i>Your listing goes live immediately after submitting.</p>
+      </div>
+      <div class="vmodal-foot">
+        <button class="vbtn-cancel" onclick="closeMarketFormModal()">Cancel</button>
+        <button class="vbtn-save" onclick="submitMarketListing()"><i class="fas fa-paper-plane" style="margin-right:6px;"></i>Submit Listing</button>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <footer>
@@ -1293,7 +1967,24 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
 // server (e.g. a Supabase Edge Function) instead if you want the key to
 // stay private.
 const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
-const GEMINI_MODEL = "gemini-1.5-flash";
+const GEMINI_MODEL = "gemini-2.5-flash";
+
+// Dynamically imports the official @google/genai SDK from a CDN (works
+// as a dynamic import() even inside a classic, non-module <script>).
+// Switched to the SDK from raw fetch() calls because newer "Auth key"
+// format Gemini API keys (the ones starting with "AQ." that Google
+// began issuing in 2026) are currently rejected by the raw REST
+// endpoint with 401 UNAUTHENTICATED, even though the same key works
+// through the official SDK. Cached after first successful load.
+let _geminiClientPromise=null;
+function getGeminiClient(){
+  if(_geminiClientPromise) return _geminiClientPromise;
+  _geminiClientPromise=(async()=>{
+    const { GoogleGenAI } = await import('https://esm.sh/@google/genai');
+    return new GoogleGenAI({apiKey: GEMINI_API_KEY});
+  })();
+  return _geminiClientPromise;
+}
 const GEMINI_SYSTEM_PROMPT = "You are an automated strict chat moderator for Auto Encyclopedia. Evaluate if the message contains explicit toxicity, severe harassment, violent threats, adult/explicit images, or external advertising/spam. Return JSON: { safe: boolean, reason: string }.";
 
 // ═══ LIGHT / DARK THEME ═══
@@ -1513,6 +2204,8 @@ function onAdminStateChanged(){
   if(pbadge) pbadge.style.display = isPro ? 'block' : 'none';
   const goProBtn=document.getElementById('goProBtn');
   if(goProBtn) goProBtn.style.display = isPro ? 'none' : 'flex';
+  const marketAdminBtn=document.getElementById('marketAdminNavBtn');
+  if(marketAdminBtn) marketAdminBtn.style.display = isAdmin ? 'flex' : 'none';
   if (typeof currentState !== 'undefined' && currentState) {
     render(currentState);
   }
@@ -1586,31 +2279,45 @@ async function loadProfileView(){
   }
 
   cont.innerHTML = `
-    <div class="panel" style="text-align:center;">
-      <img class="profile-avatar-lg" src="${esc(avatarUrl)}" referrerpolicy="no-referrer" alt="Avatar">
-      <div style="text-align:left;max-width:380px;margin:0 auto;">
-        <label class="profile-field-label">Display Name</label>
-        <input id="profNameInput" class="sinp" style="width:100%;margin-bottom:10px;" value="${esc(displayName)}" placeholder="Your name">
-        <button class="wbtn" onclick="saveProfileName()"><i class="fas fa-floppy-disk"></i>Save Changes</button>
-        <p id="profSaveMsg" style="font-size:11px;margin-top:8px;color:var(--ok);font-weight:600;"></p>
+    <div class="panel force-center-wrap" style="display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;text-align:center !important;">
+      <div class="force-center-wrap" style="margin:0 auto !important;">
+        <img class="profile-avatar-lg force-center-block" src="${esc(avatarUrl)}" referrerpolicy="no-referrer" alt="Avatar" style="display:block !important;margin-left:auto !important;margin-right:auto !important;">
+        <h2 class="force-center-block" style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:800;color:var(--text-main);margin-top:6px;display:block !important;margin-left:auto !important;margin-right:auto !important;text-align:center !important;">${esc(displayName||'User')}</h2>
+      </div>
 
-        <div style="margin-top:18px;">
+      <div style="text-align:left;max-width:380px;margin:14px auto 0;">
+        <div>
           <label class="profile-field-label">Email</label>
           <div class="profile-readonly">${esc(user.email || '—')}</div>
         </div>
         <div style="margin-top:14px;">
-          <label class="profile-field-label">Joined</label>
+          <label class="profile-field-label">Account Created</label>
           <div class="profile-readonly"><i class="fas fa-calendar-days" style="margin-right:6px;color:var(--sky);"></i>${esc(joinDate)}</div>
         </div>
         ${(isAdmin||isPro)?`<div style="margin-top:14px;">
           <label class="profile-field-label">Account Status</label>
           <div class="profile-readonly" style="display:flex;gap:8px;flex-wrap:wrap;">
             ${isAdmin?'<span class="badge" style="background:#fef3c7;color:#92400e;"><i class="fas fa-shield-halved" style="margin-right:4px;"></i>Admin</span>':''}
-            ${isPro?'<span class="badge" style="background:#d1fae5;color:#065f46;"><i class="fas fa-crown" style="margin-right:4px;"></i>PRO</span>':''}
+            ${isPro?'<span class="pro-glow-badge"><i class="fas fa-crown"></i>PRO</span>':''}
           </div>
         </div>`:''}
+
+        <div style="margin-top:18px;">
+          <label class="profile-field-label">Phone Number <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--gray);">(optional)</span></label>
+          <input id="profPhoneInput" class="sinp" style="width:100%;margin-bottom:4px;" value="${esc((profile&&profile.phone)||'')}" placeholder="e.g. +48 123 456 789" oninput="onPhoneInputLive()">
+          <p id="profPhoneValidationMsg" style="font-size:10.5px;margin-bottom:6px;line-height:1.5;min-height:14px;"></p>
+          <p style="font-size:10px;color:var(--gray);margin-bottom:8px;line-height:1.5;">Most people communicate through Groups &amp; Chats in the app, so this is entirely optional. Include the country code (e.g. +48, +41) if you fill it in.</p>
+          <label style="display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:var(--text-secondary);cursor:pointer;margin-bottom:10px;line-height:1.5;">
+            <input type="checkbox" id="profPhoneHideToggle" ${(!profile || !profile.phone_public)?'checked':''} style="width:16px;height:16px;accent-color:var(--sky);flex-shrink:0;margin-top:1px;">
+            Hide phone number from non-logged-in users
+          </label>
+
+          <button class="wbtn" onclick="saveProfileDetails()"><i class="fas fa-floppy-disk"></i>Save Changes</button>
+          <p id="profSaveMsg" style="font-size:11px;margin-top:8px;color:var(--ok);font-weight:600;"></p>
+        </div>
       </div>
     </div>
+
     ${proHtml}`;
 }
 
@@ -1624,12 +2331,128 @@ async function cancelProSubscription(){
   loadProfileView();
 }
 
-async function saveProfileName(){
-  const input = document.getElementById('profNameInput');
+// ═══ PHONE NUMBER VALIDATION ═══
+// Uses libphonenumber-js (a JS port of Google's libphonenumber) for real,
+// per-country validation — actual national numbering plan rules for every
+// ITU country code, not a fixed digit-count guess. Loaded via CDN as the
+// global `libphonenumber`; see the <script> tag in <head>.
+//
+// Country display names come from the built-in Intl.DisplayNames API
+// (no hardcoded name table needed) — converts an ISO region code like
+// "PL" into "Poland" using the browser's own locale data.
+function getCountryDisplayName(isoCode){
+  if(!isoCode) return '';
+  try{
+    return new Intl.DisplayNames(['en'],{type:'region'}).of(isoCode);
+  }catch(e){ return isoCode; }
+}
+
+// Returns {valid, empty, message}. Empty input is always valid — the
+// field is optional, this only enforces format IF something was typed.
+function validatePhoneNumber(raw){
+  const trimmed = (raw||'').trim();
+  if(!trimmed) return {valid:true, empty:true, message:''};
+
+  const cleaned = trimmed.replace(/[\s\-()]/g,''); // strip spaces/dashes/parens only
+
+  if(!cleaned.startsWith('+')){
+    return {valid:false, empty:false, message:'Include a country code, e.g. +48 for Poland or +41 for Switzerland.'};
+  }
+  if(!/^\+\d+$/.test(cleaned)){
+    return {valid:false, empty:false, message:'Phone number can only contain digits, spaces, dashes, and parentheses.'};
+  }
+
+  // Defensive fallback if the CDN library didn't load (e.g. offline) —
+  // the field should never become impossible to use because of a network
+  // hiccup, so fall back to a permissive length-only sanity check.
+  if(typeof libphonenumber==='undefined' || !libphonenumber.parsePhoneNumberFromString){
+    return /^\+\d{7,15}$/.test(cleaned)
+      ? {valid:true, empty:false, message:''}
+      : {valid:false, empty:false, message:'Please enter a valid phone number with country code.'};
+  }
+
+  let parsed;
+  try{ parsed = libphonenumber.parsePhoneNumberFromString(cleaned); }
+  catch(e){ parsed = undefined; }
+
+  if(!parsed){
+    return {valid:false, empty:false, message:'Unrecognized country code.'};
+  }
+
+  if(!parsed.isValid()){
+    const countryCode = parsed.countryCallingCode ? '+'+parsed.countryCallingCode : '';
+    const countryName = getCountryDisplayName(parsed.country);
+    const label = countryCode + (countryName ? ' ('+countryName+')' : '');
+    const lengthIssue = libphonenumber.validatePhoneNumberLength ? libphonenumber.validatePhoneNumberLength(cleaned) : undefined;
+    let detail = 'the format looks incorrect';
+    if(lengthIssue==='TOO_SHORT') detail='too few digits';
+    else if(lengthIssue==='TOO_LONG') detail='too many digits';
+    else if(lengthIssue==='INVALID_COUNTRY') detail='unrecognized country code';
+    return {valid:false, empty:false, message:`Please enter a valid number for ${label} — ${detail}.`};
+  }
+
+  return {valid:true, empty:false, message:''};
+}
+
+// Live feedback as the user types — updates the message + red border,
+// but does NOT block anything itself (submission is enforced separately
+// in saveProfileDetails(), since a user could otherwise bypass this by
+// e.g. pasting without triggering input, or via devtools).
+function onPhoneInputLive(){
+  const input=document.getElementById('profPhoneInput');
+  const msgEl=document.getElementById('profPhoneValidationMsg');
+  if(!input || !msgEl) return;
+  const result=validatePhoneNumber(input.value);
+
+  input.classList.toggle('field-invalid', !result.valid);
+  if(result.empty || result.valid){
+    msgEl.textContent='';
+  } else {
+    msgEl.style.color='var(--err)';
+    msgEl.textContent=result.message;
+  }
+}
+
+async function saveProfileDetails(){
+  const phoneInput = document.getElementById('profPhoneInput');
+  const phoneHideToggle = document.getElementById('profPhoneHideToggle');
   const msg = document.getElementById('profSaveMsg');
-  if(!input) return;
-  const val = input.value.trim();
-  if(!val){ msg.textContent='Display name cannot be empty.'; msg.style.color='var(--err)'; return; }
+  const phoneMsgEl = document.getElementById('profPhoneValidationMsg');
+  if(!phoneInput) return;
+
+  // ── HARD GATE #1: plain E.164 regex, no external dependency at all. ──
+  // This runs regardless of whether the libphonenumber-js CDN loaded
+  // correctly, so a malformed number can never slip through due to a
+  // library/network issue. Deliberately simple and easy to verify.
+  const rawPhoneValue = phoneInput.value.trim();
+  if(rawPhoneValue !== ""){
+    const phoneRegex = /^\+[1-9]\d{6,14}$/;
+    const cleanPhone = rawPhoneValue.replace(/[\s\-()]/g,'');
+    if(!phoneRegex.test(cleanPhone)){
+      phoneInput.classList.add('field-invalid');
+      if(phoneMsgEl){
+        phoneMsgEl.style.color='var(--err)';
+        phoneMsgEl.textContent='Please enter a valid international phone number (e.g. +48123456789 or +41791234567).';
+      }
+      msg.style.color='var(--err)';
+      msg.textContent='Please fix the phone number above before saving.';
+      alert('Please enter a valid international phone number (e.g. +48123456789 or +41791234567)!');
+      phoneInput.focus();
+      return false;
+    }
+  }
+
+  // ── HARD GATE #2: precise, country-specific check via libphonenumber-js
+  // (real national numbering-plan rules, not just "digits between 7-15"). ──
+  const phoneCheck = validatePhoneNumber(phoneInput.value);
+  if(!phoneCheck.valid){
+    phoneInput.classList.add('field-invalid');
+    if(phoneMsgEl){ phoneMsgEl.style.color='var(--err)'; phoneMsgEl.textContent=phoneCheck.message; }
+    msg.style.color='var(--err)';
+    msg.textContent='Please fix the phone number above before saving.';
+    phoneInput.focus();
+    return false;
+  }
 
   const { data: { user } } = await supabaseClient.auth.getUser();
   if(!user){ msg.textContent='You are not signed in.'; msg.style.color='var(--err)'; return; }
@@ -1637,9 +2460,15 @@ async function saveProfileName(){
   msg.style.color='var(--gray)';
   msg.textContent='Saving...';
 
+  // "Hide phone number" checked -> phone_public = false (inverted on purpose,
+  // since the toggle reads as an opt-out, not an opt-in).
   const { error } = await supabaseClient
     .from('profiles')
-    .upsert({ id: user.id, email: user.email, display_name: val });
+    .update({
+      phone: phoneInput.value.trim() || null,
+      phone_public: phoneHideToggle ? !phoneHideToggle.checked : false
+    })
+    .eq('id', user.id);
 
   if(error){
     msg.style.color='var(--err)';
@@ -1652,8 +2481,30 @@ async function saveProfileName(){
 
 // ═══ SECURITY ═══
 function san(el){el.value=el.value.replace(/[<>"'`;&|\\]/g,'');}
-function esc(s){if(typeof s!=='string')return '';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function esc(s){if(s===null||s===undefined)return '';if(typeof s==='number'||typeof s==='boolean')s=String(s);if(typeof s!=='string')return '';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function cVin(v){return v.replace(/[^A-HJ-NPR-Z0-9]/gi,'').toUpperCase().slice(0,17);}
+
+// Live feedback as the user types in the homepage VIN field — strips
+// invalid characters (I, O, Q are never valid in a real VIN, along with
+// any punctuation) and forces uppercase in real time, then shows a
+// character-count / validity message.
+function onVinInputLive(input){
+  const cleaned = cVin(input.value);
+  if(input.value !== cleaned) input.value = cleaned;
+  const msgEl = document.getElementById('vinLiveMsg');
+  if(!msgEl) return;
+  if(cleaned.length === 0){
+    msgEl.textContent = '0/17 characters';
+    msgEl.style.color = 'var(--gray)';
+  } else if(cleaned.length < 17){
+    msgEl.textContent = `${cleaned.length}/17 characters — VINs must be exactly 17 characters.`;
+    msgEl.style.color = 'var(--gray)';
+  } else {
+    msgEl.textContent = '17/17 — looks like a valid VIN format.';
+    msgEl.style.color = 'var(--ok)';
+  }
+}
+
 
 // ═══ STATE ═══
 let curUser=null,curCat='cars',curGroup=null,curBrand=null;
@@ -1667,8 +2518,53 @@ let currentState=null; // last state passed to render(), used to re-render after
 const CAT_LABELS={cars:'Cars',moto:'Motorcycles',boats:'Boats',engines:'Engines'};
 
 // ═══ PRO SUBSCRIPTION / STRIPE ═══
-const STRIPE_MONTHLY_LINK = 'YOUR_STRIPE_LINK_HERE';
-const STRIPE_YEARLY_LINK  = 'YOUR_STRIPE_LINK_HERE';
+// Client-side Stripe Checkout via Stripe.js redirectToCheckout() — works
+// without a backend server (this app doesn't have one), using a
+// publishable key + pre-created Price IDs from the Stripe Dashboard.
+// Note: Stripe's currently-recommended integration path creates Checkout
+// Sessions server-side for more flexibility (promo codes, tax, etc.) —
+// this client-only approach is the simplest option that still works
+// entirely from a static HTML file.
+const STRIPE_PUBLISHABLE_KEY = 'YOUR_STRIPE_PUBLISHABLE_KEY_HERE'; // pk_live_... / pk_test_...
+const STRIPE_PRICE_ID_MONTHLY = 'YOUR_STRIPE_MONTHLY_PRICE_ID_HERE'; // price_...
+const STRIPE_PRICE_ID_YEARLY  = 'YOUR_STRIPE_YEARLY_PRICE_ID_HERE';  // price_...
+
+// ═══ AI CAR ADVISOR — QUERY LIMIT STATE (infrastructure only) ═══
+// This is the counting/gating engine for the Free (5/day) vs PRO
+// (12/day) limit described in the PRO module. There is no AI Car Advisor
+// chat feature built yet anywhere in this app — these functions are
+// ready for whatever UI eventually calls an AI endpoint to use as a gate.
+// Enforced client-side (see 14_pro_ai_query_limits.sql for the caveat on
+// what that does and doesn't protect against).
+function getAiQueryLimit(){ return isPro ? 12 : 5; }
+
+async function getAiQueriesUsedToday(){
+  if(!authUser) return 0;
+  const { data } = await supabaseClient.from('profiles').select('ai_queries_today,ai_queries_date').eq('id',authUser.id).maybeSingle();
+  if(!data) return 0;
+  const today = new Date().toISOString().slice(0,10);
+  return (data.ai_queries_date === today) ? data.ai_queries_today : 0; // stale date = day rolled over, so 0 used
+}
+
+// Call before making an AI query. Does NOT increment the counter itself —
+// call recordAiQuery() only after the query actually succeeds.
+async function canMakeAiQuery(){
+  if(!authUser) return {allowed:false, reason:'Sign in to use the AI Car Advisor.'};
+  const used = await getAiQueriesUsedToday();
+  const limit = getAiQueryLimit();
+  if(used >= limit){
+    return {allowed:false, reason:`You've used all ${limit} AI Car Advisor queries for today${isPro?'':' — upgrade to PRO for 12/day'}.`, used, limit};
+  }
+  return {allowed:true, used, limit};
+}
+
+async function recordAiQuery(){
+  if(!authUser) return;
+  const today = new Date().toISOString().slice(0,10);
+  const { data } = await supabaseClient.from('profiles').select('ai_queries_today,ai_queries_date').eq('id',authUser.id).maybeSingle();
+  const currentCount = (data && data.ai_queries_date === today) ? data.ai_queries_today : 0;
+  await supabaseClient.from('profiles').update({ai_queries_today: currentCount+1, ai_queries_date: today}).eq('id',authUser.id);
+}
 
 function openAuthRequiredModal(message){
   const msgEl=document.getElementById('authRequiredMessage');
@@ -1683,15 +2579,6 @@ function authRequiredModalSignIn(){
   loginWithGoogle();
 }
 
-// Marketplace is for signed-in users only. Guests get a friendly prompt instead.
-function tryOpenMarket(){
-  if(!isLoggedIn()){
-    openAuthRequiredModal('Sign in to access the Marketplace — new accounts are created automatically with Google.');
-    return;
-  }
-  go({view:'market'});
-}
-
 function openProPricingModal(){
   document.getElementById('proPricingModal').classList.add('open');
 }
@@ -1700,20 +2587,50 @@ function closeProPricingModal(){
 }
 
 // Guests can see PRO pricing freely; only the actual purchase click requires sign-in.
-function buyPro(plan){
-  if(!isLoggedIn()){
-    openAuthRequiredModal('Sign in to purchase PRO — new accounts are created automatically with Google.');
+async function buyPro(plan){
+  // Explicit, fresh check against Supabase Auth (not just the cached
+  // authUser variable) — makes sure we're not acting on a stale session
+  // right at the moment of a purchase attempt.
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  if(!user){
+    closeProPricingModal();
+    openAuthRequiredModal('Please log in or create an account to subscribe to PRO.');
     return;
   }
-  const base = plan==='yearly' ? STRIPE_YEARLY_LINK : STRIPE_MONTHLY_LINK;
-  // Pass the Supabase user id/email through to Stripe so a future webhook can
-  // match the completed payment back to this account (client_reference_id is
-  // a standard Stripe Payment Link parameter for exactly this purpose).
-  const params=new URLSearchParams();
-  if(authUser && authUser.id) params.set('client_reference_id', authUser.id);
-  if(authUser && authUser.email) params.set('prefilled_email', authUser.email);
-  const sep = base.includes('?') ? '&' : '?';
-  window.location.href = params.toString() ? base+sep+params.toString() : base;
+
+  if(STRIPE_PUBLISHABLE_KEY.startsWith('YOUR_') || typeof Stripe==='undefined'){
+    alert('Stripe is not configured yet — set STRIPE_PUBLISHABLE_KEY and the Price ID constants in the code.');
+    return;
+  }
+  const priceId = plan==='yearly' ? STRIPE_PRICE_ID_YEARLY : STRIPE_PRICE_ID_MONTHLY;
+  const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+  // client_reference_id lets the webhook (see the Edge Function file) match
+  // the completed payment back to this Supabase user.
+  const { error } = await stripe.redirectToCheckout({
+    lineItems: [{ price: priceId, quantity: 1 }],
+    mode: 'subscription',
+    successUrl: window.location.origin + window.location.pathname + '?pro=success',
+    cancelUrl: window.location.origin + window.location.pathname + '?pro=cancelled',
+    clientReferenceId: user.id,
+    customerEmail: user.email
+  });
+  if(error){ alert('Could not start checkout: ' + error.message); }
+}
+
+// ── DEV/TEST ONLY ──────────────────────────────────────────────────
+// Toggles the PRO look client-side, for this browser tab/session only —
+// it does NOT write to the database. profiles.is_pro is intentionally
+// restricted to service_role (see 13_fix_profiles_permissions.sql), so a
+// regular signed-in user's own client can't grant itself PRO even if this
+// function tried to — that's a security boundary, not a bug, so this
+// helper works around it for UI testing by staying purely local. Refreshing
+// the page reverts it. To actually grant a test account PRO, update
+// profiles.is_pro directly in the Supabase dashboard (service_role).
+function enableProUser(){
+  isPro = true;
+  onAdminStateChanged();
+  console.log('[DEV] isPro set to true for this session only (not persisted). Refresh to reset. To make this permanent for a test account, set profiles.is_pro=true directly in Supabase — regular users cannot do this from the client by design.');
 }
 
 // ═══ SAVED VEHICLES / FAVORITES ═══
@@ -2760,27 +3677,22 @@ async function moderateWithGemini(text, imageUrl){
       }
     }
 
+    const ai=await getGeminiClient();
     const controller=new AbortController();
     const timeoutId=setTimeout(()=>controller.abort(),8000);
-    let resp;
+    let response;
     try{
-      resp=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({contents:[{parts}],generationConfig:{responseMimeType:'application/json'}}),
-        signal:controller.signal
+      response=await ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents:[{role:'user', parts}],
+        config:{responseMimeType:'application/json'},
+        // AbortSignal support varies by SDK version — passed defensively;
+        // if unsupported it's simply ignored rather than throwing.
+        signal: controller.signal
       });
     } finally { clearTimeout(timeoutId); }
 
-    if(!resp.ok){
-      console.warn('AI moderator unavailable ('+resp.status+') — falling back to built-in filter.');
-      return null;
-    }
-
-    const data=await resp.json();
-    const raw=data && data.candidates && data.candidates[0] && data.candidates[0].content
-      && data.candidates[0].content.parts && data.candidates[0].content.parts[0]
-      && data.candidates[0].content.parts[0].text;
+    const raw=response && response.text;
     if(!raw) return null;
 
     const parsed=JSON.parse(raw);
@@ -3126,7 +4038,6 @@ async function openUserProfileModal(userId){
   const {data:profile}=await supabaseClient.from('profiles').select('*').eq('id',userId).maybeSingle();
   if(!profile){ body.innerHTML=`<p class="empty-note">User not found.</p>`; return; }
 
-  const {data:listings}=await supabaseClient.from('marketplace_listings').select('*').eq('seller_id',userId).eq('status','active').order('created_at',{ascending:false}).limit(6);
   const joinDate=new Date(profile.created_at).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   const isSelf=userId===authUser.id;
   const avatarUrl=profile.avatar_url||fallbackAvatarFor(profile.display_name);
@@ -3146,18 +4057,940 @@ async function openUserProfileModal(userId){
         <button class="wbtn" onclick="closeUserProfileModal();go({view:'chatthread',kind:'dm',id:'${esc(userId)}'})"><i class="fas fa-paper-plane" style="margin-right:6px;"></i>Send Message</button>
         <button class="wbtn" style="background:var(--err);" onclick="blockUserFromProfileModal('${esc(userId)}')"><i class="fas fa-ban" style="margin-right:6px;"></i>${blocked?'Unblock':'Block'}</button>
       </div>`:''}
-    </div>
-    <div class="user-profile-listings">
-      <div class="ftitle" style="margin-top:0;"><i class="fas fa-car"></i>Listed Vehicles</div>
-      ${listings&&listings.length
-        ?`<div class="user-profile-listings-grid">${listings.map(l=>`<div class="user-listing-card">
-            ${l.image_url?`<img src="${esc(l.image_url)}" alt="${esc(l.title)}">`:`<div style="height:56px;background:var(--off);display:flex;align-items:center;justify-content:center;"><i class="fas fa-car" style="color:var(--gray2);"></i></div>`}
-            <div class="ulc-body"><div class="ulc-title">${esc(l.title)}</div>${l.price?`<div class="ulc-price">$${esc(String(l.price))}</div>`:''}</div>
-          </div>`).join('')}</div>`
-        :`<p class="empty-note" style="padding:14px 0;">No active listings yet.</p>`}
     </div>`;
 }
 function closeUserProfileModal(){ document.getElementById('userProfileModal').classList.remove('open'); }
+
+// ═══ MARKETPLACE ═══
+let MARKET_TAB='browse';
+let MARKET_VIEW_MODE='standard'; // 'standard' | 'vip'
+let mktFormVipMode=false;        // whether the currently-open submission form is the VIP flow
+let MARKET_LISTINGS_CACHE=[];
+let MARKET_PENDING_ADMIN=[];
+let SAVED_LISTING_IDS=new Set(); // ids of listings the current user has starred/saved
+let COMPARE_SELECTED_IDS=[];     // up to 2 listing ids picked for side-by-side comparison
+let mktPendingPhotoFiles=[];      // File objects queued in the form, not yet uploaded
+let mktEditingListingId=null;
+let CURRENT_LISTING=null;
+let CURRENT_LISTING_IMAGES=[];
+
+const MKT_CURRENCY_ORDER=['EUR','PLN','CHF','USD'];
+// High-Value Vehicle Gate — PRO-only AT OR ABOVE these thresholds
+// ("from €400,000" is inclusive, hence >= not >). PLN/CHF/USD scaled
+// proportionally from the EUR base.
+const MKT_VIP_THRESHOLDS={EUR:400000,PLN:1800000,CHF:400000,USD:450000};
+function mktExceedsVipThreshold(price,currency){
+  const threshold=MKT_VIP_THRESHOLDS[currency];
+  return threshold!=null && Number(price)>=threshold;
+}
+// VIP Marketplace's OWN minimum — a separate, higher floor from the
+// Standard Marketplace's 400k cap above. Scaled proportionally from the
+// same EUR base ratio used for MKT_VIP_THRESHOLDS.
+const MKT_VIP_MIN_THRESHOLDS={EUR:500000,PLN:2250000,CHF:500000,USD:550000};
+function mktBelowVipMinThreshold(price,currency){
+  const threshold=MKT_VIP_MIN_THRESHOLDS[currency];
+  return threshold==null || Number(price)<threshold;
+}
+function formatMktPrice(price,currency){
+  const formatted=Number(price).toLocaleString('en-US').replace(/,/g,' ');
+  return `${formatted} ${esc(currency)}`;
+}
+
+async function tryOpenMarket(){
+  if(!isLoggedIn()){
+    openAuthRequiredModal('Sign in to access the Marketplace — new accounts are created automatically with Google.');
+    return;
+  }
+  MARKET_VIEW_MODE='standard';
+  go({view:'market'});
+}
+
+async function tryOpenVipMarket(){
+  if(!isLoggedIn()){
+    openAuthRequiredModal('Sign in to access the VIP Marketplace — new accounts are created automatically with Google.');
+    return;
+  }
+  if(!isVipEligible()){
+    openVipPaywallModal();
+    return;
+  }
+  MARKET_VIEW_MODE='vip';
+  go({view:'market'});
+}
+
+async function buildMarketView(){
+  switchMarketTab(MARKET_TAB,true);
+  syncMarketModeUi();
+  await loadMarketListings();
+  populateMarketBrandFilter();
+  populateMarketModelFilter();
+  populateMarketCountryFilter();
+  populateMarketCityFilter();
+  applyMarketFilters();
+}
+
+// ─────────────────────────────────────────────────────────
+// VIP MARKETPLACE — Standard/VIP mode switching, access control, and
+// the "only load is_vip rows while in VIP mode" query behavior. Entry
+// point is now the top-nav "VIP Marketplace" button (tryOpenVipMarket)
+// rather than a toggle nested inside the Marketplace page itself.
+// ─────────────────────────────────────────────────────────
+function isVipEligible(){ return isPro || isAdmin; }
+
+function syncMarketModeUi(){
+  const isVip=MARKET_VIEW_MODE==='vip';
+  document.documentElement.classList.toggle('vip-mode-active',isVip);
+  document.body.classList.toggle('vip-mode-active',isVip);
+  document.getElementById('vMarket').classList.toggle('vip-mode',isVip);
+  document.getElementById('sellVehicleBtnStandard').style.display=isVip?'none':'flex';
+  document.getElementById('sellVipVehicleBtn').style.display=(isVip&&isVipEligible())?'flex':'none';
+  document.getElementById('mktVipConciergeBanner').style.display=isVip?'flex':'none';
+}
+
+function openVipPaywallModal(){
+  document.getElementById('vipPaywallModal').classList.add('open');
+}
+function closeVipPaywallModal(){
+  document.getElementById('vipPaywallModal').classList.remove('open');
+}
+
+async function buildMarketAdminView(){
+  if(!isAdmin){ document.getElementById('marketAdminContent').innerHTML='<p class="empty-note">Admin access required.</p>'; return; }
+  document.getElementById('marketAdminContent').innerHTML=`<div class="spin"><i class="fas fa-circle-notch"></i><p>Loading...</p></div>`;
+  await loadMarketAdminOverview();
+  renderMarketAdminOverview();
+}
+
+function switchMarketTab(tab,silent){
+  MARKET_TAB=tab;
+  document.getElementById('marketTabBtnBrowse').classList.toggle('active',tab==='browse');
+  document.getElementById('marketTabBtnMine').classList.toggle('active',tab==='mine');
+  document.getElementById('marketTabBtnSaved').classList.toggle('active',tab==='saved');
+  const compareBar=document.getElementById('mktCompareBar');
+  if(tab==='saved'){
+    compareBar.style.display='flex';
+    if(isPro){
+      compareBar.innerHTML=`<span id="mktCompareCount" style="font-size:11.5px;color:var(--gray);font-weight:600;">0/2 selected</span>
+        <button class="wbtn" id="mktCompareBtn" style="margin:0;" disabled onclick="openCompareModal()"><i class="fas fa-clone" style="margin-right:6px;"></i>Compare Selected</button>`;
+    } else {
+      compareBar.innerHTML=`<button class="wbtn mkt-compare-locked-btn" style="margin:0;" onclick="openProPricingModal()"><i class="fas fa-lock" style="margin-right:6px;"></i>Upgrade to PRO to compare saved vehicles side-by-side</button>`;
+    }
+  } else {
+    compareBar.style.display='none';
+    compareBar.innerHTML='';
+  }
+  COMPARE_SELECTED_IDS=[];
+  if(!silent){
+    loadMarketListings().then(()=>{
+      populateMarketBrandFilter();
+      populateMarketModelFilter();
+      populateMarketCountryFilter();
+      populateMarketCityFilter();
+      applyMarketFilters();
+    });
+  }
+}
+
+async function tryOpenSavedMarketTab(){
+  if(!isLoggedIn()){ openAuthRequiredModal('Sign in to view and save Marketplace listings.'); return; }
+  switchMarketTab('saved');
+}
+
+async function loadMarketListings(){
+  // Clear stale cards BEFORE fetching, not after — otherwise the old
+  // list sits on screen for the full duration of the network round-trip,
+  // then gets swapped for the new one. Combined with the card entry
+  // animation, that hand-off can look like a glitchy double-render even
+  // though no DOM node is ever literally duplicated.
+  const gridEl=document.getElementById('marketGrid');
+  if(gridEl) gridEl.innerHTML='';
+
+  await loadSavedListingIds();
+
+  if(MARKET_TAB==='saved'){
+    if(!SAVED_LISTING_IDS.size){ MARKET_LISTINGS_CACHE=[]; return; }
+    const {data,error}=await supabaseClient.from('marketplace_listings').select('*')
+      .in('id',[...SAVED_LISTING_IDS])
+      .order('created_at',{ascending:false})
+      .limit(300);
+    MARKET_LISTINGS_CACHE=(!error && data)?data:[];
+    return;
+  }
+
+  let query=supabaseClient.from('marketplace_listings').select('*').order('created_at',{ascending:false});
+  query=MARKET_TAB==='mine' ? query.eq('seller_id',authUser.id) : query.eq('status','approved');
+  query=query.eq('is_vip', MARKET_VIEW_MODE==='vip');
+  const {data,error}=await query.limit(300);
+  MARKET_LISTINGS_CACHE=(!error && data)?data:[];
+}
+
+function populateMarketBrandFilter(){
+  const categorySel=document.getElementById('mktfCategory').value;
+  const sel=document.getElementById('mktfBrand');
+  const current=sel.value;
+  const brands=[...new Set(MARKET_LISTINGS_CACHE.filter(l=>!categorySel||l.category===categorySel).map(l=>l.brand).filter(Boolean))].sort();
+  sel.innerHTML='<option value="">Any brand</option>'+brands.map(b=>`<option value="${esc(b)}">${esc(b)}</option>`).join('');
+  // If the previously selected brand no longer has any live listings in
+  // the (possibly just-changed) category, this naturally resets to "Any
+  // brand" — the <option> it pointed to simply won't exist anymore.
+  if(brands.includes(current)) sel.value=current;
+}
+function populateMarketModelFilter(){
+  const categorySel=document.getElementById('mktfCategory').value;
+  const brandSel=document.getElementById('mktfBrand').value;
+  const sel=document.getElementById('mktfModel');
+  const current=sel.value;
+
+  if(!brandSel){
+    // Matches "Select Brand First" placeholder — disabled rather than a
+    // giant unfiltered list of every model across every brand, so the
+    // natural workflow is pick a brand, then narrow by model.
+    sel.innerHTML='<option value="">Select Brand First</option>';
+    sel.value='';
+    sel.disabled=true;
+    return;
+  }
+  sel.disabled=false;
+  const models=[...new Set(
+    MARKET_LISTINGS_CACHE
+      .filter(l=>l.brand===brandSel && (!categorySel||l.category===categorySel))
+      .map(l=>l.model)
+      .filter(Boolean)
+  )].sort();
+  sel.innerHTML='<option value="">Any model</option>'+models.map(m=>`<option value="${esc(m)}">${esc(m)}</option>`).join('');
+  // Same auto-reset behavior as the brand dropdown: if the previously
+  // selected model isn't among this brand's current live listings, the
+  // dropdown falls back to "Any model" automatically.
+  if(models.includes(current)) sel.value=current;
+}
+function populateMarketCountryFilter(){
+  const sel=document.getElementById('mktfCountry');
+  const current=sel.value;
+  const countries=[...new Set(MARKET_LISTINGS_CACHE.map(l=>l.country).filter(Boolean))].sort();
+  sel.innerHTML='<option value="">Any country</option>'+countries.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  if(countries.includes(current)) sel.value=current;
+}
+function populateMarketCityFilter(){
+  const countrySel=document.getElementById('mktfCountry').value;
+  const sel=document.getElementById('mktfCity');
+  const current=sel.value;
+  const cities=[...new Set(MARKET_LISTINGS_CACHE.filter(l=>!countrySel||l.country===countrySel).map(l=>l.city).filter(Boolean))].sort();
+  sel.innerHTML='<option value="">Any city</option>'+cities.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  if(cities.includes(current)) sel.value=current;
+}
+function clearMarketFilters(){
+  ['mktfKeyword','mktfPriceMin','mktfPriceMax','mktfMileageMin','mktfMileageMax','mktfYearMin','mktfYearMax'].forEach(id=>{ document.getElementById(id).value=''; });
+  ['mktfCategory','mktfBrand','mktfModel','mktfCountry','mktfCity','mktfCurrency','mktfFuel','mktfTransmission'].forEach(id=>{ document.getElementById(id).selectedIndex=0; });
+  populateMarketBrandFilter();
+  populateMarketModelFilter();
+  applyMarketFilters();
+}
+
+function applyMarketFilters(){
+  const categoryFilter=document.getElementById('mktfCategory').value;
+  const kw=document.getElementById('mktfKeyword').value.trim().toLowerCase();
+  const brand=document.getElementById('mktfBrand').value;
+  const model=document.getElementById('mktfModel').value;
+  const priceMin=parseFloat(document.getElementById('mktfPriceMin').value);
+  const priceMax=parseFloat(document.getElementById('mktfPriceMax').value);
+  const mileageMin=parseFloat(document.getElementById('mktfMileageMin').value);
+  const mileageMax=parseFloat(document.getElementById('mktfMileageMax').value);
+  const yearMin=parseInt(document.getElementById('mktfYearMin').value,10);
+  const yearMax=parseInt(document.getElementById('mktfYearMax').value,10);
+  const currencyFilter=document.getElementById('mktfCurrency').value;
+  const fuel=document.getElementById('mktfFuel').value;
+  const transmission=document.getElementById('mktfTransmission').value;
+  const countryFilter=document.getElementById('mktfCountry').value;
+  const cityFilter=document.getElementById('mktfCity').value;
+  const sortMode=document.getElementById('mktSortSelect').value;
+
+  let filtered=MARKET_LISTINGS_CACHE.filter(l=>{
+    if(l.status==='removed') return false;
+    if(categoryFilter && l.category!==categoryFilter) return false;
+    if(kw){
+      const hay=(l.brand+' '+l.model+' '+(l.generation||'')+' '+(l.city||'')+' '+(l.country||'')).toLowerCase();
+      if(!hay.includes(kw)) return false;
+    }
+    if(brand && l.brand!==brand) return false;
+    if(model && l.model!==model) return false;
+    if(currencyFilter && l.currency!==currencyFilter) return false;
+    if(!isNaN(priceMin) && l.price<priceMin) return false;
+    if(!isNaN(priceMax) && l.price>priceMax) return false;
+    if(!isNaN(mileageMin) && (l.mileage_km==null || l.mileage_km<mileageMin)) return false;
+    if(!isNaN(mileageMax) && (l.mileage_km==null || l.mileage_km>mileageMax)) return false;
+    if(!isNaN(yearMin) && l.production_year<yearMin) return false;
+    if(!isNaN(yearMax) && l.production_year>yearMax) return false;
+    if(fuel && l.fuel_type!==fuel) return false;
+    if(transmission && l.transmission!==transmission) return false;
+    if(countryFilter && l.country!==countryFilter) return false;
+    if(cityFilter && l.city!==cityFilter) return false;
+    return true;
+  });
+
+  if(sortMode==='price_asc') filtered.sort((a,b)=>a.price-b.price);
+  else if(sortMode==='price_desc') filtered.sort((a,b)=>b.price-a.price);
+  else if(sortMode==='mileage_asc') filtered.sort((a,b)=>(a.mileage_km??Infinity)-(b.mileage_km??Infinity));
+  else filtered.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)); // newest
+
+  const countEl=document.getElementById('mktResultsCount');
+  if(countEl) countEl.textContent=`${filtered.length} listing${filtered.length===1?'':'s'} found`;
+  renderMarketGrid(filtered);
+}
+
+function marketStatusBadgeHtml(listing){
+  const expired=listing.status==='approved' && listing.expires_at && new Date(listing.expires_at).getTime()<Date.now();
+  const effectiveStatus=expired?'expired':listing.status;
+  const labels={pending:'Pending Review',approved:'Approved',sold:'Sold',expired:'Expired',rejected:'Rejected',removed:'Removed'};
+  return `<span class="mkt-status-badge ${esc(effectiveStatus)}">${esc(labels[effectiveStatus]||effectiveStatus)}</span>`;
+}
+
+function renderMarketGrid(list){
+  const g=document.getElementById('marketGrid');
+  let html=list.map((l,cardIndex)=>{
+    const expired=l.status==='approved' && l.expires_at && new Date(l.expires_at).getTime()<Date.now();
+    const soldLook=l.status==='sold'||expired;
+    const imgHtml=l.cover_image_url?`<img src="${esc(l.cover_image_url)}" alt="${esc(l.brand+' '+l.model)}" loading="lazy">`:`<div class="cph"><i class="fas fa-car"></i></div>`;
+    const isOwnerCard=MARKET_TAB==='mine' && authUser && l.seller_id===authUser.id;
+    const canToggleSold=isOwnerCard && l.status==='approved' && !expired;
+    const locationLabel=[l.city,l.country].filter(Boolean).join(', ');
+    const isSaved=SAVED_LISTING_IDS.has(l.id);
+    const pills=[
+      l.mileage_km?`<span class="mkt-pill"><i class="fas fa-road"></i>${esc(Number(l.mileage_km).toLocaleString())} km</span>`:'',
+      l.horsepower?`<span class="mkt-pill"><i class="fas fa-gauge-high"></i>${esc(l.horsepower)} HP</span>`:'',
+      l.fuel_type?`<span class="mkt-pill"><i class="fas fa-gas-pump"></i>${esc(l.fuel_type)}</span>`:'',
+      l.transmission?`<span class="mkt-pill"><i class="fas fa-arrows-spin"></i>${esc(l.transmission)}</span>`:'',
+      locationLabel?`<span class="mkt-pill">📍 ${esc(locationLabel)}</span>`:''
+    ].filter(Boolean).join('');
+    const compareCheckboxHtml = (MARKET_TAB==='saved' && isPro) ? `
+      <label class="mkt-compare-checkbox-wrap" onclick="event.stopPropagation();">
+        <input type="checkbox" class="mkt-compare-checkbox" data-listing-id="${esc(l.id)}" ${COMPARE_SELECTED_IDS.includes(l.id)?'checked':''} onchange="toggleCompareSelection('${esc(l.id)}',event)">
+        <span>Compare</span>
+      </label>` : '';
+    return `<div class="mkt-card ${soldLook?'mkt-sold':''}" style="--card-index:${cardIndex}" onclick="go({view:'marketlisting',id:'${esc(l.id)}'})">
+      <div class="mkt-thumb">
+        ${imgHtml}
+        ${marketStatusBadgeHtml(l)}
+        ${l.accident_status==='accident_free'?'<span class="mkt-accident-badge"><i class="fas fa-shield-check"></i>Accident-free</span>':''}
+        ${soldLook?`<div class="mkt-sold-overlay"><div class="mkt-sold-stamp">${l.status==='sold'?'SOLD':'EXPIRED'}</div></div>`:''}
+        <button class="mkt-save-star ${isSaved?'saved':''}" data-listing-id="${esc(l.id)}" onclick="toggleSaveListing('${esc(l.id)}',event)" title="${isSaved?'Remove from Saved':'Save this listing'}"><i class="${isSaved?'fas':'far'} fa-star"></i></button>
+      </div>
+      <div class="mkt-body">
+        <h3>${esc(l.brand)} ${esc(l.model)}${l.generation?' '+esc(l.generation):''} '${esc(String(l.production_year).slice(-2))}</h3>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <div class="mkt-price">${formatMktPrice(l.price,l.currency)}</div>
+          ${l.is_vip?'<span class="mkt-vip-gold-badge"><i class="fas fa-crown"></i>VIP GOLD</span>':''}
+        </div>
+        <div class="mkt-pills">${pills}</div>
+        ${compareCheckboxHtml}
+      </div>
+      ${canToggleSold?`<div class="mkt-card-owner-actions"><button class="mkt-mark-sold-btn" onclick="event.stopPropagation();markListingSoldFromCard('${esc(l.id)}')"><i class="fas fa-tag" style="margin-right:5px;"></i>Mark as Sold</button></div>`:''}
+    </div>`;
+  }).join('');
+
+  if(!list.length){
+    if(MARKET_VIEW_MODE==='vip'){
+      g.innerHTML=`<div class="mkt-vip-empty-state">
+        <i class="fas fa-crown"></i>
+        <h3>${MARKET_TAB==='mine'?'No VIP Listings Yet':'No VIP Vehicles Match Your Filters'}</h3>
+        <p>${MARKET_TAB==='mine'?'List a vehicle above 400,000 to see it featured here.':'Try widening your search — the VIP Lounge is a curated, smaller collection by design.'}</p>
+      </div>`;
+    } else {
+      g.innerHTML=`<p class="empty-note">${MARKET_TAB==='mine'?"You haven't listed any vehicles yet.":'No listings match your filters.'}</p>`;
+    }
+  } else {
+    g.innerHTML=html;
+  }
+}
+
+async function markListingSoldFromCard(id){
+  if(!confirm('Mark this listing as sold?')) return;
+  const {error}=await supabaseClient.from('marketplace_listings').update({status:'sold'}).eq('id',id);
+  if(error){ alert(error.message); return; }
+  await loadMarketListings();
+  applyMarketFilters();
+}
+
+// ─────────────────────────────────────────────────────────
+// SAVED LISTINGS — star/save system, available to every signed-in user
+// (not PRO-gated). The price-drop email alert (server-side, see
+// 24_marketplace_saved_listings.sql) and the comparison matrix below are
+// the two PRO-exclusive parts of this feature, not saving itself.
+// ─────────────────────────────────────────────────────────
+async function loadSavedListingIds(){
+  if(!authUser){ SAVED_LISTING_IDS=new Set(); return; }
+  const {data,error}=await supabaseClient.from('saved_listings').select('listing_id').eq('user_id',authUser.id);
+  SAVED_LISTING_IDS=new Set((!error && data)?data.map(r=>r.listing_id):[]);
+}
+
+async function toggleSaveListing(id,event){
+  if(event) event.stopPropagation();
+  if(!isLoggedIn()){ openAuthRequiredModal('Sign in to save listings.'); return; }
+  const btn=document.querySelector(`.mkt-save-star[data-listing-id="${id}"]`);
+  const wasSaved=SAVED_LISTING_IDS.has(id);
+  try{
+    if(wasSaved){
+      const {error}=await supabaseClient.from('saved_listings').delete().eq('user_id',authUser.id).eq('listing_id',id);
+      if(error) throw error;
+      SAVED_LISTING_IDS.delete(id);
+    } else {
+      const {error}=await supabaseClient.from('saved_listings').insert({user_id:authUser.id,listing_id:id});
+      if(error) throw error;
+      SAVED_LISTING_IDS.add(id);
+    }
+    if(btn) btn.classList.toggle('saved',!wasSaved);
+    // If we're currently looking at the Saved tab, unsaving should
+    // remove the card immediately rather than waiting for a re-fetch.
+    if(MARKET_TAB==='saved' && wasSaved){
+      MARKET_LISTINGS_CACHE=MARKET_LISTINGS_CACHE.filter(l=>l.id!==id);
+      applyMarketFilters();
+    }
+  }catch(err){
+    alert('Could not update saved listings: '+err.message);
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// SIDE-BY-SIDE COMPARISON — PRO exclusive. Free users get a locked
+// teaser that opens the PRO paywall instead of the actual comparison.
+// ─────────────────────────────────────────────────────────
+function toggleCompareSelection(id,event){
+  if(event) event.stopPropagation();
+  const idx=COMPARE_SELECTED_IDS.indexOf(id);
+  if(idx>-1){
+    COMPARE_SELECTED_IDS.splice(idx,1);
+  } else {
+    if(COMPARE_SELECTED_IDS.length>=2){
+      alert('You can compare up to 2 vehicles at a time. Deselect one first.');
+      return;
+    }
+    COMPARE_SELECTED_IDS.push(id);
+  }
+  document.querySelectorAll('.mkt-compare-checkbox').forEach(cb=>{
+    cb.checked=COMPARE_SELECTED_IDS.includes(cb.dataset.listingId);
+  });
+  updateCompareBarUi();
+}
+
+function updateCompareBarUi(){
+  const bar=document.getElementById('mktCompareBar');
+  if(!bar) return;
+  const btn=document.getElementById('mktCompareBtn');
+  const count=document.getElementById('mktCompareCount');
+  if(count) count.textContent=`${COMPARE_SELECTED_IDS.length}/2 selected`;
+  if(btn) btn.disabled=COMPARE_SELECTED_IDS.length!==2;
+}
+
+function openCompareModal(){
+  if(COMPARE_SELECTED_IDS.length!==2){ alert('Select exactly 2 saved vehicles to compare.'); return; }
+  if(!isVipEligible() && !isPro){
+    // Free users never get this far normally (button is disabled/locked
+    // below), but guard here too in case of a stale UI state.
+    openProPricingModal();
+    return;
+  }
+  const [a,b]=COMPARE_SELECTED_IDS.map(id=>MARKET_LISTINGS_CACHE.find(l=>l.id===id)).filter(Boolean);
+  if(!a||!b){ alert('Could not load both selected listings.'); return; }
+  renderCompareModal(a,b);
+  document.getElementById('mktCompareModal').classList.add('open');
+}
+function closeCompareModal(){
+  document.getElementById('mktCompareModal').classList.remove('open');
+}
+function mktCompareRow(label,valA,valB,unit){
+  const fmt=v=>(v===null||v===undefined||v==='')?'—':(unit?`${v} ${unit}`:v);
+  return `<tr><th>${esc(label)}</th><td>${esc(fmt(valA))}</td><td>${esc(fmt(valB))}</td></tr>`;
+}
+function renderCompareModal(a,b){
+  const body=document.getElementById('mktCompareModalBody');
+  body.innerHTML=`
+    <div class="mkt-compare-header-row">
+      <div></div>
+      <div class="mkt-compare-vehicle-head">
+        ${a.cover_image_url?`<img src="${esc(a.cover_image_url)}" alt="">`:''}
+        <strong>${esc(a.brand)} ${esc(a.model)}${a.generation?' '+esc(a.generation):''}</strong>
+      </div>
+      <div class="mkt-compare-vehicle-head">
+        ${b.cover_image_url?`<img src="${esc(b.cover_image_url)}" alt="">`:''}
+        <strong>${esc(b.brand)} ${esc(b.model)}${b.generation?' '+esc(b.generation):''}</strong>
+      </div>
+    </div>
+    <table class="mkt-compare-table">
+      <tbody>
+        ${mktCompareRow('Price', formatMktPrice(a.price,a.currency), formatMktPrice(b.price,b.currency))}
+        ${mktCompareRow('Horsepower', a.horsepower, b.horsepower, 'HP')}
+        ${mktCompareRow('Displacement', a.displacement_cc, b.displacement_cc, 'cc')}
+        ${mktCompareRow('Fuel Type', a.fuel_type, b.fuel_type)}
+        ${mktCompareRow('Transmission', a.transmission, b.transmission)}
+        ${mktCompareRow('Mileage', a.mileage_km?Number(a.mileage_km).toLocaleString():null, b.mileage_km?Number(b.mileage_km).toLocaleString():null, 'km')}
+        ${mktCompareRow('Weight', a.weight_kg, b.weight_kg, 'kg')}
+        ${mktCompareRow('Known Issues / Notes', a.recent_maintenance||a.description, b.recent_maintenance||b.description)}
+      </tbody>
+    </table>`;
+}
+
+async function loadMarketAdminOverview(){
+  const {data,error}=await supabaseClient.from('marketplace_listings').select('*, profiles(display_name,avatar_url)').neq('status','removed').order('created_at',{ascending:false}).limit(100);
+  MARKET_PENDING_ADMIN=(!error && data)?data:[]; // reused variable name, now holds the full recent-listings overview
+}
+function renderMarketAdminOverview(){
+  const el=document.getElementById('marketAdminContent');
+  if(!el) return;
+  if(!isAdmin){ el.innerHTML='<p class="empty-note">Admin access required.</p>'; return; }
+  el.innerHTML=`<div class="panel">
+    <h3><i class="fas fa-list"></i>Recent Listings (${MARKET_PENDING_ADMIN.length})</h3>
+    ${MARKET_PENDING_ADMIN.length?MARKET_PENDING_ADMIN.map(l=>`<div class="ust">
+      <h5 style="color:var(--text-main);text-transform:none;font-weight:800;font-size:12px;">${esc(l.brand)} ${esc(l.model)} — ${formatMktPrice(l.price,l.currency)} ${marketStatusBadgeHtml(l)}</h5>
+      <p>Seller: ${esc((l.profiles&&l.profiles.display_name)||'User')} &bull; ${esc([l.city,l.country].filter(Boolean).join(', '))} &bull; Published ${l.approved_at?new Date(l.approved_at).toLocaleDateString():'—'}</p>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+        <button class="wbtn" onclick="go({view:'marketlisting',id:'${esc(l.id)}'})"><i class="fas fa-eye" style="margin-right:5px;"></i>Review</button>
+        <button class="wbtn" style="background:var(--err);" onclick="adminRemoveListing('${esc(l.id)}')"><i class="fas fa-trash" style="margin-right:5px;"></i>Delete</button>
+      </div>
+    </div>`).join(''):'<p style="font-size:12px;color:var(--gray);padding:6px 0;">No listings yet.</p>'}
+  </div>`;
+}
+async function adminRemoveListing(id){
+  if(!confirm('Permanently delete this listing? This cannot be undone.')) return;
+  const {error}=await supabaseClient.from('marketplace_listings').delete().eq('id',id);
+  if(error){ alert('Could not delete: '+error.message); return; }
+  MARKET_LISTINGS_CACHE=MARKET_LISTINGS_CACHE.filter(l=>l.id!==id);
+  MARKET_PENDING_ADMIN=MARKET_PENDING_ADMIN.filter(l=>l.id!==id);
+  await loadMarketAdminOverview();
+  renderMarketAdminOverview();
+  applyMarketFilters();
+  if(currentState && currentState.view==='marketlisting' && currentState.id===id) go({view:'market'});
+}
+
+// ─────────────────────────────────────────────────────────
+// VIN VALIDATION (reuses cVin() from the VIN Decoder tool — same
+// uppercase enforcement and I/O/Q stripping, applied here since VIN is
+// optional-but-strict in this form too)
+// ─────────────────────────────────────────────────────────
+function onMktVinInput(input){
+  const cleaned=cVin(input.value);
+  if(input.value!==cleaned) input.value=cleaned;
+  const msgEl=document.getElementById('mktVinMsg');
+  if(!msgEl) return;
+  if(cleaned.length===0){ msgEl.textContent=''; input.classList.remove('field-invalid'); }
+  else if(cleaned.length<17){ msgEl.style.color='var(--gray)'; msgEl.textContent=`${cleaned.length}/17 characters.`; input.classList.remove('field-invalid'); }
+  else { msgEl.style.color='var(--ok)'; msgEl.textContent='17/17 — valid VIN format.'; input.classList.remove('field-invalid'); }
+}
+
+// ─────────────────────────────────────────────────────────
+// SUBMISSION FORM
+// ─────────────────────────────────────────────────────────
+function openMarketFormModal(editId,isVipFlow){
+  if(!isLoggedIn()){ openAuthRequiredModal('Sign in to list a vehicle for sale.'); return; }
+  // Editing an existing listing always continues in whichever flow that
+  // listing already belongs to (a VIP listing stays VIP, a standard
+  // listing stays standard) — isVipFlow is only meaningful for new listings.
+  const editingListing=editId?(MARKET_LISTINGS_CACHE.find(x=>x.id===editId)||CURRENT_LISTING):null;
+  mktFormVipMode=editId ? !!(editingListing&&editingListing.is_vip) : !!isVipFlow;
+  if(mktFormVipMode && !isVipEligible()){ openVipPaywallModal(); return; }
+
+  mktEditingListingId=editId||null;
+  mktPendingPhotoFiles=[];
+  const titleIcon=mktFormVipMode?'<i class="fas fa-crown" style="margin-right:8px;color:#f5c542;"></i>':'<i class="fas fa-car" style="margin-right:8px;color:var(--sky);"></i>';
+  const titleText=editId?'Edit Listing':(mktFormVipMode?'List a VIP Vehicle':'List a Vehicle');
+  document.getElementById('mktFormTitle').innerHTML=titleIcon+titleText;
+  document.getElementById('marketFormModal').classList.toggle('vip-form-theme',mktFormVipMode);
+
+  if(editId){
+    populateMarketForm(editingListing);
+  } else {
+    resetMarketForm();
+  }
+  renderMktPhotoGrid();
+  document.getElementById('marketFormModal').classList.add('open');
+}
+function closeMarketFormModal(){
+  document.getElementById('marketFormModal').classList.remove('open');
+}
+function resetMarketForm(){
+  ['mktBrand','mktModel','mktGeneration','mktYear','mktPrice','mktDisplacement','mktHorsepower','mktMileage','mktVin','mktDescription','mktMaintenance','mktCity','mktCountry','mktPhone'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  ['mktCategory','mktBodyStyle','mktCurrency','mktFuelType','mktTransmission','mktAccidentStatus'].forEach(id=>{ const el=document.getElementById(id); if(el) el.selectedIndex=0; });
+  document.getElementById('mktCurrency').value='EUR';
+  document.getElementById('mktPhonePublic').checked=true;
+  document.getElementById('mktNegotiable').checked=false;
+  document.getElementById('mktVinMsg').textContent='';
+  onMktPriceOrCurrencyChanged();
+}
+// High-Value Vehicle Gate — live UI feedback as the seller types the
+// price. Purely informational here; the actual block/allow decision is
+// re-checked in submitMarketListing() (and enforced server-side too, see
+// 17_marketplace_vip_gate.sql).
+function onMktPriceOrCurrencyChanged(){
+  const price=parseFloat(document.getElementById('mktPrice').value);
+  const currency=document.getElementById('mktCurrency').value;
+  const notice=document.getElementById('mktVipNotice');
+  if(!notice) return;
+
+  if(mktFormVipMode){
+    if(!price || !mktBelowVipMinThreshold(price,currency)){
+      notice.style.display='none';
+      notice.innerHTML='';
+      return;
+    }
+    notice.style.display='block';
+    notice.innerHTML=`<div class="mkt-vip-blocked"><i class="fas fa-triangle-exclamation" style="color:var(--err);font-size:18px;"></i><div><strong style="color:var(--err);">Below VIP minimum</strong><p style="font-size:11px;color:var(--text-secondary);margin-top:2px;">In the VIP Marketplace, the minimum vehicle value is ${esc(MKT_VIP_MIN_THRESHOLDS[currency].toLocaleString())} ${esc(currency)}.</p></div></div>`;
+    return;
+  }
+
+  if(!price || !mktExceedsVipThreshold(price,currency)){
+    notice.style.display='none';
+    notice.innerHTML='';
+    return;
+  }
+  notice.style.display='block';
+  notice.innerHTML=`<div class="mkt-vip-blocked"><i class="fas fa-lock" style="color:var(--err);font-size:18px;"></i><div><strong style="color:var(--err);">VIP Marketplace required</strong><p style="font-size:11px;color:var(--text-secondary);margin-top:2px;">Vehicles priced at ${esc(MKT_VIP_THRESHOLDS[currency].toLocaleString())} ${esc(currency)} or above can only be listed in the VIP Marketplace.</p></div></div>`;
+}
+function populateMarketForm(l){
+  if(!l) return;
+  document.getElementById('mktCategory').value=l.category||'';
+  document.getElementById('mktBrand').value=l.brand||'';
+  document.getElementById('mktModel').value=l.model||'';
+  document.getElementById('mktGeneration').value=l.generation||'';
+  document.getElementById('mktBodyStyle').value=l.body_style||'';
+  document.getElementById('mktYear').value=l.production_year||'';
+  document.getElementById('mktPrice').value=l.price||'';
+  document.getElementById('mktCurrency').value=l.currency||'EUR';
+  document.getElementById('mktDisplacement').value=l.displacement_cc||'';
+  document.getElementById('mktHorsepower').value=l.horsepower||'';
+  document.getElementById('mktFuelType').value=l.fuel_type||'';
+  document.getElementById('mktTransmission').value=l.transmission||'';
+  document.getElementById('mktMileage').value=l.mileage_km||'';
+  document.getElementById('mktAccidentStatus').value=l.accident_status||'';
+  document.getElementById('mktVin').value=l.vin||'';
+  document.getElementById('mktDescription').value=l.description||'';
+  document.getElementById('mktMaintenance').value=l.recent_maintenance||'';
+  document.getElementById('mktCity').value=l.city||'';
+  document.getElementById('mktCountry').value=l.country||'';
+  document.getElementById('mktPhone').value=l.contact_phone||'';
+  document.getElementById('mktPhonePublic').checked=l.phone_public!==false;
+  document.getElementById('mktNegotiable').checked=!!l.price_negotiable;
+  onMktPriceOrCurrencyChanged();
+}
+
+function handleMktPhotosSelected(e){
+  const files=Array.from(e.target.files||[]);
+  e.target.value='';
+  for(const file of files){
+    if(mktPendingPhotoFiles.length>=10){ alert('Maximum 10 photos per listing.'); break; }
+    if(!file.type.startsWith('image/')){ alert(file.name+' is not an image file.'); continue; }
+    if(file.size>5*1024*1024){ alert(file.name+' is larger than 5MB.'); continue; }
+    mktPendingPhotoFiles.push(file);
+  }
+  renderMktPhotoGrid();
+}
+function removeMktPhoto(index){
+  mktPendingPhotoFiles.splice(index,1);
+  renderMktPhotoGrid();
+}
+// Drag-to-reorder: HTML5 drag events on each thumbnail, reordering the
+// underlying mktPendingPhotoFiles array on drop. Position 1 (leftmost)
+// becomes the cover image on submit.
+let mktDragFromIndex=null;
+function renderMktPhotoGrid(){
+  const grid=document.getElementById('mktPhotoGrid');
+  const thumbsHtml=mktPendingPhotoFiles.map((file,i)=>{
+    const url=URL.createObjectURL(file);
+    return `<div class="mkt-photo-thumb" draggable="true"
+        ondragstart="mktDragFromIndex=${i};this.classList.add('dragging')"
+        ondragend="this.classList.remove('dragging')"
+        ondragover="event.preventDefault();this.classList.add('drag-over')"
+        ondragleave="this.classList.remove('drag-over')"
+        ondrop="event.preventDefault();this.classList.remove('drag-over');reorderMktPhotos(mktDragFromIndex,${i})">
+        <img src="${url}" alt="">
+        <span class="mkt-photo-order-badge">${i===0?'Cover':i+1}</span>
+        <button type="button" class="mkt-photo-remove" onclick="removeMktPhoto(${i})">&times;</button>
+      </div>`;
+  }).join('');
+  const addTile=mktPendingPhotoFiles.length<10?`<div class="mkt-photo-add" onclick="document.getElementById('mktPhotoInput').click()"><i class="fas fa-camera"></i><span>Add Photo</span></div>`:'';
+  grid.innerHTML=thumbsHtml+addTile;
+}
+function reorderMktPhotos(fromIndex,toIndex){
+  if(fromIndex==null || fromIndex===toIndex) return;
+  const [moved]=mktPendingPhotoFiles.splice(fromIndex,1);
+  mktPendingPhotoFiles.splice(toIndex,0,moved);
+  mktDragFromIndex=null;
+  renderMktPhotoGrid();
+}
+
+async function uploadMarketImage(file){
+  const ext=((file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,''))||'jpg';
+  const path=`${authUser.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+  const {error}=await supabaseClient.storage.from('marketplace-images').upload(path,file,{cacheControl:'3600',upsert:false});
+  if(error) throw error;
+  const {data}=supabaseClient.storage.from('marketplace-images').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+async function submitMarketListing(){
+  const category=document.getElementById('mktCategory').value;
+  const brand=document.getElementById('mktBrand').value.trim();
+  const model=document.getElementById('mktModel').value.trim();
+  const price=parseFloat(document.getElementById('mktPrice').value);
+  const year=parseInt(document.getElementById('mktYear').value,10);
+  const city=document.getElementById('mktCity').value.trim();
+  const country=document.getElementById('mktCountry').value.trim();
+  const phone=document.getElementById('mktPhone').value.trim();
+  const locationName=[city,country].filter(Boolean).join(', ');
+
+  if(!category||!brand||!model||!price||!year||!city||!country||!phone){
+    alert('Please fill in at least Category, Brand, Model, Year, Price, City, Country, and Phone Number.');
+    return;
+  }
+  const currencyVal=document.getElementById('mktCurrency').value;
+  let isVipListing;
+
+  if(mktFormVipMode){
+    // VIP Marketplace flow: mandatory MINIMUM, always tagged VIP.
+    if(mktBelowVipMinThreshold(price,currencyVal)){
+      alert(`In the VIP Marketplace, the minimum vehicle value is ${MKT_VIP_MIN_THRESHOLDS[currencyVal].toLocaleString()} ${currencyVal}.`);
+      return;
+    }
+    isVipListing=true;
+  } else {
+    // Standard Marketplace flow: hard cap, regardless of PRO status —
+    // anything at/above the threshold must go through the VIP flow
+    // instead. Free users get the PRO paywall (they can't access VIP at
+    // all yet); PRO/admin users are simply redirected to the VIP form,
+    // since showing them an "upgrade to PRO" paywall would make no sense.
+    if(mktExceedsVipThreshold(price,currencyVal)){
+      if(!isVipEligible()){
+        alert(`Vehicles priced above ${MKT_VIP_THRESHOLDS[currencyVal].toLocaleString()} ${currencyVal} can only be listed in the VIP Marketplace. Upgrade to PRO to unlock VIP access!`);
+        closeMarketFormModal();
+        openProPricingModal();
+        return;
+      }
+      alert(`Vehicles priced above ${MKT_VIP_THRESHOLDS[currencyVal].toLocaleString()} ${currencyVal} must be listed through the VIP Marketplace instead. Switching you there now.`);
+      closeMarketFormModal();
+      MARKET_VIEW_MODE='vip';
+      syncMarketModeUi();
+      openMarketFormModal(null,true);
+      return;
+    }
+    isVipListing=false;
+  }
+
+  const vinVal=cVin(document.getElementById('mktVin').value);
+  if(vinVal && vinVal.length!==17){
+    alert('VIN must be exactly 17 characters if provided — leave it blank to skip.');
+    return;
+  }
+  if(!mktEditingListingId && !mktPendingPhotoFiles.length){ if(!confirm('No photos added — continue without any photos?')) return; }
+
+  const saveBtn=document.querySelector('#marketFormModal .vbtn-save');
+  if(saveBtn){ saveBtn.disabled=true; saveBtn.style.opacity='.6'; saveBtn.innerHTML='<i class="fas fa-circle-notch fa-spin" style="margin-right:6px;"></i>Uploading...'; }
+
+  try{
+    let uploadedUrls=[];
+    for(const file of mktPendingPhotoFiles){
+      uploadedUrls.push(await uploadMarketImage(file));
+    }
+
+    const payload={
+      category, brand, model,
+      generation: document.getElementById('mktGeneration').value.trim()||null,
+      body_style: document.getElementById('mktBodyStyle').value||null,
+      production_year: year,
+      price, currency: document.getElementById('mktCurrency').value,
+      displacement_cc: parseInt(document.getElementById('mktDisplacement').value,10)||null,
+      horsepower: parseInt(document.getElementById('mktHorsepower').value,10)||null,
+      fuel_type: document.getElementById('mktFuelType').value||null,
+      transmission: document.getElementById('mktTransmission').value||null,
+      mileage_km: parseInt(document.getElementById('mktMileage').value,10)||null,
+      accident_status: document.getElementById('mktAccidentStatus').value||null,
+      vin: vinVal||null,
+      description: document.getElementById('mktDescription').value.trim()||null,
+      recent_maintenance: document.getElementById('mktMaintenance').value.trim()||null,
+      location_name: locationName,
+      city, country,
+      contact_phone: phone,
+      phone_public: document.getElementById('mktPhonePublic').checked,
+      price_negotiable: document.getElementById('mktNegotiable').checked,
+      is_vip: isVipListing
+    };
+    if(uploadedUrls.length) payload.cover_image_url=uploadedUrls[0];
+
+    let listingId=mktEditingListingId;
+    if(listingId){
+      const {error}=await supabaseClient.from('marketplace_listings').update(payload).eq('id',listingId);
+      if(error) throw error;
+    } else {
+      payload.seller_id=authUser.id;
+      payload.status='approved';
+      payload.approved_at=new Date().toISOString();
+      payload.expires_at=new Date(Date.now()+30*86400000).toISOString();
+      const {data,error}=await supabaseClient.from('marketplace_listings').insert(payload).select().single();
+      if(error) throw error;
+      listingId=data.id;
+    }
+
+    for(let i=0;i<uploadedUrls.length;i++){
+      await supabaseClient.from('marketplace_listing_images').insert({listing_id:listingId,image_url:uploadedUrls[i],sort_order:i});
+    }
+
+    closeMarketFormModal();
+    alert(mktEditingListingId?'Listing updated.':(mktFormVipMode?'Your VIP listing is now live in the VIP Marketplace!':'Your listing is now live!'));
+    MARKET_TAB='mine';
+    await buildMarketView();
+    go({view:'marketlisting',id:listingId});
+  }catch(err){
+    alert('Could not save listing: '+err.message);
+  }finally{
+    if(saveBtn){ saveBtn.disabled=false; saveBtn.style.opacity='1'; saveBtn.innerHTML='<i class="fas fa-paper-plane" style="margin-right:6px;"></i>Submit Listing'; }
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// LISTING DETAIL PAGE
+// ─────────────────────────────────────────────────────────
+async function openMarketListingDetail(id,push){
+  if(push===undefined) push=true;
+  showV('vMarketListing');
+  if(push) go({view:'marketlisting',id});
+  const c=document.getElementById('marketListingContent');
+  c.innerHTML=`<div class="spin"><i class="fas fa-circle-notch"></i><p>Loading listing...</p></div>`;
+
+  const {data:listing,error}=await supabaseClient.from('marketplace_listings').select('*, profiles(display_name,avatar_url,created_at)').eq('id',id).maybeSingle();
+  if(error || !listing){ c.innerHTML=`<p class="empty-note">This listing could not be found — it may have been removed.</p>`; return; }
+  const {data:images}=await supabaseClient.from('marketplace_listing_images').select('*').eq('listing_id',id).order('sort_order',{ascending:true});
+  CURRENT_LISTING=listing;
+  CURRENT_LISTING_IMAGES=images||[];
+  renderMarketListingDetail();
+}
+
+function mktSpecItem(label,value){
+  if(value===null||value===undefined||value==='') return '';
+  return `<div class="mkt-spec-item"><label>${esc(label)}</label><span>${esc(String(value))}</span></div>`;
+}
+
+function renderMarketListingDetail(){
+  const l=CURRENT_LISTING;
+  const c=document.getElementById('marketListingContent');
+  if(!l) return;
+  const imgs=CURRENT_LISTING_IMAGES.length?CURRENT_LISTING_IMAGES.map(i=>i.image_url):(l.cover_image_url?[l.cover_image_url]:[]);
+  const isOwner=authUser && l.seller_id===authUser.id;
+  const expired=l.status==='approved' && l.expires_at && new Date(l.expires_at).getTime()<Date.now();
+
+  const galleryHtml=imgs.length?`
+    <div class="mkt-gallery-main"><img id="mktGalleryMainImg" src="${esc(imgs[0])}" alt="${esc(l.brand+' '+l.model)}" onclick="openChatLightbox(this.src)"></div>
+    ${imgs.length>1?`<div class="mkt-gallery-thumbs">${imgs.map((u,i)=>`<img src="${esc(u)}" class="${i===0?'active-thumb':''}" onclick="document.getElementById('mktGalleryMainImg').src=this.src;document.querySelectorAll('.mkt-gallery-thumbs img').forEach(t=>t.classList.remove('active-thumb'));this.classList.add('active-thumb')">`).join('')}</div>`:''}
+  ` : `<div class="mkt-gallery-main"><div class="cph" style="height:100%;"><i class="fas fa-car"></i></div></div>`;
+
+  let actionsHtml='';
+  if(isOwner){
+    actionsHtml=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">`;
+    if(l.status==='approved' && !expired){
+      actionsHtml+=`<button class="wbtn" onclick="openMarketFormModal('${esc(l.id)}')"><i class="fas fa-pencil" style="margin-right:6px;"></i>Edit</button>
+        <button class="wbtn" style="background:var(--ok);" onclick="markListingSold('${esc(l.id)}')"><i class="fas fa-tag" style="margin-right:6px;"></i>Mark as Sold</button>`;
+    }
+    if(l.status==='expired' || expired){
+      actionsHtml+=`<button class="wbtn" style="background:var(--ok);" onclick="renewMarketListing('${esc(l.id)}')"><i class="fas fa-rotate" style="margin-right:6px;"></i>Renew (30 days)</button>`;
+    }
+    actionsHtml+=`<button class="wbtn" style="background:var(--err);" onclick="removeMarketListing('${esc(l.id)}')"><i class="fas fa-trash" style="margin-right:6px;"></i>Delete Listing</button>`;
+    actionsHtml+=`</div>`;
+  }
+  if(isAdmin && !isOwner){
+    actionsHtml+=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+      <button class="wbtn" style="background:var(--err);" onclick="adminRemoveListing('${esc(l.id)}')"><i class="fas fa-trash" style="margin-right:6px;"></i>Delete (Admin)</button>
+    </div>`;
+  }
+
+  const sellerName=(l.profiles&&l.profiles.display_name)||'Seller';
+  const showPhone = l.phone_public || isOwner || isAdmin || isLoggedIn();
+  const contactHtml=(l.status==='approved' && !expired) || isOwner || isAdmin ? `
+    <div class="panel">
+      <h3><i class="fas fa-address-card"></i>Seller &amp; Contact</h3>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <img src="${esc((l.profiles&&l.profiles.avatar_url)||fallbackAvatarFor(sellerName))}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;" referrerpolicy="no-referrer" alt="">
+        <span class="chat-clickable-name" style="font-weight:700;font-size:12.5px;" onclick="openUserProfileModal('${esc(l.seller_id)}')">${esc(sellerName)}</span>
+      </div>
+      ${l.contact_phone && showPhone ? `<p style="font-size:12px;margin-bottom:4px;"><i class="fas fa-phone" style="margin-right:6px;color:var(--sky-d);"></i><a href="tel:${esc(l.contact_phone.replace(/[^\d+]/g,''))}" style="color:var(--text-main);text-decoration:none;">${esc(l.contact_phone)}</a></p>`
+        : l.contact_phone ? `<p style="font-size:11.5px;color:var(--gray);margin-bottom:4px;"><i class="fas fa-lock" style="margin-right:6px;"></i>Phone hidden — <span style="color:var(--sky);cursor:pointer;" onclick="openAuthRequiredModal('Sign in to view this seller\'s phone number.')">sign in to view</span></p>` : ''}
+      ${!isOwner?`<button class="wbtn" style="margin-top:8px;" onclick="go({view:'chatthread',kind:'dm',id:'${esc(l.seller_id)}'})"><i class="fas fa-paper-plane" style="margin-right:6px;"></i>Message Seller</button>`:''}
+    </div>` : '';
+
+  const statusNote=(expired)?`<div class="chat-suspended-banner" style="margin-bottom:16px;"><i class="fas fa-circle-exclamation" style="margin-right:6px;"></i>This listing has expired. ${isOwner?'Renew it to make it public again.':''}</div>`
+    :'';
+
+  const locationLabel=[l.city,l.country].filter(Boolean).join(', ')||l.location_name||'';
+
+  c.innerHTML=`
+    ${statusNote}
+    ${galleryHtml}
+    <div class="rhdr">
+      <div>
+        <h1>${esc(l.brand)} ${esc(l.model)}${l.generation?' '+esc(l.generation):''}</h1>
+        <p class="years"><i class="fas fa-calendar-days" style="margin-right:4px;"></i>${esc(l.production_year)}${locationLabel?' &bull; '+esc(locationLabel):''}</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">${marketStatusBadgeHtml(l)}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+      <div class="mkt-price" style="font-size:26px;">${formatMktPrice(l.price,l.currency)}${l.price_negotiable?' <span style="font-size:11px;color:var(--gray);font-weight:600;">(negotiable)</span>':''}</div>
+      ${l.is_vip?'<span class="mkt-vip-gold-badge" style="font-size:11px;padding:6px 14px;"><i class="fas fa-crown"></i>VIP GOLD</span>':''}
+    </div>
+    <div class="mkt-pills" style="margin-bottom:16px;">
+      ${l.mileage_km?`<span class="mkt-pill"><i class="fas fa-road"></i>${esc(Number(l.mileage_km).toLocaleString())} km</span>`:''}
+      ${l.horsepower?`<span class="mkt-pill"><i class="fas fa-gauge-high"></i>${esc(l.horsepower)} HP</span>`:''}
+      ${l.fuel_type?`<span class="mkt-pill"><i class="fas fa-gas-pump"></i>${esc(l.fuel_type)}</span>`:''}
+      ${l.transmission?`<span class="mkt-pill"><i class="fas fa-arrows-spin"></i>${esc(l.transmission)}</span>`:''}
+    </div>
+    ${actionsHtml}
+
+    <div class="panel" style="margin-top:18px;"><h3><i class="fas fa-circle-info"></i>Basic Details</h3>
+      <div class="mkt-spec-grid">
+        ${mktSpecItem('Body Style',l.body_style)}
+        ${mktSpecItem('Production Year',l.production_year)}
+        ${mktSpecItem('Mileage',l.mileage_km?Number(l.mileage_km).toLocaleString()+' km':'')}
+      </div>
+    </div>
+
+    <div class="panel"><h3><i class="fas fa-gears"></i>Engine &amp; Drivetrain</h3>
+      <div class="mkt-spec-grid">
+        ${mktSpecItem('Displacement',l.displacement_cc?l.displacement_cc+' cc':'')}
+        ${mktSpecItem('Horsepower',l.horsepower?l.horsepower+' HP':'')}
+        ${mktSpecItem('Fuel Type',l.fuel_type)}
+        ${mktSpecItem('Transmission',l.transmission)}
+      </div>
+    </div>
+
+    ${l.accident_status || l.description || l.recent_maintenance ? `<div class="panel"><h3><i class="fas fa-magnifying-glass"></i>Condition</h3>
+      ${mktSpecItem('Status',l.accident_status?l.accident_status.replace(/_/g,' '):'')}
+      ${l.description?`<p style="font-size:12px;margin-top:8px;line-height:1.6;">${esc(l.description)}</p>`:''}
+      ${l.recent_maintenance?`<p style="font-size:12px;margin-top:8px;"><strong>Recent Maintenance:</strong> ${esc(l.recent_maintenance)}</p>`:''}
+      ${l.vin?`<p style="font-size:12px;margin-top:8px;"><strong>VIN:</strong> ${esc(l.vin)}</p>`:''}
+    </div>`:''}
+
+    ${locationLabel ? `<div class="panel"><h3><i class="fas fa-location-dot"></i>Location</h3><p class="mkt-location-pin">📍 ${esc(locationLabel)}</p></div>` : ''}
+
+    ${contactHtml}
+  `;
+}
+
+async function markListingSold(id){
+  if(!confirm('Mark this listing as sold? It will be greyed out and removed from active browsing, but stays visible in your history.')) return;
+  const {error}=await supabaseClient.from('marketplace_listings').update({status:'sold'}).eq('id',id);
+  if(error){ alert(error.message); return; }
+  openMarketListingDetail(id,false);
+}
+async function renewMarketListing(id){
+  if(!confirm('Renew this listing for another 30 days?')) return;
+  const expiresAt=new Date(Date.now()+30*86400000).toISOString();
+  const {error}=await supabaseClient.from('marketplace_listings').update({status:'approved',expires_at:expiresAt,renewed_at:new Date().toISOString()}).eq('id',id);
+  if(error){ alert(error.message); return; }
+  openMarketListingDetail(id,false);
+}
+async function removeMarketListing(id){
+  if(!confirm('Permanently delete this listing? This cannot be undone.')) return;
+  const {error}=await supabaseClient.from('marketplace_listings').delete().eq('id',id);
+  if(error){ alert(error.message); return; }
+  MARKET_LISTINGS_CACHE=MARKET_LISTINGS_CACHE.filter(l=>l.id!==id);
+  go({view:'market'});
+  applyMarketFilters();
+}
+
+
 
 async function blockUserFromProfileModal(userId){
   const {data:blockRow}=await supabaseClient.from('user_blocks').select('id').eq('blocker_id',authUser.id).eq('blocked_id',userId).maybeSingle();
@@ -4490,27 +6323,99 @@ function qSearch(q){
 async function decodeVin(){
   const raw=document.getElementById('vinIn')?.value||'';
   const vin=cVin(raw);
-  if(vin.length<11)return alert('Please enter a valid VIN (11+ characters). Try the sample: 1HGBH41JXMN109186');
+  if(vin.length!==17){
+    const msgEl=document.getElementById('vinLiveMsg');
+    if(msgEl){ msgEl.style.color='var(--err)'; msgEl.textContent=`VINs must be exactly 17 characters (you entered ${vin.length}).`; }
+    alert(`Please enter a valid 17-character VIN. Try the sample: 1HGBH41JXMN109186`);
+    return;
+  }
   go({view:'vin',vin});
 }
+// Maps a WMI/VDS/VIS position (0-indexed) to its section class.
+function vinCellSection(i){
+  if(i<3) return 'wmi';   // Digits 1-3: World Manufacturer Identifier
+  if(i<8) return 'vds';   // Digits 4-8: Vehicle Descriptor Section
+  return 'vis';           // Digits 9-17: Vehicle Identifier Section
+}
+
+function vinBreakdownMatrixHtml(vin){
+  const cells = vin.split('').map((ch,i)=>`<div class="vin-cell ${vinCellSection(i)}" title="Position ${i+1}">${esc(ch)}</div>`).join('');
+  return `
+    <div class="vin-legend">
+      <span class="vin-legend-item"><span class="vin-legend-dot wmi"></span>WMI — World Manufacturer Identifier (1–3)</span>
+      <span class="vin-legend-item"><span class="vin-legend-dot vds"></span>VDS — Vehicle Descriptor Section (4–8)</span>
+      <span class="vin-legend-item"><span class="vin-legend-dot vis"></span>VIS — Vehicle Identifier Section (9–17)</span>
+    </div>
+    <div class="vin-matrix">${cells}</div>`;
+}
+
+function vinChecklistHtml(){
+  const items=[
+    {icon:'fa-car-side',title:'Windshield (bottom, driver side)',text:'Look through the glass from outside — most vehicles have the VIN stamped on a small plate visible at the base of the windshield.'},
+    {icon:'fa-door-closed',title:'B-pillar door jamb sticker',text:'Open the driver\'s door and check the sticker on the B-pillar (the frame between front and rear doors) — it repeats the VIN along with tire pressure and paint code info.'},
+    {icon:'fa-gears',title:'Engine bay firewall stamp',text:'Some manufacturers stamp the VIN directly onto the firewall (the panel separating the engine bay from the cabin) — check near the base of the windshield under the hood.'},
+    {icon:'fa-road',title:'Stamped chassis rail',text:'Many vehicles have the VIN stamped into the front chassis rail or frame, usually visible from underneath near the front wheel well.'},
+    {icon:'fa-file-lines',title:'Registration document cross-check',text:'Always compare all physical VIN locations against the registration/title document — a mismatch anywhere is a serious red flag.'}
+  ];
+  return items.map(it=>`<div class="vin-checklist-item">
+      <div class="vin-checklist-icon"><i class="fas ${it.icon}"></i></div>
+      <div class="vin-checklist-text"><h5>${esc(it.title)}</h5><p>${esc(it.text)}</p></div>
+    </div>`).join('');
+}
+
+function vinLockedHistoryHtml(vin){
+  return `<div class="vin-locked-card">
+    <div class="vin-locked-list">
+      <div class="vin-locked-item"><i class="fas fa-triangle-exclamation"></i><span class="vlbl">Stolen Vehicle Registry Check</span><span class="vph">•••••••</span></div>
+      <div class="vin-locked-item"><i class="fas fa-gauge-high"></i><span class="vlbl">Mileage Rollback Analysis</span><span class="vph">•••••••</span></div>
+      <div class="vin-locked-item"><i class="fas fa-car-burst"></i><span class="vlbl">Previous Salvage / Accident Records</span><span class="vph">•••••••</span></div>
+    </div>
+    <div class="vin-locked-overlay" onclick="vinHistoryUnlockClick()">
+      <i class="fas fa-lock"></i>
+      <p>Vehicle History &amp; Theft Status is a PRO feature.</p>
+      <button class="wbtn" style="background:var(--gold);color:#1e293b;pointer-events:none;"><i class="fas fa-unlock" style="margin-right:6px;"></i>Unlock Full History Report</button>
+    </div>
+  </div>`;
+}
+
+function vinHistoryUnlockClick(){
+  if(!isLoggedIn()){
+    openAuthRequiredModal('Please log in or create an account to unlock the full Vehicle History & Theft Status report.');
+    return;
+  }
+  openProPricingModal();
+}
+
 async function renderVinContent(vin){
   showV('vReport');
   const c=document.getElementById('rContent');
   c.innerHTML=`<div class="spin"><i class="fas fa-circle-notch"></i><p>Decoding VIN: ${esc(vin)}</p></div>`;
   try{
-    const r=await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${encodeURIComponent(vin)}?format=json`,{signal:AbortSignal.timeout(10000)});
+    const r=await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${encodeURIComponent(vin)}?format=json`,{signal:AbortSignal.timeout(10000)});
     if(!r.ok)throw 0;
     const d=await r.json();
-    const WANT=["Make","Model","Model Year","Trim","Body Class","Engine HP","Engine Displacement (CC)","Fuel Type - Primary","Drive Type","Transmission Style","Number of Cylinders","Manufacturer Name","Plant Country","Series"];
-    let rows='',make='',model='',year='';
-    d.Results.forEach(x=>{
-      if(x.Value&&x.Value!=='Not Applicable'&&x.Value!=='0'&&WANT.includes(x.Variable)){
-        rows+=`<div class="trow"><strong>${esc(x.Variable)}</strong><span>${esc(x.Value)}</span></div>`;
-        if(x.Variable==='Make')make=x.Value;
-        if(x.Variable==='Model')model=x.Value;
-        if(x.Variable==='Model Year')year=x.Value;
-      }
-    });
+    const info=(d.Results&&d.Results[0])||{};
+    const isClean = !info.ErrorCode || info.ErrorCode==='0' || info.ErrorCode.split(',').every(x=>x.trim()==='0');
+
+    const make=info.Make||'', model=info.Model||'', year=info.ModelYear||'';
+    const displacement = info.DisplacementL ? `${info.DisplacementL}L${info.DisplacementCC?' ('+info.DisplacementCC+' cc)':''}` : (info.DisplacementCC||'');
+    const SPEC_FIELDS=[
+      ['Make', make],
+      ['Model', model],
+      ['Model Year', year],
+      ['Plant Country', info.PlantCountry],
+      ['Engine Cylinders', info.EngineCylinders],
+      ['Engine Displacement', displacement],
+      ['Fuel Type', info.FuelTypePrimary],
+      ['Drive Type', info.DriveType],
+      ['Body Class', info.BodyClass],
+      ['Vehicle Type', info.VehicleType]
+    ];
+    const specRows = SPEC_FIELDS
+      .filter(([,v])=>v && v!=='Not Applicable')
+      .map(([label,v])=>`<div class="trow"><strong>${esc(label)}</strong><span>${esc(v)}</span></div>`)
+      .join('');
+
     let compHtml='';
     if(make&&model){
       try{
@@ -4526,16 +6431,26 @@ async function renderVinContent(vin){
         <p style="font-size:12px;line-height:1.7;">${esc(w.text.slice(0,600))}${w.text.length>600?'...':''}</p>
         ${w.url?`<a href="${esc(w.url)}" target="_blank" rel="noopener noreferrer" class="wbtn"><i class="fas fa-arrow-up-right-from-square"></i>Wikipedia</a>`:''}</div>`;
     }
+
     c.innerHTML=`
-      <div style="background:var(--surface)beb;border:1.5px solid var(--gold);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#92400e;font-weight:600;display:flex;align-items:center;gap:8px;"><i class="fas fa-triangle-exclamation"></i>This is a demo version. Technical data comes from the NHTSA database (US government). It does not replace a full vehicle history report.</div>
-      <h2 style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--text-main);margin-bottom:12px;display:flex;align-items:center;gap:9px;"><i class="fas fa-id-card" style="color:var(--sky);"></i>VIN decoding result</h2>
-      <p style="font-size:11px;color:var(--gray);margin-bottom:14px;">VIN: <strong>${esc(vin)}</strong> &bull; NHTSA.gov (USA)</p>
-      <div class="panel"><h3><i class="fas fa-database"></i>Technical data</h3>${rows||'<p style="font-size:12px;color:var(--gray);">No data found in the NHTSA database for this VIN.</p>'}</div>
-      <div class="panel" style="background:var(--surface)beb;border-left-color:var(--gold);margin-top:12px;">
-        <h3><i class="fas fa-clock-rotate-left"></i>Vehicle history</h3>
-        <p style="font-size:12px;margin-bottom:12px;">Full history (accidents, inspections, mileage) via official services:</p>
-        <a href="https://www.vehiclehistory.com/vin-search?vin=${esc(vin)}" target="_blank" rel="noopener noreferrer" class="wbtn"><i class="fas fa-globe"></i>VehicleHistory</a>
-      </div>${compHtml}${wikiHtml}`;
+      <div style="background:var(--off);border:1.5px solid var(--gold);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#92400e;font-weight:600;display:flex;align-items:center;gap:8px;"><i class="fas fa-triangle-exclamation"></i>This is a demo version. Technical data comes from the NHTSA database (US government, free &amp; public). It does not replace a full vehicle history report.</div>
+      <h2 style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--text-main);margin-bottom:6px;display:flex;align-items:center;gap:9px;"><i class="fas fa-id-card" style="color:var(--sky);"></i>Advanced VIN Decoder &amp; Spec Lookup</h2>
+      <p style="font-size:11px;color:var(--gray);margin-bottom:14px;">VIN: <strong>${esc(vin)}</strong> &bull; NHTSA.gov (USA)${!isClean?' &bull; <span style="color:var(--err);font-weight:700;">Warning: NHTSA could not fully validate this VIN\'s check digit</span>':''}</p>
+
+      <div class="panel"><h3><i class="fas fa-barcode"></i>VIN Breakdown</h3>${vinBreakdownMatrixHtml(vin)}</div>
+
+      <div class="panel" style="margin-top:12px;"><h3><i class="fas fa-database"></i>Decoded Factory Specs</h3>${specRows||'<p style="font-size:12px;color:var(--gray);">No data found in the NHTSA database for this VIN.</p>'}</div>
+
+      <div class="panel" style="margin-top:12px;"><h3><i class="fas fa-magnifying-glass"></i>Chassis VIN Verification Checklist</h3>
+        <p style="font-size:11.5px;color:var(--gray);margin-bottom:4px;line-height:1.5;">Before buying, physically cross-check the VIN in these locations — a mismatch between any of them is a red flag.</p>
+        ${vinChecklistHtml()}
+      </div>
+
+      <div style="margin-top:16px;">
+        <h3 style="font-size:14px;font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--text-main);margin-bottom:10px;display:flex;align-items:center;gap:8px;"><i class="fas fa-shield-halved" style="color:var(--gold);"></i>Vehicle History &amp; Theft Status</h3>
+        ${vinLockedHistoryHtml(vin)}
+      </div>
+      ${compHtml}${wikiHtml}`;
   }catch{
     document.getElementById('rContent').innerHTML=`<div class="panel" style="border-left-color:var(--err);"><h3><i class="fas fa-circle-xmark" style="color:var(--err);"></i>Error</h3><p style="font-size:12px;">Could not fetch data for VIN: <strong>${esc(vin)}</strong></p></div>`;
   }
@@ -5518,16 +7433,25 @@ function render(state){
   currentState=state;
   if(state.cat) curCat = state.cat;
 
+  // The VIP Marketplace's full-page gold/black takeover (body.vip-mode-active)
+  // must never leak onto other pages — it's re-applied by buildMarketView()/
+  // switchMarketTab()/tryOpenVipMarket() only while actually viewing Marketplace.
+  const MARKET_VIEWS=['market','marketlisting','marketadmin'];
+  if(!MARKET_VIEWS.includes(state.view)){
+    document.documentElement.classList.remove('vip-mode-active');
+    document.body.classList.remove('vip-mode-active');
+  }
+
   // Highlight the correct top tab. Only the four category views (groups/brands/
-  // models/report use curCat; engines is its own tab; everything else (market,
-  // avoid, about, rodo, terms, settings, vin) has no matching category tab.
+  // models/report use curCat; engines is its own tab; everything else (avoid,
+  // about, rodo, terms, settings, vin) has no matching category tab.
   const CAT_VIEWS = ['groups','brands','models','report'];
   document.querySelectorAll('.ctab').forEach(b=>{
     if(CAT_VIEWS.includes(state.view)) b.classList.toggle('active', b.dataset.cat===curCat);
     else if(state.view==='engines' || state.view==='engReport') b.classList.toggle('active', b.dataset.cat==='engines');
-    else if(state.view==='market') b.classList.toggle('active', b.dataset.cat==='market');
     else if(state.view==='saved') b.classList.toggle('active', b.dataset.cat==='saved');
     else if(state.view==='chathub' || state.view==='chatthread') b.classList.toggle('active', b.dataset.cat==='chat');
+    else if(state.view==='market' || state.view==='marketlisting') b.classList.toggle('active', b.dataset.cat===(MARKET_VIEW_MODE==='vip'?'vipmarket':'market'));
     else b.classList.remove('active');
   });
 
@@ -5585,7 +7509,26 @@ function render(state){
         currentState={view:'groups',cat:curCat};
         renderCatChrome(curCat);showV('vGroups');buildGroups();buildFeatured();buildPopular();
       } else {
-        showV('vMarket');
+        showV('vMarket');buildMarketView();
+      }
+      break;
+    case 'marketlisting':
+      if(!isLoggedIn() || !state.id){
+        openAuthRequiredModal('Sign in to access the Marketplace — new accounts are created automatically with Google.');
+        history.replaceState({view:'groups',cat:curCat},'');
+        currentState={view:'groups',cat:curCat};
+        renderCatChrome(curCat);showV('vGroups');buildGroups();buildFeatured();buildPopular();
+      } else {
+        openMarketListingDetail(state.id,false);
+      }
+      break;
+    case 'marketadmin':
+      if(!isAdmin){
+        history.replaceState({view:'market'},'');
+        currentState={view:'market'};
+        showV('vMarket');buildMarketView();
+      } else {
+        showV('vMarketAdmin');buildMarketAdminView();
       }
       break;
     case 'saved':
