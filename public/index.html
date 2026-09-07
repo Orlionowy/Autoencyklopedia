@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>git 
+<head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 <title>CarEncyclopedia 2026 – Is it a bargain or a bottomless money pit?</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -99,8 +99,9 @@ html,body,header,
   transition:none !important;
   animation:none !important;
 }
-html{scroll-behavior:smooth;background:var(--bg-main);min-height:100%;}
-body{font-family:'Inter',sans-serif;background:var(--bg-main);color:var(--text-main);overflow-x:hidden;min-height:100vh;margin:0;display:flex;flex-direction:column;}
+html{scroll-behavior:smooth;background:var(--bg-main);min-height:100%;overflow-x:hidden;width:100%;max-width:100%;overscroll-behavior:none;}
+img,video,iframe,table{max-width:100%;}
+body{font-family:'Inter',sans-serif;background:var(--bg-main);color:var(--text-main);overflow-x:hidden;min-height:100vh;min-height:100dvh;margin:0;display:flex;flex-direction:column;overscroll-behavior:none;}
 header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:999;box-shadow:0 2px 20px rgba(0,0,0,.35);height:60px;border-bottom:2px solid var(--sky);gap:8px;}
 .logo{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#fff;cursor:pointer;letter-spacing:1px;white-space:nowrap;display:flex;align-items:center;gap:7px;}
 .logo span{color:var(--aqua);}
@@ -121,6 +122,58 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .cbar{background:var(--navy2);display:flex;justify-content:center;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(255,255,255,.07);}
 .cbar::-webkit-scrollbar{display:none;}
 .ctab{display:flex;align-items:center;gap:7px;padding:13px 18px;cursor:pointer;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:rgba(255,255,255,.5);border-bottom:3px solid transparent;transition:var(--t);white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;}
+
+/* ═══ RESPONSIVE NAVIGATION — hamburger on mobile, full bar on desktop ═══ */
+.hamburger-btn{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;padding:9px;background:none;border:none;cursor:pointer;flex-shrink:0;touch-action:manipulation;position:relative;z-index:1000;}
+.hamburger-btn span{display:block;width:22px;height:2px;background:#ffffff !important;border-radius:2px;transition:transform .25s ease,opacity .25s ease;}
+.hamburger-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger-btn.open span:nth-child(2){opacity:0;}
+.hamburger-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+.cbar-mobile-divider{display:none;}
+.cbar-mobile-only{display:none;}
+
+.mobile-nav-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2999;opacity:0;transition:opacity .3s ease;pointer-events:none;}
+.mobile-nav-backdrop.active{opacity:1;pointer-events:auto;}
+
+@media(max-width:767px){
+  .hamburger-btn{display:flex;}
+  .hnav{display:none;}
+  .mobile-nav-backdrop{display:block;}
+  .cbar-mobile-divider{display:block;height:1px;background:rgba(255,255,255,.1);margin:10px 16px;}
+  .cbar-mobile-only{display:flex;}
+
+  header{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:100vw;overflow:hidden;padding:0 12px;}
+  /* Top bar on mobile keeps only: hamburger, logo, sign-in/avatar CTA.
+     Everything else moves into the drawer (mobile-duplicate buttons
+     below) so nothing gets cut off on narrow screens. */
+  #marketAdminNavBtn,#themeToggleBtn,#goProBtn{display:none !important;}
+  .cbar-mobile-actions{display:flex;flex-direction:column;gap:10px;padding:14px 16px;}
+  .cbar-mobile-actions button{width:100%;justify-content:center;margin:0;}
+
+  /* Hide the visible scrollbar on mobile while keeping normal scrolling. */
+  html{scrollbar-width:none;-ms-overflow-style:none;}
+  html::-webkit-scrollbar{display:none;}
+  body{scrollbar-width:none;-ms-overflow-style:none;}
+  body::-webkit-scrollbar{display:none;}
+
+  .cbar{
+    position:fixed;top:0;left:0;width:280px;max-width:80vw;
+    height:100vh;height:100dvh;
+    flex-direction:column;align-items:stretch;justify-content:flex-start;
+    overflow-x:visible;overflow-y:auto;
+    transform:translateX(-100%);transition:transform .3s ease;
+    z-index:3000;padding-top:64px;
+    box-shadow:4px 0 24px rgba(0,0,0,.3);
+  }
+  .cbar.mobile-open{transform:translateX(0);}
+  .cbar .ctab{
+    width:100%;justify-content:flex-start;padding:14px 20px;
+    border-bottom:none;border-left:3px solid transparent;font-size:12px;
+  }
+  .cbar .ctab.active{border-left-color:var(--sky);background:rgba(255,255,255,.04);}
+}
+
 .ctab:hover,.ctab.active{color:var(--aqua);border-bottom-color:var(--aqua);}
 .ctab i{font-size:15px;}
 .hero{position:relative;height:300px;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
@@ -171,8 +224,8 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .mkt-sold-overlay{position:absolute;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(1.5px);display:flex;align-items:center;justify-content:center;z-index:3;border-radius:15px;}
 .mkt-sold-stamp{border:3px solid #fff;color:#fff;font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:800;letter-spacing:4px;padding:6px 22px;border-radius:8px;transform:rotate(-8deg);text-transform:uppercase;}
 .mkt-thumb{height:160px;background:var(--off);position:relative;overflow:hidden;}
-.mkt-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
-.mkt-card:hover .mkt-thumb img{transform:scale(1.06);}
+.mkt-thumb img{width:100%;height:100%;object-fit:cover;transition:transform 2s ease-in-out;}
+.mkt-card:hover .mkt-thumb img{transform:scale(1.05);}
 .mkt-thumb .cph{height:100%;}
 .mkt-status-badge{position:absolute;top:10px;left:10px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:4px 10px;border-radius:20px;color:#fff;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.25);}
 .mkt-status-badge.pending{background:var(--gold);color:#1e293b;}
@@ -195,6 +248,68 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .mkt-compare-table{width:100%;border-collapse:collapse;font-size:12px;}
 .mkt-compare-table th{text-align:left;padding:9px 8px;font-weight:700;color:var(--gray);border-top:1px solid var(--gray3);width:120px;}
 .mkt-compare-table td{text-align:center;padding:9px 8px;font-weight:600;color:var(--text-main);border-top:1px solid var(--gray3);}
+
+/* ═══ ADMIN DATA GENERATOR — scoped entirely to this view, deliberately
+   distinct from the site's light/dark theme (same pattern as VIP mode
+   having its own identity) since this is an internal admin tool. ═══ */
+.admin-datagen-view{background:#16181c;min-height:100vh;padding:24px 4%;}
+.admin-datagen-view .wbtn{background:#262a30;}
+.datagen-shell{display:flex;gap:0;max-width:1200px;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);flex-wrap:wrap;}
+.datagen-col{flex:1;min-width:340px;padding:32px;}
+.datagen-form-col{background:#16181c;}
+.datagen-json-col{background:#1c1f24;border-left:1px solid #2a2e34;display:flex;flex-direction:column;}
+.datagen-title{font-size:22px;font-weight:800;color:#e8e6e1;margin-bottom:28px;}
+.datagen-import-box{background:#1c1f24;border:1px dashed #3a3f46;border-radius:10px;padding:14px;margin-bottom:24px;}
+.datagen-import-box label{display:block;font-size:11px;color:#8b8f96;margin-bottom:8px;}
+.datagen-import-box textarea{width:100%;background:#262a30;border:1px solid #33373d;color:#c9d1d9;border-radius:8px;padding:9px 11px;font-size:11.5px;font-family:ui-monospace,'SF Mono','Cascadia Code',Menlo,monospace;outline:none;box-sizing:border-box;resize:vertical;}
+.datagen-import-box textarea:focus{border-color:#ff6b35;}
+.datagen-import-row{display:flex;align-items:center;gap:12px;margin-top:8px;}
+.datagen-import-row button{background:#262a30;border:1px solid #ff6b35;color:#ff6b35;border-radius:6px;padding:7px 14px;font-size:11.5px;font-weight:700;cursor:pointer;}
+.datagen-import-row span{font-size:11px;}
+.datagen-title span{color:#ff6b35;font-size:13px;font-weight:600;margin-left:8px;}
+.datagen-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
+.datagen-grid-2 label,.datagen-row-head label,.datagen-stars+label{display:block;font-size:11px;color:#8b8f96;margin-bottom:6px;}
+.datagen-grid-2 input,.datagen-row input,.datagen-row select{width:100%;background:#262a30;border:1px solid #33373d;color:#e8e6e1;border-radius:8px;padding:9px 11px;font-size:13px;font-family:'Inter',sans-serif;outline:none;box-sizing:border-box;}
+.datagen-grid-2 input:focus,.datagen-row input:focus,.datagen-row select:focus{border-color:#ff6b35;}
+.datagen-row-head{display:flex;align-items:center;justify-content:space-between;margin-top:18px;margin-bottom:8px;}
+.datagen-row-head label{margin-bottom:0;}
+.datagen-row-head button{background:none;border:1px solid #ff6b35;color:#ff6b35;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;}
+.datagen-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px;}
+.datagen-row button{background:none;border:none;color:#8b8f96;font-size:13px;cursor:pointer;padding:6px;}
+.datagen-stars{display:flex;gap:4px;}
+.datagen-stars button{background:none;border:none;font-size:28px;line-height:1;cursor:pointer;padding:0;}
+.datagen-json-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.datagen-json-head span{font-size:11px;color:#8b8f96;}
+.datagen-json-head button{background:#ff6b35;color:#16181c;border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
+.datagen-json-head button.copied{background:#4ade80;}
+.datagen-json-output{flex:1;background:#121417;border:1px solid #2a2e34;border-radius:10px;padding:16px;font-size:12px;line-height:1.6;color:#c9d1d9;font-family:ui-monospace,'SF Mono','Cascadia Code',Menlo,monospace;white-space:pre-wrap;word-break:break-word;overflow:auto;min-height:400px;margin:0;}
+@media(max-width:700px){
+  .datagen-shell{flex-direction:column;}
+  .datagen-grid-2{grid-template-columns:1fr;}
+  .datagen-row{grid-template-columns:1fr;}
+}
+
+/* ═══ ADMIN PANEL — search/filter bar, tabs, reports table ═══ */
+.admin-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.admin-toolbar input{flex:1;min-width:200px;padding:9px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;}
+.admin-toolbar input:focus{border-color:var(--sky);box-shadow:var(--input-focus-glow);}
+.admin-toolbar select{padding:9px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;}
+.admin-tabswitch{display:flex;gap:6px;margin-bottom:16px;background:var(--off);border-radius:10px;padding:4px;max-width:360px;}
+.admin-tabbtn{flex:1;background:none;border:none;padding:9px 8px;border-radius:7px;font-size:11px;font-weight:800;letter-spacing:.3px;color:var(--gray);cursor:pointer;transition:var(--t);}
+.admin-tabbtn.active{background:var(--surface);color:var(--text-main);box-shadow:0 2px 8px rgba(12,26,58,.1);}
+.admin-report-row{border-left:3px solid var(--err);}
+.admin-report-row.resolved{border-left-color:var(--ok);opacity:.7;}
+.admin-report-reason-badge{display:inline-block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:20px;background:rgba(239,68,68,.12);color:var(--err);margin-left:6px;}
+
+/* Report submission modal — reason chip picker */
+.report-reason-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
+.report-reason-chip{border:1.5px solid var(--gray3);border-radius:9px;padding:10px 12px;font-size:12px;font-weight:700;text-align:center;cursor:pointer;color:var(--text-secondary);transition:var(--t);background:var(--surface);}
+.report-reason-chip.active{border-color:var(--err);color:var(--err);background:rgba(239,68,68,.06);}
+
+/* Support form */
+.support-form-row label{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:5px;margin-top:12px;}
+.support-form-row input,.support-form-row select,.support-form-row textarea{width:100%;padding:10px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;background:var(--surface);color:var(--text-main);outline:none;}
+.support-form-row input:focus,.support-form-row select:focus,.support-form-row textarea:focus{border-color:var(--sky);box-shadow:var(--input-focus-glow);}
 .mkt-body{padding:13px 15px;}
 .mkt-body h3{font-family:'Rajdhani',sans-serif;font-size:15.5px;font-weight:700;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mkt-price{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--sky),var(--sky-deep));-webkit-background-clip:text;background-clip:text;color:transparent;margin-top:3px;}
@@ -206,6 +321,7 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .mkt-mark-sold-btn{background:var(--ok);color:#fff;}
 .mkt-mark-sold-btn:hover{background:#0d9668;}
 
+.mkt-filter-sidebar{width:280px;max-width:100%;flex-shrink:0;}
 .mkt-filter-bar{background:var(--surface);border:1px solid var(--card-border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--panel-shadow);}
 .mkt-filter-field{display:flex;flex-direction:column;gap:5px;}
 .mkt-filter-field label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);}
@@ -219,7 +335,8 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .mkt-location-pin{font-size:11.5px;color:var(--text-secondary);font-weight:600;}
 
 .mkt-gallery-main{border-radius:14px;overflow:hidden;height:340px;background:var(--off);margin-bottom:10px;}
-.mkt-gallery-main img{width:100%;height:100%;object-fit:cover;cursor:zoom-in;}
+.mkt-gallery-main img{width:100%;height:100%;object-fit:cover;cursor:zoom-in;transition:transform 2s ease-in-out;}
+.mkt-gallery-main:hover img{transform:scale(1.05);}
 .mkt-gallery-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .mkt-gallery-thumbs img{width:64px;height:64px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:var(--t);}
 .mkt-gallery-thumbs img.active-thumb{border-color:var(--sky);}
@@ -326,6 +443,7 @@ body.vip-mode-active .main-content{
   box-shadow:none !important;
   width:100% !important;
   min-height:100vh !important;
+  min-height:100dvh !important;
   margin:0 !important;
   padding:0 !important;
 }
@@ -532,10 +650,11 @@ body.vip-mode-active #mktResultsCount{color:#c9b57a !important;}
 #marketFormModal.vip-form-theme .vmodal{background:linear-gradient(160deg,#141210,#050503);}
 #marketFormModal.vip-form-theme .vbtn-save{background:#111115 !important;color:#ffd700 !important;font-weight:700;border:1px solid rgba(212,175,55,.5) !important;box-shadow:0 0 15px rgba(212,175,55,.4);}
 .mkt-fullscreen-overlay{padding:0;align-items:stretch;justify-content:stretch;}
-.mkt-fullscreen-panel{max-width:100vw;width:100vw;height:100vh;max-height:100vh;border-radius:0;margin:0;display:flex;flex-direction:column;}
+.mkt-fullscreen-panel{max-width:100vw;width:100vw;height:100vh;height:100dvh;max-height:100vh;max-height:100dvh;border-radius:0;margin:0;display:flex;flex-direction:column;}
 .mkt-fullscreen-panel .vmodal-body{flex:1;max-width:760px;width:100%;margin:0 auto;}
 @media(max-width:700px){
   .mkt-filter-bar{padding:12px;}
+  .mkt-filter-sidebar{width:100%;}
 }
 
 .card:hover{transform:translateY(-4px);border-color:var(--sky);box-shadow:var(--card-glow),0 10px 25px rgba(0,0,0,.3);}
@@ -754,6 +873,21 @@ body.vip-mode-active #mktResultsCount{color:#c9b57a !important;}
 .wbtn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--navy);color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:11px;margin-top:10px;cursor:pointer;transition:var(--t);border:none;box-shadow:var(--btn-glow);}
 .wbtn:hover{box-shadow:var(--btn-glow-hover);}
 .wbtn:active{transform:scale(.97);}
+
+/* ═══ MOBILE INPUT ZOOM PREVENTION & TOUCH HANDLING ═══
+   Scoped to mobile viewports only — desktop keeps its existing smaller
+   font sizes throughout the site. !important is deliberate and safe
+   here: it only touches font-size on form controls, not transitions,
+   animations, or colors, so it can't interact with anything else. */
+@media(max-width:768px){
+  input,select,textarea{font-size:16px !important;}
+}
+/* Removes the ~300ms double-tap-to-zoom delay on interactive elements
+   without disabling pinch-zoom site-wide (unlike user-scalable=no on the
+   viewport tag, this only changes how taps on THESE elements resolve). */
+button,a,.wbtn,.sbtn,.ctab,.card,.mkt-card,input[type="checkbox"],input[type="radio"],select{
+  touch-action:manipulation;
+}
 .wbtn:hover{background:var(--sky-d);}
 .scorecard{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1px solid var(--sky);border-radius:11px;padding:16px;margin-bottom:14px;}
 .scorecard h4{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--sky-deep);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
@@ -859,17 +993,48 @@ body.vip-mode-active #mktResultsCount{color:#c9b57a !important;}
 .stitle i{color:var(--sky);}
 @media(max-width:600px){
   header{height:54px;padding:0 3%;}
+  .swrap{margin-bottom:16px;}
   .logo{font-size:16px;}
   .hnav{display:none;}
   .hero{height:240px;}
   .wrap,.swrap{width:96%;}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+  .grid{grid-template-columns:1fr;gap:18px;}
   .ctab{padding:11px 12px;font-size:9px;}
   .frow{grid-template-columns:1fr 1fr;}
+
+  /* ═══ Large-format mobile card redesign — group/brand/model cards ═══
+     .cbody is absolutely positioned (inset:0) over .cthumb, so it never
+     adds extra height of its own — the card's total height is exactly
+     .cthumb's height, and overflow:hidden on both .card and .cthumb
+     means nothing (including a high-res image) can ever push past the
+     card's own bottom edge. */
+  .card{width:100%;border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.18),0 0 0 1px var(--card-border);transition:transform .2s ease,box-shadow .2s ease;overflow:hidden;}
+  .card:active{transform:scale(1.02);}
+  .cthumb{height:220px;border-radius:16px;overflow:hidden;}
+  /* object-fit:cover (not the site's default "contain") specifically on
+     mobile, so the image genuinely fills the card edge-to-edge like a
+     background image, instead of shrinking to fit with empty space
+     around it — scoped here rather than changed globally, since other
+     places using .cthumb (like logo-only contexts) may rely on
+     "contain" not cropping their image. */
+  .cthumb img{object-fit:cover;}
+  /* Dimmed and pushed toward the top-left so it doesn't visually clash
+     with the now-centered title text below — this only matters for the
+     brief moment before a real photo loads, or if no image is available
+     for a given brand/group at all. */
+  .cph{position:absolute;top:14px;left:14px;width:auto;height:auto;font-size:24px;opacity:.35;}
+  .cbody{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:20px;
+    background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.35) 50%,rgba(0,0,0,.78) 100%);
+    pointer-events:none;
+  }
+  .cbody h3{font-size:1.7rem;font-weight:800;color:#ffffff;text-shadow:0 2px 12px rgba(0,0,0,.7);text-transform:none;letter-spacing:.2px;line-height:1.25;}
+  .cbody p{font-size:13px;color:rgba(255,255,255,.9);margin-top:6px;text-shadow:0 1px 6px rgba(0,0,0,.5);}
 }
 @media(max-width:380px){
   .frow{grid-template-columns:1fr;}
-  .grid{grid-template-columns:1fr 1fr;}
 }
 footer{background:var(--footer-bg);color:rgba(255,255,255,.6);padding:30px 5%;text-align:center;margin:0;flex-shrink:0;}
 footer p{font-size:11px;margin-bottom:5px;}
@@ -912,6 +1077,9 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
 <body>
 
 <header>
+  <button id="hamburgerBtn" class="hamburger-btn" onclick="toggleMobileNav()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
   <div class="logo" onclick="goHome()">
     <div class="logo-icon"><i class="fas fa-gauge-high" style="color:#fff;font-size:13px;"></i></div>
     Auto<span>Encyclopedia</span>
@@ -955,6 +1123,20 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
 </header>
 
 <nav class="cbar">
+  <div class="cbar-mobile-only cbar-mobile-actions">
+    <button id="marketAdminNavBtnMobile" onclick="closeMobileNav();go({view:'marketadmin'})" style="display:none;background:var(--navy2);color:#fff;border:1px solid rgba(255,255,255,.15);padding:10px 14px;border-radius:20px;font-weight:800;font-size:11px;cursor:pointer;align-items:center;gap:6px;font-family:'Inter',sans-serif;">
+      <i class="fas fa-shield-halved"></i> Admin Panel
+    </button>
+    <button id="goProBtnMobile" onclick="closeMobileNav();openProPricingModal()" style="display:flex;background:var(--gold);color:#1e293b;border:none;padding:10px 14px;border-radius:20px;font-weight:800;font-size:11px;cursor:pointer;align-items:center;gap:6px;font-family:'Inter',sans-serif;">
+      <i class="fas fa-crown"></i> Go PRO
+    </button>
+    <button id="themeToggleBtnMobile" class="theme-toggle" onclick="toggleTheme()" title="Switch theme" aria-label="Toggle light/dark theme" style="align-self:center;">
+      <i class="fas fa-sun theme-toggle-icon sun"></i>
+      <i class="fas fa-moon theme-toggle-icon moon"></i>
+      <span class="theme-toggle-knob"></span>
+    </button>
+  </div>
+  <div class="cbar-mobile-divider cbar-mobile-only" style="margin-top:0;"></div>
   <button class="ctab active" data-cat="cars" onclick="go({view:'groups',cat:'cars'})"><i class="fas fa-car"></i>Cars</button>
   <button class="ctab" data-cat="moto" onclick="go({view:'groups',cat:'moto'})"><i class="fas fa-motorcycle"></i>Motorcycles</button>
   <button class="ctab" data-cat="boats" onclick="go({view:'groups',cat:'boats'})"><i class="fas fa-sailboat"></i>Boats</button>
@@ -963,7 +1145,15 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
   <button class="ctab" data-cat="chat" onclick="tryOpenChatHub()"><i class="fas fa-comments"></i>Groups &amp; Messaging</button>
   <button class="ctab" data-cat="market" onclick="tryOpenMarket()"><i class="fas fa-shop"></i>Marketplace</button>
   <button class="ctab vip-nav-btn" data-cat="vipmarket" onclick="tryOpenVipMarket()"><i class="fas fa-crown"></i><span class="vip-nav-label">VIP Marketplace</span></button>
+  <div class="cbar-mobile-divider"></div>
+  <button class="ctab cbar-mobile-only" onclick="openPage('avoid')"><i class="fas fa-skull-crossbones"></i>Cars To Avoid</button>
+  <button class="ctab cbar-mobile-only" onclick="openPage('checklist')"><i class="fas fa-clipboard-check"></i>Inspection Checklist</button>
+  <button class="ctab cbar-mobile-only" onclick="openPage('about')"><i class="fas fa-info-circle"></i>About Us</button>
+  <button class="ctab cbar-mobile-only" onclick="openPage('rodo')"><i class="fas fa-shield-halved"></i>Privacy</button>
+  <button class="ctab cbar-mobile-only" onclick="openPage('terms')"><i class="fas fa-file-contract"></i>Terms</button>
 </nav>
+
+<div id="mobileNavBackdrop" class="mobile-nav-backdrop" onclick="closeMobileNav()"></div>
 
 <div id="homeSection">
   <div class="hero">
@@ -1691,7 +1881,7 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
 
       <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
         <!-- FILTER SIDEBAR -->
-        <aside style="width:280px;flex-shrink:0;">
+        <aside class="mkt-filter-sidebar">
           <div class="mkt-filter-bar">
             <div class="mkt-filter-field">
               <label>Category</label>
@@ -1808,11 +1998,162 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
        queue to review here anymore; this is a moderation backstop for
        removing anything that slipped past the AI check. -->
   <div id="vMarketAdmin" class="view">
-    <div style="max-width:820px;margin:0 auto;">
-      <button class="wbtn" style="margin-bottom:14px;" onclick="go({view:'market'})"><i class="fas fa-arrow-left" style="margin-right:6px;"></i>Back to Marketplace</button>
-      <div class="stitle"><i class="fas fa-shield-halved"></i>Marketplace Admin</div>
-      <p style="font-size:12px;color:var(--gray);margin-bottom:18px;line-height:1.6;">Listings are approved automatically by Gemini AI content moderation at submission — nothing waits for manual review here. This panel is a backstop for taking down anything that shouldn't have gone live.</p>
+    <div style="max-width:900px;margin:0 auto;">
+      <button class="wbtn" style="margin-bottom:14px;" onclick="go({view:'market'})"><i class="fas fa-arrow-left" style="margin-right:6px;"></i>Powrót do Marketplace</button>
+      <div class="stitle"><i class="fas fa-shield-halved"></i>Panel Administratora</div>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:18px;line-height:1.6;">Ogłoszenia publikują się natychmiast po dodaniu — nic nie czeka na ręczną weryfikację. Ten panel to zabezpieczenie: wyszukuj i filtruj ogłoszenia oraz przeglądaj zgłoszenia użytkowników.</p>
+
+      <button class="wbtn" style="margin-bottom:18px;background:#ff6b35;box-shadow:none;" onclick="go({view:'admindatagen'})"><i class="fas fa-code" style="margin-right:6px;"></i>Data Generator (vehicle specs)</button>
+      <button class="wbtn" style="margin-bottom:18px;margin-left:8px;background:#262a30;color:#ff6b35;box-shadow:none;border:1px solid #ff6b35;" onclick="openVehiclePickerModal()"><i class="fas fa-plus" style="margin-right:6px;"></i>Quick Add Vehicle</button>
+
+      <div class="admin-tabswitch">
+        <button class="admin-tabbtn active" id="adminTabBtnListings" onclick="switchAdminTab('listings')">Ogłoszenia</button>
+        <button class="admin-tabbtn" id="adminTabBtnReports" onclick="switchAdminTab('reports')">Zgłoszenia użytkowników</button>
+      </div>
+
+      <div class="admin-toolbar">
+        <input type="text" id="adminSearchInput" placeholder="Szukaj po imieniu, nazwie użytkownika, marce/modelu, VIN lub ID..." oninput="applyAdminFilters()">
+        <select id="adminStatusFilter" onchange="applyAdminFilters()">
+          <option value="all">Wszystkie</option>
+          <option value="pending">Oczekujące</option>
+          <option value="flagged">Zgłoszone</option>
+        </select>
+      </div>
+
       <div id="marketAdminContent"></div>
+    </div>
+  </div>
+
+  <div id="vAdminDataGen" class="view admin-datagen-view">
+    <button class="wbtn" style="margin-bottom:16px;" onclick="go({view:'marketadmin'})"><i class="fas fa-arrow-left" style="margin-right:6px;"></i>Back to Admin Panel</button>
+    <div class="datagen-shell">
+      <div class="datagen-col datagen-form-col">
+        <div class="datagen-title">MotorPlaza <span>Data Generator</span></div>
+
+        <div class="datagen-import-box">
+          <label>Load existing JSON (optional)</label>
+          <textarea id="dgImportInput" rows="3" placeholder="Paste existing JSON here to load it into the form..."></textarea>
+          <div class="datagen-import-row">
+            <button onclick="loadDataGenJSON()">Load into form</button>
+            <span id="dgImportError"></span>
+          </div>
+        </div>
+
+        <div class="datagen-grid-2">
+          <div>
+            <label>Brand</label>
+            <input type="text" id="dgBrand" placeholder="Volkswagen" oninput="renderDataGenJSON()">
+          </div>
+          <div>
+            <label>Model</label>
+            <input type="text" id="dgModel" placeholder="Golf" oninput="renderDataGenJSON()">
+          </div>
+          <div>
+            <label>Generation</label>
+            <input type="text" id="dgGeneration" placeholder="Mk7" oninput="renderDataGenJSON()">
+          </div>
+          <div>
+            <label>Production years</label>
+            <input type="text" id="dgYears" placeholder="2012–2020" oninput="renderDataGenJSON()">
+          </div>
+        </div>
+
+        <div class="datagen-row-head">
+          <label>Engine options</label>
+          <button onclick="addDataGenEngine()">+ Add engine</button>
+        </div>
+        <div id="dgEngineRows"></div>
+
+        <div class="datagen-row-head">
+          <label>Known issues</label>
+          <button onclick="addDataGenFault()">+ Add issue</button>
+        </div>
+        <div id="dgFaultRows"></div>
+
+        <label style="display:block;margin-top:18px;margin-bottom:8px;">Pre-purchase rating</label>
+        <div id="dgStars" class="datagen-stars"></div>
+      </div>
+
+      <div class="datagen-col datagen-json-col">
+        <div class="datagen-json-head">
+          <span>Generated JSON</span>
+          <button id="dgCopyBtn" onclick="copyDataGenJSON()">Copy to clipboard</button>
+        </div>
+        <pre id="dgJsonOutput" class="datagen-json-output"></pre>
+      </div>
+    </div>
+  </div>
+
+  <div id="vehiclePickerModal" class="vmodal-overlay">
+    <div class="vmodal" style="max-width:440px;">
+      <div class="vmodal-head"><h3><i class="fas fa-car" style="margin-right:8px;color:var(--sky);"></i>Quick Add Vehicle</h3><button onclick="closeVehiclePickerModal()">&times;</button></div>
+      <div class="vmodal-body">
+        <p style="font-size:12px;color:var(--gray);margin-bottom:16px;line-height:1.6;">Pick where this model belongs, then continue to the full Add Model form.</p>
+        <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:5px;">Category</label>
+        <select id="vpCategory" onchange="onVpCategoryChange()" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;margin-bottom:14px;"></select>
+        <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:5px;">Group</label>
+        <select id="vpGroup" onchange="onVpGroupChange()" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;margin-bottom:14px;"></select>
+        <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:5px;">Brand</label>
+        <select id="vpBrand" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;"></select>
+        <p id="vpEmptyNote" style="font-size:11px;color:var(--err);margin-top:10px;display:none;"></p>
+      </div>
+      <div class="vmodal-foot">
+        <button class="vbtn-cancel" onclick="closeVehiclePickerModal()">Cancel</button>
+        <button class="vbtn-save" id="vpContinueBtn" onclick="proceedToAddModel()">Continue to Add Model</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="reportModal" class="vmodal-overlay">
+    <div class="vmodal" style="max-width:440px;">
+      <div class="vmodal-head"><h3><i class="fas fa-flag" style="margin-right:8px;color:var(--err);"></i>Zgłoś ogłoszenie</h3><button onclick="closeReportModal()">&times;</button></div>
+      <div class="vmodal-body">
+        <label style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);">Powód</label>
+        <div class="report-reason-grid">
+          <div class="report-reason-chip" data-reason="spam" onclick="selectReportReason('spam')">Spam</div>
+          <div class="report-reason-chip" data-reason="fraud" onclick="selectReportReason('fraud')">Oszustwo</div>
+          <div class="report-reason-chip" data-reason="incorrect_info" onclick="selectReportReason('incorrect_info')">Błędne informacje</div>
+          <div class="report-reason-chip" data-reason="other" onclick="selectReportReason('other')">Inne</div>
+        </div>
+        <label style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);">Opis</label>
+        <textarea id="reportDescriptionInput" rows="3" placeholder="Dodaj szczegóły, które pomogą naszemu zespołowi..." style="width:100%;padding:10px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;background:var(--surface);color:var(--text-main);outline:none;margin-top:6px;"></textarea>
+      </div>
+      <div class="vmodal-foot">
+        <button class="vbtn-cancel" onclick="closeReportModal()">Anuluj</button>
+        <button class="vbtn-save" style="background:var(--err);" onclick="submitReport()"><i class="fas fa-flag" style="margin-right:6px;"></i>Wyślij zgłoszenie</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="supportModal" class="vmodal-overlay">
+    <div class="vmodal" style="max-width:460px;">
+      <div class="vmodal-head"><h3><i class="fas fa-life-ring" style="margin-right:8px;color:var(--sky);"></i>Kontakt z pomocą</h3><button onclick="closeSupportModal()">&times;</button></div>
+      <div class="vmodal-body">
+        <p style="font-size:12px;color:var(--gray);line-height:1.6;margin-bottom:4px;">Masz problem z kontem? Napisz do nas, a odpowiemy mailowo.</p>
+        <div class="support-form-row">
+          <label>Twój e-mail</label>
+          <input type="email" id="supportEmailInput" placeholder="ty@przyklad.pl">
+        </div>
+        <div class="support-form-row">
+          <label>Temat</label>
+          <select id="supportTopicInput">
+            <option value="Problem z kontem">Problem z kontem</option>
+            <option value="Problem z ogłoszeniem">Problem z ogłoszeniem</option>
+            <option value="Subskrypcja PRO / płatności">Subskrypcja PRO / płatności</option>
+            <option value="Zgłoszenie błędu">Zgłoszenie błędu</option>
+            <option value="Inne">Inne</option>
+          </select>
+        </div>
+        <div class="support-form-row">
+          <label>Wiadomość</label>
+          <textarea id="supportMessageInput" rows="4" placeholder="Opisz problem..."></textarea>
+        </div>
+        <p style="font-size:10.5px;color:var(--gray);margin-top:10px;line-height:1.5;"><i class="fas fa-circle-info" style="margin-right:4px;"></i>Otworzy się Twoja aplikacja pocztowa z gotową wiadomością — nic nie wysyła się automatycznie stąd.</p>
+      </div>
+      <div class="vmodal-foot">
+        <button class="vbtn-cancel" onclick="closeSupportModal()">Anuluj</button>
+        <button class="vbtn-save" onclick="submitSupportForm()"><i class="fas fa-paper-plane" style="margin-right:6px;"></i>Otwórz e-mail</button>
+      </div>
     </div>
   </div>
 
@@ -1928,7 +2269,7 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
 <footer>
   <div class="fline"></div>
   <p>&copy; 2026 AutoEncyclopedia Engine &bull; Everything free</p>
-  <p>Contact: <a href="mailto:valtore.official@gmail.com">valtore.official@gmail.com</a></p>
+  <p>Contact: <a href="mailto:valtore.official@gmail.com">valtore.official@gmail.com</a> &bull; <a onclick="openSupportModal()" style="cursor:pointer;">Kontakt z pomocą</a></p>
   <p style="margin-top:14px;">
     <a onclick="openPage('rodo')">Privacy Policy</a>
     &nbsp;&bull;&nbsp;
@@ -2204,8 +2545,12 @@ function onAdminStateChanged(){
   if(pbadge) pbadge.style.display = isPro ? 'block' : 'none';
   const goProBtn=document.getElementById('goProBtn');
   if(goProBtn) goProBtn.style.display = isPro ? 'none' : 'flex';
+  const goProBtnMobile=document.getElementById('goProBtnMobile');
+  if(goProBtnMobile) goProBtnMobile.style.display = isPro ? 'none' : 'flex';
   const marketAdminBtn=document.getElementById('marketAdminNavBtn');
   if(marketAdminBtn) marketAdminBtn.style.display = isAdmin ? 'flex' : 'none';
+  const marketAdminBtnMobile=document.getElementById('marketAdminNavBtnMobile');
+  if(marketAdminBtnMobile) marketAdminBtnMobile.style.display = isAdmin ? 'flex' : 'none';
   if (typeof currentState !== 'undefined' && currentState) {
     render(currentState);
   }
@@ -2826,7 +3171,7 @@ let CHAT_OTHER_BLOCKED=false;       // whether *I* have blocked the person in th
 let CHAT_SELF_SUSPENDED=false;      // whether *my own* account is currently suspended from messaging
 let chatSidebarSearchTimer=null;    // debounce timer for the unified sidebar search box
 
-const QUICK_EMOJIS=['😀','😂','😍','😎','👍','👎','🙏','🔥','🎉','❤️','😢','😡','🚗','🏍️','⛵','🚀','✅','❌','😊','🤔','👏','💯','🥳','😴'];
+const QUICK_EMOJIS=['??','??','??','??','??','??','??','??','??','❤️','??','??','??','??️','⛵','??','✅','❌','??','??','??','??','??','??'];
 
 // Generic "..." dropdown menu used for member/user options throughout this module.
 function toggleKebabMenu(btn){
@@ -3133,7 +3478,7 @@ async function loadDmConversations(){
       otherId,
       otherName:(otherProfile&&otherProfile.display_name)||'User',
       otherAvatar:(otherProfile&&otherProfile.avatar_url)||'',
-      lastMessage:(mine?'You: ':'')+(r.image_url?'📷 Photo':(r.content||'')),
+      lastMessage:(mine?'You: ':'')+(r.image_url?'?? Photo':(r.content||'')),
       lastAt:r.created_at
     });
   });
@@ -4154,11 +4499,408 @@ function closeVipPaywallModal(){
   document.getElementById('vipPaywallModal').classList.remove('open');
 }
 
+let ADMIN_TAB='listings';
+let ADMIN_REPORTS_CACHE=[];
+let REPORT_TARGET_LISTING_ID=null;
+let REPORT_SELECTED_REASON=null;
+
+// ─────────────────────────────────────────────────────────
+// ADMIN DATA GENERATOR — structured vehicle-spec entry tool, admin-only.
+// Vanilla JS port of a React prototype: no JSX/React runtime exists in
+// this file, so the same behavior (structured engine/fault rows, live
+// JSON preview, copy-to-clipboard with a fallback) is rebuilt here using
+// plain DOM rendering, matching the pattern already used throughout this
+// file (e.g. renderMarketGrid()) rather than introducing a new paradigm.
+// ─────────────────────────────────────────────────────────
+let DG_ENGINES=[];
+let DG_FAULTS=[];
+let DG_RATING=0;
+let DG_HOVER_RATING=0;
+const DG_SEVERITY_COLORS={low:'#4ade80',medium:'#fbbf24',high:'#f87171'};
+const DG_CATEGORIES=['Engine','Transmission','Electrical','Suspension','Brakes','Fuel system','Cooling system','Interior','Body / Rust','Other'];
+
+function dgUid(){ return Math.random().toString(36).slice(2,10); }
+function dgEmptyEngine(){ return {id:dgUid(),type:'',power:'',code:''}; }
+function dgEmptyFault(){ return {id:dgUid(),category:DG_CATEGORIES[0],severity:'medium',cost:''}; }
+
+function loadDataGenJSON(){
+  const raw=document.getElementById('dgImportInput').value.trim();
+  const errEl=document.getElementById('dgImportError');
+  errEl.textContent='';
+  errEl.style.color='';
+  if(!raw){ errEl.textContent='Paste some JSON first.'; errEl.style.color='#f87171'; return; }
+
+  let data;
+  try{
+    data=JSON.parse(raw);
+  }catch(e){
+    errEl.textContent='Invalid JSON — check for a missing comma or bracket.';
+    errEl.style.color='#f87171';
+    return;
+  }
+
+  // Flexible field-name matching: existing JSON from other sources may
+  // not use the exact same key names this tool generates.
+  document.getElementById('dgBrand').value = data.brand || '';
+  document.getElementById('dgModel').value = data.model || '';
+  document.getElementById('dgGeneration').value = data.generation || '';
+  document.getElementById('dgYears').value = data.productionYears || data.years || data.productionYear || '';
+
+  const rawEngines = data.engines || data.engineOptions || [];
+  DG_ENGINES = Array.isArray(rawEngines) && rawEngines.length
+    ? rawEngines.map(e=>({
+        id:dgUid(),
+        type:e.type || e.engineType || '',
+        power:e.power || e.hp || e.horsepower || '',
+        code:e.code || e.engineCode || ''
+      }))
+    : [dgEmptyEngine()];
+
+  const rawFaults = data.commonFaults || data.faults || data.knownIssues || [];
+  DG_FAULTS = Array.isArray(rawFaults) && rawFaults.length
+    ? rawFaults.map(f=>({
+        id:dgUid(),
+        category: DG_CATEGORIES.includes(f.category) ? f.category : (f.category || DG_CATEGORIES[0]),
+        severity: ['low','medium','high'].includes((f.severity||'').toLowerCase()) ? f.severity.toLowerCase() : 'medium',
+        cost:f.estimatedRepairCost || f.cost || f.repairCost || ''
+      }))
+    : [dgEmptyFault()];
+
+  DG_RATING = Number(data.prePurchaseRating || data.rating) || 0;
+
+  renderDataGenEngineRows();
+  renderDataGenFaultRows();
+  renderDataGenStars();
+  renderDataGenJSON();
+
+  errEl.textContent='Loaded successfully.';
+  errEl.style.color='#4ade80';
+  setTimeout(()=>{ errEl.textContent=''; },2500);
+}
+
+function buildDataGenView(){
+  if(!DG_ENGINES.length) DG_ENGINES=[dgEmptyEngine()];
+  if(!DG_FAULTS.length) DG_FAULTS=[dgEmptyFault()];
+  renderDataGenEngineRows();
+  renderDataGenFaultRows();
+  renderDataGenStars();
+  renderDataGenJSON();
+}
+
+function renderDataGenEngineRows(){
+  document.getElementById('dgEngineRows').innerHTML=DG_ENGINES.map(e=>`
+    <div class="datagen-row" data-id="${e.id}">
+      <input type="text" placeholder="2.0 TDI" value="${esc(e.type)}" oninput="updateDataGenEngine('${e.id}','type',this.value)">
+      <input type="text" placeholder="150 hp" value="${esc(e.power)}" oninput="updateDataGenEngine('${e.id}','power',this.value)">
+      <input type="text" placeholder="Engine code" value="${esc(e.code)}" oninput="updateDataGenEngine('${e.id}','code',this.value)">
+      <button onclick="removeDataGenEngine('${e.id}')" aria-label="Remove engine">✕</button>
+    </div>`).join('');
+}
+function addDataGenEngine(){ DG_ENGINES.push(dgEmptyEngine()); renderDataGenEngineRows(); renderDataGenJSON(); }
+function removeDataGenEngine(id){ if(DG_ENGINES.length>1){ DG_ENGINES=DG_ENGINES.filter(e=>e.id!==id); renderDataGenEngineRows(); renderDataGenJSON(); } }
+function updateDataGenEngine(id,field,value){ const e=DG_ENGINES.find(x=>x.id===id); if(e){ e[field]=value; renderDataGenJSON(); } }
+
+function renderDataGenFaultRows(){
+  document.getElementById('dgFaultRows').innerHTML=DG_FAULTS.map(f=>`
+    <div class="datagen-row" data-id="${f.id}">
+      <select onchange="updateDataGenFault('${f.id}','category',this.value)">
+        ${DG_CATEGORIES.map(c=>`<option value="${esc(c)}" ${f.category===c?'selected':''}>${esc(c)}</option>`).join('')}
+      </select>
+      <select onchange="updateDataGenFault('${f.id}','severity',this.value)" style="color:${DG_SEVERITY_COLORS[f.severity]};">
+        <option value="low" ${f.severity==='low'?'selected':''}>Low</option>
+        <option value="medium" ${f.severity==='medium'?'selected':''}>Medium</option>
+        <option value="high" ${f.severity==='high'?'selected':''}>High</option>
+      </select>
+      <input type="text" placeholder="Repair cost" value="${esc(f.cost)}" oninput="updateDataGenFault('${f.id}','cost',this.value)">
+      <button onclick="removeDataGenFault('${f.id}')" aria-label="Remove issue">✕</button>
+    </div>`).join('');
+}
+function addDataGenFault(){ DG_FAULTS.push(dgEmptyFault()); renderDataGenFaultRows(); renderDataGenJSON(); }
+function removeDataGenFault(id){ if(DG_FAULTS.length>1){ DG_FAULTS=DG_FAULTS.filter(f=>f.id!==id); renderDataGenFaultRows(); renderDataGenJSON(); } }
+function updateDataGenFault(id,field,value){ const f=DG_FAULTS.find(x=>x.id===id); if(f){ f[field]=value; renderDataGenJSON(); } }
+
+function renderDataGenStars(){
+  const active=DG_HOVER_RATING||DG_RATING;
+  document.getElementById('dgStars').innerHTML=[1,2,3,4,5].map(n=>
+    `<button onclick="setDataGenRating(${n})" onmouseenter="hoverDataGenRating(${n})" onmouseleave="hoverDataGenRating(0)" style="color:${active>=n?'#ff6b35':'#3a3f46'};" aria-label="${n} star">★</button>`
+  ).join('');
+}
+function setDataGenRating(n){ DG_RATING = (n===DG_RATING) ? 0 : n; renderDataGenStars(); renderDataGenJSON(); }
+function hoverDataGenRating(n){ DG_HOVER_RATING=n; renderDataGenStars(); }
+
+function renderDataGenJSON(){
+  const brand=(document.getElementById('dgBrand').value||'').trim();
+  const model=(document.getElementById('dgModel').value||'').trim();
+  const generation=(document.getElementById('dgGeneration').value||'').trim();
+  const years=(document.getElementById('dgYears').value||'').trim();
+  const obj={
+    brand,model,generation,
+    productionYears:years,
+    engines:DG_ENGINES.filter(e=>e.type.trim()||e.power.trim()||e.code.trim()).map(e=>({type:e.type.trim(),power:e.power.trim(),code:e.code.trim()})),
+    commonFaults:DG_FAULTS.filter(f=>f.cost.trim()).map(f=>({category:f.category,severity:f.severity,estimatedRepairCost:f.cost.trim()})),
+    prePurchaseRating:DG_RATING
+  };
+  document.getElementById('dgJsonOutput').textContent=JSON.stringify(obj,null,2);
+}
+
+function copyDataGenJSON(){
+  const text=document.getElementById('dgJsonOutput').textContent;
+  const btn=document.getElementById('dgCopyBtn');
+  const showCopied=()=>{ btn.textContent='Copied'; btn.classList.add('copied'); setTimeout(()=>{ btn.textContent='Copy to clipboard'; btn.classList.remove('copied'); },1800); };
+  navigator.clipboard.writeText(text).then(showCopied).catch(()=>{
+    // Clipboard API can be blocked by browser permissions in some
+    // contexts — fall back to the older selection-based copy method.
+    try{
+      const ta=document.createElement('textarea');
+      ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showCopied();
+    }catch(e){ alert('Could not copy automatically — please select and copy the text manually.'); }
+  });
+}
+
+// ─────────────────────────────────────────────────────────
+// QUICK ADD VEHICLE PICKER — lets an admin open the real, existing "Add
+// Model" form from the centralized Admin Panel, without needing to be
+// currently browsing the target brand's page. openVehicleModal() and
+// saveVehicleModal() are NOT duplicated here — they're called directly,
+// unchanged, so this can never drift out of sync with the real schema.
+// The only thing this adds is temporarily setting curCat/curGroup/
+// curBrand (which findDynBrandForCurrent() reads) to the picked values,
+// then restoring them afterward so normal site navigation is unaffected.
+// ─────────────────────────────────────────────────────────
+let PICKER_SAVED_NAV_CONTEXT=null;
+
+async function openVehiclePickerModal(){
+  if(!isAdmin) return;
+  await loadDynamicData(); // ensure DYN_GROUPS/DYN_BRANDS are fresh, regardless of how this was reached
+  const catSel=document.getElementById('vpCategory');
+  catSel.innerHTML=Object.keys(CAT_LABELS).map(key=>`<option value="${esc(key)}">${esc(CAT_LABELS[key])}</option>`).join('');
+  onVpCategoryChange();
+  document.getElementById('vehiclePickerModal').classList.add('open');
+}
+function closeVehiclePickerModal(){
+  document.getElementById('vehiclePickerModal').classList.remove('open');
+}
+function onVpCategoryChange(){
+  const catKey=document.getElementById('vpCategory').value;
+  const catLabel=CAT_LABELS[catKey];
+  const groupSel=document.getElementById('vpGroup');
+  const groups=DYN_GROUPS.filter(g=>g.category===catLabel);
+  groupSel.innerHTML=groups.map(g=>`<option value="${esc(g.id)}">${esc(g.name)}</option>`).join('');
+  onVpGroupChange();
+}
+function onVpGroupChange(){
+  const groupId=document.getElementById('vpGroup').value;
+  const brandSel=document.getElementById('vpBrand');
+  const brands=DYN_BRANDS.filter(b=>b.group_id===groupId);
+  const emptyNote=document.getElementById('vpEmptyNote');
+  const continueBtn=document.getElementById('vpContinueBtn');
+  if(!brands.length){
+    brandSel.innerHTML='<option value="">No brands yet</option>';
+    emptyNote.textContent='No brands exist yet for this group — add one first via "Add Group" / "Add Brand" on the catalog pages.';
+    emptyNote.style.display='block';
+    continueBtn.disabled=true;
+  } else {
+    brandSel.innerHTML=brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');
+    emptyNote.style.display='none';
+    continueBtn.disabled=false;
+  }
+}
+function proceedToAddModel(){
+  const catKey=document.getElementById('vpCategory').value;
+  const catLabel=CAT_LABELS[catKey];
+  const groupId=document.getElementById('vpGroup').value;
+  const brandId=document.getElementById('vpBrand').value;
+  const group=DYN_GROUPS.find(g=>g.id===groupId);
+  const brand=DYN_BRANDS.find(b=>b.id===brandId);
+  if(!group || !brand){ alert('Please select a group and brand.'); return; }
+
+  // Save the real navigation context so it can be restored once the Add
+  // Model form closes — this tool must not leave the site thinking the
+  // admin actually navigated to that brand's page.
+  PICKER_SAVED_NAV_CONTEXT={cat:curCat,group:curGroup,brand:curBrand};
+  curCat=catKey; curGroup=group.name; curBrand=brand.name;
+
+  closeVehiclePickerModal();
+  openVehicleModal(null);
+}
+
 async function buildMarketAdminView(){
   if(!isAdmin){ document.getElementById('marketAdminContent').innerHTML='<p class="empty-note">Admin access required.</p>'; return; }
   document.getElementById('marketAdminContent').innerHTML=`<div class="spin"><i class="fas fa-circle-notch"></i><p>Loading...</p></div>`;
+  await Promise.all([loadMarketAdminOverview(), loadAdminReports()]);
+  applyAdminFilters();
+}
+
+function switchAdminTab(tab){
+  ADMIN_TAB=tab;
+  document.getElementById('adminTabBtnListings').classList.toggle('active',tab==='listings');
+  document.getElementById('adminTabBtnReports').classList.toggle('active',tab==='reports');
+  applyAdminFilters();
+}
+
+// Cross-references listings against open reports so the "Flagged/Reported"
+// status filter and the per-row badge both work off one source of truth.
+function listingHasOpenReport(listingId){
+  return ADMIN_REPORTS_CACHE.some(r=>r.target_type==='listing' && r.target_id===listingId && r.status==='open');
+}
+
+function applyAdminFilters(){
+  const q=(document.getElementById('adminSearchInput').value||'').trim().toLowerCase();
+  const statusFilter=document.getElementById('adminStatusFilter').value;
+
+  if(ADMIN_TAB==='listings'){
+    let filtered=MARKET_PENDING_ADMIN.filter(l=>{
+      if(statusFilter==='pending' && l.status!=='pending') return false;
+      if(statusFilter==='flagged' && !listingHasOpenReport(l.id)) return false;
+      if(q){
+        const seller=(l.profiles&&l.profiles.display_name)||'';
+        const hay=[l.brand,l.model,l.vin,l.id,seller].filter(Boolean).join(' ').toLowerCase();
+        if(!hay.includes(q)) return false;
+      }
+      return true;
+    });
+    renderMarketAdminOverview(filtered);
+  } else {
+    let filtered=ADMIN_REPORTS_CACHE.filter(r=>{
+      if(q){
+        const reporter=(r.profiles&&r.profiles.display_name)||'';
+        const hay=[reporter,r.target_id,r.reason,r.description].filter(Boolean).join(' ').toLowerCase();
+        if(!hay.includes(q)) return false;
+      }
+      return true;
+    });
+    renderAdminReportsTab(filtered);
+  }
+}
+
+async function loadMarketAdminOverview(){
+  const {data,error}=await supabaseClient.from('marketplace_listings').select('*, profiles(display_name,avatar_url)').neq('status','removed').order('created_at',{ascending:false}).limit(100);
+  MARKET_PENDING_ADMIN=(!error && data)?data:[]; // reused variable name, now holds the full recent-listings overview
+}
+function renderMarketAdminOverview(list){
+  const el=document.getElementById('marketAdminContent');
+  if(!el) return;
+  if(!isAdmin){ el.innerHTML='<p class="empty-note">Admin access required.</p>'; return; }
+  el.innerHTML=`<div class="panel">
+    <h3><i class="fas fa-list"></i>Ogłoszenia (${list.length})</h3>
+    ${list.length?list.map(l=>{
+      const flagged=listingHasOpenReport(l.id);
+      return `<div class="ust ${flagged?'admin-report-row':''}">
+      <h5 style="color:var(--text-main);text-transform:none;font-weight:800;font-size:12px;">${esc(l.brand)} ${esc(l.model)} — ${formatMktPrice(l.price,l.currency)} ${marketStatusBadgeHtml(l)}${flagged?'<span class="admin-report-reason-badge">Zgłoszone</span>':''}</h5>
+      <p>Sprzedawca: ${esc((l.profiles&&l.profiles.display_name)||'User')} &bull; ${esc([l.city,l.country].filter(Boolean).join(', '))} &bull; ID: ${esc(l.id.slice(0,8))}</p>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+        <button class="wbtn" onclick="go({view:'marketlisting',id:'${esc(l.id)}'})"><i class="fas fa-eye" style="margin-right:5px;"></i>Podgląd</button>
+        <button class="wbtn" style="background:var(--err);" onclick="adminRemoveListing('${esc(l.id)}')"><i class="fas fa-trash" style="margin-right:5px;"></i>Usuń</button>
+      </div>
+    </div>`;
+    }).join(''):'<p style="font-size:12px;color:var(--gray);padding:6px 0;">Brak wyników.</p>'}
+  </div>`;
+}
+
+async function loadAdminReports(){
+  const {data,error}=await supabaseClient.from('reports').select('*, profiles(display_name,email)').order('created_at',{ascending:false}).limit(200);
+  ADMIN_REPORTS_CACHE=(!error && data)?data:[];
+}
+const REPORT_REASON_LABELS={spam:'Spam',fraud:'Oszustwo',incorrect_info:'Błędne informacje',other:'Inne'};
+function renderAdminReportsTab(list){
+  const el=document.getElementById('marketAdminContent');
+  if(!el) return;
+  el.innerHTML=`<div class="panel">
+    <h3><i class="fas fa-flag"></i>Zgłoszenia użytkowników (${list.length})</h3>
+    ${list.length?list.map(r=>{
+      const reporter=(r.profiles&&(r.profiles.display_name||r.profiles.email))||'Nieznany';
+      const isResolved=r.status==='resolved';
+      return `<div class="ust admin-report-row ${isResolved?'resolved':''}">
+      <h5 style="color:var(--text-main);text-transform:none;font-weight:800;font-size:12px;">${esc(REPORT_REASON_LABELS[r.reason]||r.reason)}<span class="admin-report-reason-badge" style="${isResolved?'background:rgba(16,185,129,.12);color:var(--ok);':''}">${isResolved?'Rozwiązane':'Otwarte'}</span></h5>
+      <p>Zgłaszający: ${esc(reporter)} &bull; Cel: ${esc(r.target_type)} #${esc(r.target_id.slice(0,8))}</p>
+      ${r.description?`<p style="font-style:italic;">"${esc(r.description)}"</p>`:''}
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+        <button class="wbtn" onclick="go({view:'marketlisting',id:'${esc(r.target_id)}'})"><i class="fas fa-eye" style="margin-right:5px;"></i>Podgląd</button>
+        ${!isResolved?`<button class="wbtn" style="background:var(--ok);" onclick="resolveReport('${esc(r.id)}')"><i class="fas fa-check" style="margin-right:5px;"></i>Rozwiąż i odrzuć</button>`:''}
+        ${r.target_type==='listing'?`<button class="wbtn" style="background:var(--err);" onclick="deleteReportedListing('${esc(r.id)}','${esc(r.target_id)}')"><i class="fas fa-trash" style="margin-right:5px;"></i>Usuń zgłoszone ogłoszenie</button>`:''}
+        <button class="wbtn" style="background:var(--err);" onclick="blockReportedUser('${esc(r.id)}','${esc(r.reporter_id)}')"><i class="fas fa-ban" style="margin-right:5px;"></i>Zablokuj użytkownika</button>
+      </div>
+    </div>`;
+    }).join(''):'<p style="font-size:12px;color:var(--gray);padding:6px 0;">Brak zgłoszeń.</p>'}
+  </div>`;
+}
+async function resolveReport(id){
+  const {error}=await supabaseClient.from('reports').update({status:'resolved',resolved_at:new Date().toISOString()}).eq('id',id);
+  if(error){ alert('Błąd: '+error.message); return; }
+  await loadAdminReports();
+  applyAdminFilters();
+}
+async function deleteReportedListing(reportId,listingId){
+  if(!confirm('Trwale usunąć to ogłoszenie?')) return;
+  const {error}=await supabaseClient.from('marketplace_listings').delete().eq('id',listingId);
+  if(error){ alert('Błąd: '+error.message); return; }
+  await resolveReport(reportId);
   await loadMarketAdminOverview();
-  renderMarketAdminOverview();
+  applyAdminFilters();
+}
+async function blockReportedUser(reportId,userId){
+  // "Block" reuses the existing profiles.banned_until mechanism already
+  // used elsewhere in this app, rather than a second, separate system.
+  // NOTE: the target here is the report's reporter_id, since `reports`
+  // doesn't currently capture a separate "who is being reported" user id
+  // for target_type='user' — see the SQL file's comments. For
+  // target_type='listing' reports, blocking the LISTING'S SELLER is
+  // usually the intent; adjust which id you pass in if that's what you
+  // need here.
+  if(!confirm('Zablokować tego użytkownika na 30 dni?')) return;
+  const bannedUntil=new Date(Date.now()+30*86400000).toISOString();
+  const {error}=await supabaseClient.from('profiles').update({banned_until:bannedUntil}).eq('id',userId);
+  if(error){ alert('Błąd: '+error.message); return; }
+  alert('Użytkownik zablokowany do '+new Date(bannedUntil).toLocaleDateString());
+}
+
+// ── Report submission (any signed-in user, on someone else's listing) ──
+function openReportModal(listingId){
+  REPORT_TARGET_LISTING_ID=listingId;
+  REPORT_SELECTED_REASON=null;
+  document.querySelectorAll('.report-reason-chip').forEach(c=>c.classList.remove('active'));
+  document.getElementById('reportDescriptionInput').value='';
+  document.getElementById('reportModal').classList.add('open');
+}
+function closeReportModal(){ document.getElementById('reportModal').classList.remove('open'); }
+function selectReportReason(reason){
+  REPORT_SELECTED_REASON=reason;
+  document.querySelectorAll('.report-reason-chip').forEach(c=>c.classList.toggle('active',c.dataset.reason===reason));
+}
+async function submitReport(){
+  if(!REPORT_SELECTED_REASON){ alert('Wybierz powód zgłoszenia.'); return; }
+  const description=document.getElementById('reportDescriptionInput').value.trim();
+  const {error}=await supabaseClient.from('reports').insert({
+    reporter_id:authUser.id,
+    target_type:'listing',
+    target_id:REPORT_TARGET_LISTING_ID,
+    reason:REPORT_SELECTED_REASON,
+    description:description||null
+  });
+  if(error){ alert('Nie udało się wysłać zgłoszenia: '+error.message); return; }
+  closeReportModal();
+  alert('Dziękujemy — zgłoszenie zostało wysłane do zespołu.');
+}
+
+// ── Support form (mailto: — genuinely works with no backend needed) ──
+function openSupportModal(){
+  if(authUser && authUser.email) document.getElementById('supportEmailInput').value=authUser.email;
+  document.getElementById('supportModal').classList.add('open');
+}
+function closeSupportModal(){ document.getElementById('supportModal').classList.remove('open'); }
+function submitSupportForm(){
+  const fromEmail=document.getElementById('supportEmailInput').value.trim();
+  const topic=document.getElementById('supportTopicInput').value;
+  const message=document.getElementById('supportMessageInput').value.trim();
+  if(!fromEmail || !message){ alert('Podaj swój e-mail i wiadomość.'); return; }
+  const subject=encodeURIComponent(`[Wsparcie] ${topic}`);
+  const body=encodeURIComponent(`Od: ${fromEmail}\nTemat: ${topic}\n\n${message}`);
+  window.location.href=`mailto:valtore.official@gmail.com?subject=${subject}&body=${body}`;
+  closeSupportModal();
 }
 
 function switchMarketTab(tab,silent){
@@ -4359,7 +5101,7 @@ function renderMarketGrid(list){
       l.horsepower?`<span class="mkt-pill"><i class="fas fa-gauge-high"></i>${esc(l.horsepower)} HP</span>`:'',
       l.fuel_type?`<span class="mkt-pill"><i class="fas fa-gas-pump"></i>${esc(l.fuel_type)}</span>`:'',
       l.transmission?`<span class="mkt-pill"><i class="fas fa-arrows-spin"></i>${esc(l.transmission)}</span>`:'',
-      locationLabel?`<span class="mkt-pill">📍 ${esc(locationLabel)}</span>`:''
+      locationLabel?`<span class="mkt-pill">?? ${esc(locationLabel)}</span>`:''
     ].filter(Boolean).join('');
     const compareCheckboxHtml = (MARKET_TAB==='saved' && isPro) ? `
       <label class="mkt-compare-checkbox-wrap" onclick="event.stopPropagation();">
@@ -4528,26 +5270,6 @@ function renderCompareModal(a,b){
     </table>`;
 }
 
-async function loadMarketAdminOverview(){
-  const {data,error}=await supabaseClient.from('marketplace_listings').select('*, profiles(display_name,avatar_url)').neq('status','removed').order('created_at',{ascending:false}).limit(100);
-  MARKET_PENDING_ADMIN=(!error && data)?data:[]; // reused variable name, now holds the full recent-listings overview
-}
-function renderMarketAdminOverview(){
-  const el=document.getElementById('marketAdminContent');
-  if(!el) return;
-  if(!isAdmin){ el.innerHTML='<p class="empty-note">Admin access required.</p>'; return; }
-  el.innerHTML=`<div class="panel">
-    <h3><i class="fas fa-list"></i>Recent Listings (${MARKET_PENDING_ADMIN.length})</h3>
-    ${MARKET_PENDING_ADMIN.length?MARKET_PENDING_ADMIN.map(l=>`<div class="ust">
-      <h5 style="color:var(--text-main);text-transform:none;font-weight:800;font-size:12px;">${esc(l.brand)} ${esc(l.model)} — ${formatMktPrice(l.price,l.currency)} ${marketStatusBadgeHtml(l)}</h5>
-      <p>Seller: ${esc((l.profiles&&l.profiles.display_name)||'User')} &bull; ${esc([l.city,l.country].filter(Boolean).join(', '))} &bull; Published ${l.approved_at?new Date(l.approved_at).toLocaleDateString():'—'}</p>
-      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-        <button class="wbtn" onclick="go({view:'marketlisting',id:'${esc(l.id)}'})"><i class="fas fa-eye" style="margin-right:5px;"></i>Review</button>
-        <button class="wbtn" style="background:var(--err);" onclick="adminRemoveListing('${esc(l.id)}')"><i class="fas fa-trash" style="margin-right:5px;"></i>Delete</button>
-      </div>
-    </div>`).join(''):'<p style="font-size:12px;color:var(--gray);padding:6px 0;">No listings yet.</p>'}
-  </div>`;
-}
 async function adminRemoveListing(id){
   if(!confirm('Permanently delete this listing? This cannot be undone.')) return;
   const {error}=await supabaseClient.from('marketplace_listings').delete().eq('id',id);
@@ -4555,7 +5277,7 @@ async function adminRemoveListing(id){
   MARKET_LISTINGS_CACHE=MARKET_LISTINGS_CACHE.filter(l=>l.id!==id);
   MARKET_PENDING_ADMIN=MARKET_PENDING_ADMIN.filter(l=>l.id!==id);
   await loadMarketAdminOverview();
-  renderMarketAdminOverview();
+  applyAdminFilters();
   applyMarketFilters();
   if(currentState && currentState.view==='marketlisting' && currentState.id===id) go({view:'market'});
 }
@@ -4896,6 +5618,11 @@ function renderMarketListingDetail(){
       <button class="wbtn" style="background:var(--err);" onclick="adminRemoveListing('${esc(l.id)}')"><i class="fas fa-trash" style="margin-right:6px;"></i>Delete (Admin)</button>
     </div>`;
   }
+  if(!isOwner && isLoggedIn()){
+    actionsHtml+=`<div style="margin-top:10px;">
+      <button class="wbtn" style="background:var(--off);color:var(--text-secondary);box-shadow:none;" onclick="openReportModal('${esc(l.id)}')"><i class="fas fa-flag" style="margin-right:6px;"></i>Zgłoś ogłoszenie</button>
+    </div>`;
+  }
 
   const sellerName=(l.profiles&&l.profiles.display_name)||'Seller';
   const showPhone = l.phone_public || isOwner || isAdmin || isLoggedIn();
@@ -4962,7 +5689,7 @@ function renderMarketListingDetail(){
       ${l.vin?`<p style="font-size:12px;margin-top:8px;"><strong>VIN:</strong> ${esc(l.vin)}</p>`:''}
     </div>`:''}
 
-    ${locationLabel ? `<div class="panel"><h3><i class="fas fa-location-dot"></i>Location</h3><p class="mkt-location-pin">📍 ${esc(locationLabel)}</p></div>` : ''}
+    ${locationLabel ? `<div class="panel"><h3><i class="fas fa-location-dot"></i>Location</h3><p class="mkt-location-pin">?? ${esc(locationLabel)}</p></div>` : ''}
 
     ${contactHtml}
   `;
@@ -6661,6 +7388,15 @@ function openVehicleModal(id){
 function closeVehicleModal(){
   document.getElementById('vehicleModal').classList.remove('open');
   editingVehicleId=null;
+  // Restore real navigation context if this modal was opened via the
+  // Quick Add picker — normal usage (opening from an actual brand page)
+  // never sets PICKER_SAVED_NAV_CONTEXT, so this is a no-op there.
+  if(PICKER_SAVED_NAV_CONTEXT){
+    curCat=PICKER_SAVED_NAV_CONTEXT.cat;
+    curGroup=PICKER_SAVED_NAV_CONTEXT.group;
+    curBrand=PICKER_SAVED_NAV_CONTEXT.brand;
+    PICKER_SAVED_NAV_CONTEXT=null;
+  }
 }
 
 async function saveVehicleModal(){
@@ -7531,6 +8267,15 @@ function render(state){
         showV('vMarketAdmin');buildMarketAdminView();
       }
       break;
+    case 'admindatagen':
+      if(!isAdmin){
+        history.replaceState({view:'market'},'');
+        currentState={view:'market'};
+        showV('vMarket');buildMarketView();
+      } else {
+        showV('vAdminDataGen');buildDataGenView();
+      }
+      break;
     case 'saved':
       if(!isLoggedIn()){
         openAuthRequiredModal('Sign in to view your saved vehicles.');
@@ -7614,6 +8359,39 @@ function renderCatChrome(cat){
 
 function openPage(p){ go({view:p}); }
 function goHome(){ curGroup=null;curBrand=null; go({view:'groups',cat:curCat}); }
+
+// ─────────────────────────────────────────────────────────
+// RESPONSIVE MOBILE NAVIGATION — hamburger toggle for .cbar's off-canvas
+// slide-out state below 768px. No changes needed to any of .cbar's
+// existing button onclick handlers — this closes the menu via event
+// delegation on the container itself, so it works for every current
+// and future nav item automatically.
+// ─────────────────────────────────────────────────────────
+function toggleMobileNav(){
+  const isOpen=document.querySelector('.cbar').classList.contains('mobile-open');
+  if(isOpen) closeMobileNav(); else openMobileNav();
+}
+function openMobileNav(){
+  document.querySelector('.cbar').classList.add('mobile-open');
+  document.getElementById('mobileNavBackdrop').classList.add('active');
+  document.getElementById('hamburgerBtn').classList.add('open');
+  document.body.style.overflow='hidden'; // prevent background scroll while the drawer is open
+}
+function closeMobileNav(){
+  document.querySelector('.cbar').classList.remove('mobile-open');
+  document.getElementById('mobileNavBackdrop').classList.remove('active');
+  document.getElementById('hamburgerBtn').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.querySelector('.cbar').addEventListener('click',(e)=>{
+  if(e.target.closest('.ctab')) closeMobileNav();
+});
+window.addEventListener('resize',()=>{
+  if(window.innerWidth>767) closeMobileNav();
+});
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape') closeMobileNav();
+});
 
 window.addEventListener('popstate', e=>{ render(e.state); });
 
