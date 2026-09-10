@@ -124,6 +124,8 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .ctab{display:flex;align-items:center;gap:7px;padding:13px 18px;cursor:pointer;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:rgba(255,255,255,.5);border-bottom:3px solid transparent;transition:var(--t);white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;}
 
 /* ═══ RESPONSIVE NAVIGATION — hamburger on mobile, full bar on desktop ═══ */
+.marketplace-cta-btn{display:inline-flex;align-items:center;background:#0a0a0a;color:#00FFCC;border:1.5px solid #00FFCC;padding:8px 16px;border-radius:20px;font-weight:800;font-size:11px;font-family:'Inter',sans-serif;text-decoration:none;white-space:nowrap;box-shadow:0 0 12px rgba(0,255,204,.25);transition:var(--t);}
+.marketplace-cta-btn:hover{background:#00FFCC;color:#0a0a0a;box-shadow:0 0 20px rgba(0,255,204,.5);}
 .hamburger-btn{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;padding:9px;background:none;border:none;cursor:pointer;flex-shrink:0;touch-action:manipulation;position:relative;z-index:1000;}
 .hamburger-btn span{display:block;width:22px;height:2px;background:#ffffff !important;border-radius:2px;transition:transform .25s ease,opacity .25s ease;}
 .hamburger-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
@@ -147,7 +149,7 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
   /* Top bar on mobile keeps only: hamburger, logo, sign-in/avatar CTA.
      Everything else moves into the drawer (mobile-duplicate buttons
      below) so nothing gets cut off on narrow screens. */
-  #marketAdminNavBtn,#themeToggleBtn,#goProBtn{display:none !important;}
+  #marketAdminNavBtn,#themeToggleBtn,#goProBtn,.marketplace-cta-btn{display:none !important;}
   .cbar-mobile-actions{display:flex;flex-direction:column;gap:10px;padding:14px 16px;}
   .cbar-mobile-actions button{width:100%;justify-content:center;margin:0;}
 
@@ -249,44 +251,42 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .mkt-compare-table th{text-align:left;padding:9px 8px;font-weight:700;color:var(--gray);border-top:1px solid var(--gray3);width:120px;}
 .mkt-compare-table td{text-align:center;padding:9px 8px;font-weight:600;color:var(--text-main);border-top:1px solid var(--gray3);}
 
-/* ═══ ADMIN DATA GENERATOR — scoped entirely to this view, deliberately
-   distinct from the site's light/dark theme (same pattern as VIP mode
-   having its own identity) since this is an internal admin tool. ═══ */
-.admin-datagen-view{background:#16181c;min-height:100vh;padding:24px 4%;}
-.admin-datagen-view .wbtn{background:#262a30;}
-.datagen-shell{display:flex;gap:0;max-width:1200px;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);flex-wrap:wrap;}
-.datagen-col{flex:1;min-width:340px;padding:32px;}
-.datagen-form-col{background:#16181c;}
-.datagen-json-col{background:#1c1f24;border-left:1px solid #2a2e34;display:flex;flex-direction:column;}
-.datagen-title{font-size:22px;font-weight:800;color:#e8e6e1;margin-bottom:28px;}
-.datagen-import-box{background:#1c1f24;border:1px dashed #3a3f46;border-radius:10px;padding:14px;margin-bottom:24px;}
-.datagen-import-box label{display:block;font-size:11px;color:#8b8f96;margin-bottom:8px;}
-.datagen-import-box textarea{width:100%;background:#262a30;border:1px solid #33373d;color:#c9d1d9;border-radius:8px;padding:9px 11px;font-size:11.5px;font-family:ui-monospace,'SF Mono','Cascadia Code',Menlo,monospace;outline:none;box-sizing:border-box;resize:vertical;}
-.datagen-import-box textarea:focus{border-color:#ff6b35;}
-.datagen-import-row{display:flex;align-items:center;gap:12px;margin-top:8px;}
-.datagen-import-row button{background:#262a30;border:1px solid #ff6b35;color:#ff6b35;border-radius:6px;padding:7px 14px;font-size:11.5px;font-weight:700;cursor:pointer;}
-.datagen-import-row span{font-size:11px;}
-.datagen-title span{color:#ff6b35;font-size:13px;font-weight:600;margin-left:8px;}
-.datagen-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
-.datagen-grid-2 label,.datagen-row-head label,.datagen-stars+label{display:block;font-size:11px;color:#8b8f96;margin-bottom:6px;}
-.datagen-grid-2 input,.datagen-row input,.datagen-row select{width:100%;background:#262a30;border:1px solid #33373d;color:#e8e6e1;border-radius:8px;padding:9px 11px;font-size:13px;font-family:'Inter',sans-serif;outline:none;box-sizing:border-box;}
-.datagen-grid-2 input:focus,.datagen-row input:focus,.datagen-row select:focus{border-color:#ff6b35;}
-.datagen-row-head{display:flex;align-items:center;justify-content:space-between;margin-top:18px;margin-bottom:8px;}
-.datagen-row-head label{margin-bottom:0;}
-.datagen-row-head button{background:none;border:1px solid #ff6b35;color:#ff6b35;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;}
-.datagen-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px;}
-.datagen-row button{background:none;border:none;color:#8b8f96;font-size:13px;cursor:pointer;padding:6px;}
-.datagen-stars{display:flex;gap:4px;}
-.datagen-stars button{background:none;border:none;font-size:28px;line-height:1;cursor:pointer;padding:0;}
-.datagen-json-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.datagen-json-head span{font-size:11px;color:#8b8f96;}
-.datagen-json-head button{background:#ff6b35;color:#16181c;border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;}
-.datagen-json-head button.copied{background:#4ade80;}
-.datagen-json-output{flex:1;background:#121417;border:1px solid #2a2e34;border-radius:10px;padding:16px;font-size:12px;line-height:1.6;color:#c9d1d9;font-family:ui-monospace,'SF Mono','Cascadia Code',Menlo,monospace;white-space:pre-wrap;word-break:break-word;overflow:auto;min-height:400px;margin:0;}
-@media(max-width:700px){
-  .datagen-shell{flex-direction:column;}
-  .datagen-grid-2{grid-template-columns:1fr;}
-  .datagen-row{grid-template-columns:1fr;}
+/* ═══ AI SHOPPING ASSISTANT — floating widget ═══ */
+.ai-assistant-btn{position:fixed;bottom:20px;right:20px;z-index:1000;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--sky-deep));border:none;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 6px 24px rgba(14,165,233,.4);transition:var(--t);display:flex;align-items:center;justify-content:center;touch-action:manipulation;}
+.ai-assistant-btn:hover{transform:scale(1.08);box-shadow:0 8px 30px rgba(14,165,233,.55);}
+.ai-assistant-drawer{position:fixed;bottom:92px;right:20px;z-index:1000;width:360px;height:480px;max-width:calc(100vw - 24px);max-height:calc(100vh - 112px);background:var(--surface);border:1px solid var(--card-border);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden;opacity:0;transform:translateY(16px) scale(.97);pointer-events:none;transition:opacity .2s ease,transform .2s ease;}
+.ai-assistant-drawer.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+.ai-assistant-head{background:linear-gradient(135deg,var(--sky),var(--sky-deep));color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:13px;flex-shrink:0;}
+.ai-assistant-head button{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;opacity:.85;}
+.ai-assistant-head button:hover{opacity:1;}
+.ai-assistant-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.ai-msg{max-width:85%;padding:10px 13px;border-radius:12px;font-size:12.5px;line-height:1.5;}
+.ai-msg-bot{background:var(--off);color:var(--text-main);align-self:flex-start;border-bottom-left-radius:3px;}
+.ai-msg-user{background:var(--sky);color:#fff;align-self:flex-end;border-bottom-right-radius:3px;}
+.ai-quick-replies{display:flex;flex-wrap:wrap;gap:7px;align-self:flex-start;max-width:100%;}
+.ai-quick-reply-btn{background:var(--surface);border:1.5px solid var(--sky);color:var(--sky);border-radius:20px;padding:7px 13px;font-size:11.5px;font-weight:700;cursor:pointer;transition:var(--t);touch-action:manipulation;}
+.ai-quick-reply-btn:hover{background:var(--sky);color:#fff;}
+.ai-quick-reply-btn.selected{background:var(--sky);color:#fff;}
+.ai-feature-continue-btn{background:var(--sky);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:11.5px;font-weight:800;cursor:pointer;align-self:flex-start;margin-top:4px;}
+.ai-typing{align-self:flex-start;display:flex;gap:4px;padding:10px 13px;}
+.ai-typing span{width:6px;height:6px;border-radius:50%;background:var(--gray);animation:aiTypingBounce 1.2s ease-in-out infinite;}
+.ai-typing span:nth-child(2){animation-delay:.15s;}
+.ai-typing span:nth-child(3){animation-delay:.3s;}
+@keyframes aiTypingBounce{0%,60%,100%{transform:translateY(0);opacity:.5;}30%{transform:translateY(-4px);opacity:1;}}
+.ai-rec-card{border:1px solid var(--card-border);border-radius:12px;overflow:hidden;background:var(--surface);cursor:pointer;transition:var(--t);}
+.ai-rec-card:hover{border-color:var(--sky);box-shadow:var(--card-glow);}
+.ai-rec-card-body{padding:10px 12px;}
+.ai-rec-card-body h5{font-size:12px;font-weight:800;color:var(--text-main);margin-bottom:3px;}
+.ai-rec-card-price{font-size:13px;font-weight:800;color:var(--sky);margin-bottom:6px;}
+.ai-rec-features-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.ai-rec-feature-chip{font-size:10px;font-weight:700;background:var(--off);color:var(--text-secondary);padding:3px 9px;border-radius:20px;}
+.ai-rec-source-tag{display:inline-block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;background:rgba(16,185,129,.12);color:var(--ok);padding:3px 8px;border-radius:20px;margin-bottom:6px;}
+.ai-rec-coming-soon-tag{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.2px;background:rgba(251,191,36,.14);color:#b45309;padding:3px 9px;border-radius:20px;margin-bottom:6px;}
+.ai-rec-inhouse-btn{width:100%;background:linear-gradient(135deg,var(--sky),var(--sky-deep));color:#fff;border:none;padding:9px 10px;font-size:11px;font-weight:700;cursor:pointer;line-height:1.4;text-align:left;}
+.ai-rec-inhouse-btn:hover{filter:brightness(1.08);}
+@media(max-width:480px){
+  .ai-assistant-drawer{right:12px;bottom:82px;width:calc(100vw - 24px);}
+  .ai-assistant-btn{bottom:16px;right:16px;}
 }
 
 /* ═══ ADMIN PANEL — search/filter bar, tabs, reports table ═══ */
@@ -1094,6 +1094,7 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
     <button class="nav-btn" onclick="openPage('terms')"><i class="fas fa-file-contract" style="margin-right:4px;"></i>Terms</button>
   </div>
   <div class="hright">
+  <a href="https://marketplace.autoencyklopedia.pl" class="marketplace-cta-btn"><i class="fas fa-shop" style="margin-right:6px;"></i>Marketplace</a>
   <button id="marketAdminNavBtn" onclick="go({view:'marketadmin'})" style="display:none;background:var(--navy2);color:#fff;border:1px solid rgba(255,255,255,.15);padding:8px 14px;border-radius:20px;font-weight:800;font-size:11px;cursor:pointer;align-items:center;gap:6px;font-family:'Inter',sans-serif;white-space:nowrap;">
     <i class="fas fa-shield-halved"></i> Admin Panel
   </button>
@@ -1124,6 +1125,9 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
 
 <nav class="cbar">
   <div class="cbar-mobile-only cbar-mobile-actions">
+    <a href="https://marketplace.autoencyklopedia.pl" class="marketplace-cta-btn" id="marketplaceCtaBtnMobile" style="justify-content:center;">
+      <i class="fas fa-shop" style="margin-right:6px;"></i>Marketplace
+    </a>
     <button id="marketAdminNavBtnMobile" onclick="closeMobileNav();go({view:'marketadmin'})" style="display:none;background:var(--navy2);color:#fff;border:1px solid rgba(255,255,255,.15);padding:10px 14px;border-radius:20px;font-weight:800;font-size:11px;cursor:pointer;align-items:center;gap:6px;font-family:'Inter',sans-serif;">
       <i class="fas fa-shield-halved"></i> Admin Panel
     </button>
@@ -1999,24 +2003,22 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
        removing anything that slipped past the AI check. -->
   <div id="vMarketAdmin" class="view">
     <div style="max-width:900px;margin:0 auto;">
-      <button class="wbtn" style="margin-bottom:14px;" onclick="go({view:'market'})"><i class="fas fa-arrow-left" style="margin-right:6px;"></i>Powrót do Marketplace</button>
+      <button class="wbtn" style="margin-bottom:14px;" onclick="go({view:'market'})"><i class="fas fa-arrow-left" style="margin-right:6px;"></i>Back to Marketplace</button>
       <div class="stitle"><i class="fas fa-shield-halved"></i>Panel Administratora</div>
-      <p style="font-size:12px;color:var(--gray);margin-bottom:18px;line-height:1.6;">Ogłoszenia publikują się natychmiast po dodaniu — nic nie czeka na ręczną weryfikację. Ten panel to zabezpieczenie: wyszukuj i filtruj ogłoszenia oraz przeglądaj zgłoszenia użytkowników.</p>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:18px;line-height:1.6;">Listings publish instantly on submission — nothing waits for manual review. This panel is the moderation backstop: search/filter listings, and review reports filed by users.</p>
 
-      <button class="wbtn" style="margin-bottom:18px;background:#ff6b35;box-shadow:none;" onclick="go({view:'admindatagen'})"><i class="fas fa-code" style="margin-right:6px;"></i>Data Generator (vehicle specs)</button>
-      <button class="wbtn" style="margin-bottom:18px;margin-left:8px;background:#262a30;color:#ff6b35;box-shadow:none;border:1px solid #ff6b35;" onclick="openVehiclePickerModal()"><i class="fas fa-plus" style="margin-right:6px;"></i>Quick Add Vehicle</button>
 
       <div class="admin-tabswitch">
-        <button class="admin-tabbtn active" id="adminTabBtnListings" onclick="switchAdminTab('listings')">Ogłoszenia</button>
-        <button class="admin-tabbtn" id="adminTabBtnReports" onclick="switchAdminTab('reports')">Zgłoszenia użytkowników</button>
+        <button class="admin-tabbtn active" id="adminTabBtnListings" onclick="switchAdminTab('listings')">Listings</button>
+        <button class="admin-tabbtn" id="adminTabBtnReports" onclick="switchAdminTab('reports')">User Reports</button>
       </div>
 
       <div class="admin-toolbar">
-        <input type="text" id="adminSearchInput" placeholder="Szukaj po imieniu, nazwie użytkownika, marce/modelu, VIN lub ID..." oninput="applyAdminFilters()">
+        <input type="text" id="adminSearchInput" placeholder="Search by name, username, make/model, VIN, or ID..." oninput="applyAdminFilters()">
         <select id="adminStatusFilter" onchange="applyAdminFilters()">
           <option value="all">Wszystkie</option>
-          <option value="pending">Oczekujące</option>
-          <option value="flagged">Zgłoszone</option>
+          <option value="pending">Pending</option>
+          <option value="flagged">Flagged/Reported</option>
         </select>
       </div>
 
@@ -2024,135 +2026,55 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
     </div>
   </div>
 
-  <div id="vAdminDataGen" class="view admin-datagen-view">
-    <button class="wbtn" style="margin-bottom:16px;" onclick="go({view:'marketadmin'})"><i class="fas fa-arrow-left" style="margin-right:6px;"></i>Back to Admin Panel</button>
-    <div class="datagen-shell">
-      <div class="datagen-col datagen-form-col">
-        <div class="datagen-title">MotorPlaza <span>Data Generator</span></div>
-
-        <div class="datagen-import-box">
-          <label>Load existing JSON (optional)</label>
-          <textarea id="dgImportInput" rows="3" placeholder="Paste existing JSON here to load it into the form..."></textarea>
-          <div class="datagen-import-row">
-            <button onclick="loadDataGenJSON()">Load into form</button>
-            <span id="dgImportError"></span>
-          </div>
-        </div>
-
-        <div class="datagen-grid-2">
-          <div>
-            <label>Brand</label>
-            <input type="text" id="dgBrand" placeholder="Volkswagen" oninput="renderDataGenJSON()">
-          </div>
-          <div>
-            <label>Model</label>
-            <input type="text" id="dgModel" placeholder="Golf" oninput="renderDataGenJSON()">
-          </div>
-          <div>
-            <label>Generation</label>
-            <input type="text" id="dgGeneration" placeholder="Mk7" oninput="renderDataGenJSON()">
-          </div>
-          <div>
-            <label>Production years</label>
-            <input type="text" id="dgYears" placeholder="2012–2020" oninput="renderDataGenJSON()">
-          </div>
-        </div>
-
-        <div class="datagen-row-head">
-          <label>Engine options</label>
-          <button onclick="addDataGenEngine()">+ Add engine</button>
-        </div>
-        <div id="dgEngineRows"></div>
-
-        <div class="datagen-row-head">
-          <label>Known issues</label>
-          <button onclick="addDataGenFault()">+ Add issue</button>
-        </div>
-        <div id="dgFaultRows"></div>
-
-        <label style="display:block;margin-top:18px;margin-bottom:8px;">Pre-purchase rating</label>
-        <div id="dgStars" class="datagen-stars"></div>
-      </div>
-
-      <div class="datagen-col datagen-json-col">
-        <div class="datagen-json-head">
-          <span>Generated JSON</span>
-          <button id="dgCopyBtn" onclick="copyDataGenJSON()">Copy to clipboard</button>
-        </div>
-        <pre id="dgJsonOutput" class="datagen-json-output"></pre>
-      </div>
-    </div>
-  </div>
-
-  <div id="vehiclePickerModal" class="vmodal-overlay">
-    <div class="vmodal" style="max-width:440px;">
-      <div class="vmodal-head"><h3><i class="fas fa-car" style="margin-right:8px;color:var(--sky);"></i>Quick Add Vehicle</h3><button onclick="closeVehiclePickerModal()">&times;</button></div>
-      <div class="vmodal-body">
-        <p style="font-size:12px;color:var(--gray);margin-bottom:16px;line-height:1.6;">Pick where this model belongs, then continue to the full Add Model form.</p>
-        <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:5px;">Category</label>
-        <select id="vpCategory" onchange="onVpCategoryChange()" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;margin-bottom:14px;"></select>
-        <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:5px;">Group</label>
-        <select id="vpGroup" onchange="onVpGroupChange()" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;margin-bottom:14px;"></select>
-        <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:5px;">Brand</label>
-        <select id="vpBrand" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;"></select>
-        <p id="vpEmptyNote" style="font-size:11px;color:var(--err);margin-top:10px;display:none;"></p>
-      </div>
-      <div class="vmodal-foot">
-        <button class="vbtn-cancel" onclick="closeVehiclePickerModal()">Cancel</button>
-        <button class="vbtn-save" id="vpContinueBtn" onclick="proceedToAddModel()">Continue to Add Model</button>
-      </div>
-    </div>
-  </div>
-
   <div id="reportModal" class="vmodal-overlay">
     <div class="vmodal" style="max-width:440px;">
-      <div class="vmodal-head"><h3><i class="fas fa-flag" style="margin-right:8px;color:var(--err);"></i>Zgłoś ogłoszenie</h3><button onclick="closeReportModal()">&times;</button></div>
+      <div class="vmodal-head"><h3><i class="fas fa-flag" style="margin-right:8px;color:var(--err);"></i>Report Listing</h3><button onclick="closeReportModal()">&times;</button></div>
       <div class="vmodal-body">
-        <label style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);">Powód</label>
+        <label style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);">Reason</label>
         <div class="report-reason-grid">
           <div class="report-reason-chip" data-reason="spam" onclick="selectReportReason('spam')">Spam</div>
           <div class="report-reason-chip" data-reason="fraud" onclick="selectReportReason('fraud')">Oszustwo</div>
-          <div class="report-reason-chip" data-reason="incorrect_info" onclick="selectReportReason('incorrect_info')">Błędne informacje</div>
+          <div class="report-reason-chip" data-reason="incorrect_info" onclick="selectReportReason('incorrect_info')">Incorrect Info</div>
           <div class="report-reason-chip" data-reason="other" onclick="selectReportReason('other')">Inne</div>
         </div>
         <label style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);">Opis</label>
-        <textarea id="reportDescriptionInput" rows="3" placeholder="Dodaj szczegóły, które pomogą naszemu zespołowi..." style="width:100%;padding:10px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;background:var(--surface);color:var(--text-main);outline:none;margin-top:6px;"></textarea>
+        <textarea id="reportDescriptionInput" rows="3" placeholder="Add any details that would help our team review this..." style="width:100%;padding:10px 12px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;background:var(--surface);color:var(--text-main);outline:none;margin-top:6px;"></textarea>
       </div>
       <div class="vmodal-foot">
         <button class="vbtn-cancel" onclick="closeReportModal()">Anuluj</button>
-        <button class="vbtn-save" style="background:var(--err);" onclick="submitReport()"><i class="fas fa-flag" style="margin-right:6px;"></i>Wyślij zgłoszenie</button>
+        <button class="vbtn-save" style="background:var(--err);" onclick="submitReport()"><i class="fas fa-flag" style="margin-right:6px;"></i>Submit Report</button>
       </div>
     </div>
   </div>
 
   <div id="supportModal" class="vmodal-overlay">
     <div class="vmodal" style="max-width:460px;">
-      <div class="vmodal-head"><h3><i class="fas fa-life-ring" style="margin-right:8px;color:var(--sky);"></i>Kontakt z pomocą</h3><button onclick="closeSupportModal()">&times;</button></div>
+      <div class="vmodal-head"><h3><i class="fas fa-life-ring" style="margin-right:8px;color:var(--sky);"></i>Contact Support</h3><button onclick="closeSupportModal()">&times;</button></div>
       <div class="vmodal-body">
         <p style="font-size:12px;color:var(--gray);line-height:1.6;margin-bottom:4px;">Masz problem z kontem? Napisz do nas, a odpowiemy mailowo.</p>
         <div class="support-form-row">
-          <label>Twój e-mail</label>
+          <label>Your Email</label>
           <input type="email" id="supportEmailInput" placeholder="ty@przyklad.pl">
         </div>
         <div class="support-form-row">
           <label>Temat</label>
           <select id="supportTopicInput">
             <option value="Problem z kontem">Problem z kontem</option>
-            <option value="Problem z ogłoszeniem">Problem z ogłoszeniem</option>
-            <option value="Subskrypcja PRO / płatności">Subskrypcja PRO / płatności</option>
-            <option value="Zgłoszenie błędu">Zgłoszenie błędu</option>
+            <option value="Marketplace listing issue">Marketplace listing issue</option>
+            <option value="PRO subscription / billing">PRO subscription / billing</option>
+            <option value="Bug report">Bug report</option>
             <option value="Inne">Inne</option>
           </select>
         </div>
         <div class="support-form-row">
-          <label>Wiadomość</label>
+          <label>Message</label>
           <textarea id="supportMessageInput" rows="4" placeholder="Opisz problem..."></textarea>
         </div>
-        <p style="font-size:10.5px;color:var(--gray);margin-top:10px;line-height:1.5;"><i class="fas fa-circle-info" style="margin-right:4px;"></i>Otworzy się Twoja aplikacja pocztowa z gotową wiadomością — nic nie wysyła się automatycznie stąd.</p>
+        <p style="font-size:10.5px;color:var(--gray);margin-top:10px;line-height:1.5;"><i class="fas fa-circle-info" style="margin-right:4px;"></i>Your email app will open with the message ready to go — nothing is sent automatically from here.</p>
       </div>
       <div class="vmodal-foot">
         <button class="vbtn-cancel" onclick="closeSupportModal()">Anuluj</button>
-        <button class="vbtn-save" onclick="submitSupportForm()"><i class="fas fa-paper-plane" style="margin-right:6px;"></i>Otwórz e-mail</button>
+        <button class="vbtn-save" onclick="submitSupportForm()"><i class="fas fa-paper-plane" style="margin-right:6px;"></i>Open Email to Send</button>
       </div>
     </div>
   </div>
@@ -2266,10 +2188,22 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
 
 </main>
 
+<button id="aiAssistantBtn" class="ai-assistant-btn" onclick="toggleAiAssistant()" aria-label="Open AI Shopping Assistant">
+  <i class="fas fa-wand-magic-sparkles"></i>
+</button>
+
+<div id="aiAssistantDrawer" class="ai-assistant-drawer">
+  <div class="ai-assistant-head">
+    <span><i class="fas fa-wand-magic-sparkles" style="margin-right:8px;"></i>Autoencyklopedia AI — Car Finder</span>
+    <button onclick="toggleAiAssistant()" aria-label="Close">&times;</button>
+  </div>
+  <div id="aiAssistantBody" class="ai-assistant-body"></div>
+</div>
+
 <footer>
   <div class="fline"></div>
   <p>&copy; 2026 AutoEncyclopedia Engine &bull; Everything free</p>
-  <p>Contact: <a href="mailto:valtore.official@gmail.com">valtore.official@gmail.com</a> &bull; <a onclick="openSupportModal()" style="cursor:pointer;">Kontakt z pomocą</a></p>
+  <p>Contact: <a href="mailto:valtore.official@gmail.com">valtore.official@gmail.com</a> &bull; <a onclick="openSupportModal()" style="cursor:pointer;">Contact Support</a></p>
   <p style="margin-top:14px;">
     <a onclick="openPage('rodo')">Privacy Policy</a>
     &nbsp;&bull;&nbsp;
@@ -4504,230 +4438,6 @@ let ADMIN_REPORTS_CACHE=[];
 let REPORT_TARGET_LISTING_ID=null;
 let REPORT_SELECTED_REASON=null;
 
-// ─────────────────────────────────────────────────────────
-// ADMIN DATA GENERATOR — structured vehicle-spec entry tool, admin-only.
-// Vanilla JS port of a React prototype: no JSX/React runtime exists in
-// this file, so the same behavior (structured engine/fault rows, live
-// JSON preview, copy-to-clipboard with a fallback) is rebuilt here using
-// plain DOM rendering, matching the pattern already used throughout this
-// file (e.g. renderMarketGrid()) rather than introducing a new paradigm.
-// ─────────────────────────────────────────────────────────
-let DG_ENGINES=[];
-let DG_FAULTS=[];
-let DG_RATING=0;
-let DG_HOVER_RATING=0;
-const DG_SEVERITY_COLORS={low:'#4ade80',medium:'#fbbf24',high:'#f87171'};
-const DG_CATEGORIES=['Engine','Transmission','Electrical','Suspension','Brakes','Fuel system','Cooling system','Interior','Body / Rust','Other'];
-
-function dgUid(){ return Math.random().toString(36).slice(2,10); }
-function dgEmptyEngine(){ return {id:dgUid(),type:'',power:'',code:''}; }
-function dgEmptyFault(){ return {id:dgUid(),category:DG_CATEGORIES[0],severity:'medium',cost:''}; }
-
-function loadDataGenJSON(){
-  const raw=document.getElementById('dgImportInput').value.trim();
-  const errEl=document.getElementById('dgImportError');
-  errEl.textContent='';
-  errEl.style.color='';
-  if(!raw){ errEl.textContent='Paste some JSON first.'; errEl.style.color='#f87171'; return; }
-
-  let data;
-  try{
-    data=JSON.parse(raw);
-  }catch(e){
-    errEl.textContent='Invalid JSON — check for a missing comma or bracket.';
-    errEl.style.color='#f87171';
-    return;
-  }
-
-  // Flexible field-name matching: existing JSON from other sources may
-  // not use the exact same key names this tool generates.
-  document.getElementById('dgBrand').value = data.brand || '';
-  document.getElementById('dgModel').value = data.model || '';
-  document.getElementById('dgGeneration').value = data.generation || '';
-  document.getElementById('dgYears').value = data.productionYears || data.years || data.productionYear || '';
-
-  const rawEngines = data.engines || data.engineOptions || [];
-  DG_ENGINES = Array.isArray(rawEngines) && rawEngines.length
-    ? rawEngines.map(e=>({
-        id:dgUid(),
-        type:e.type || e.engineType || '',
-        power:e.power || e.hp || e.horsepower || '',
-        code:e.code || e.engineCode || ''
-      }))
-    : [dgEmptyEngine()];
-
-  const rawFaults = data.commonFaults || data.faults || data.knownIssues || [];
-  DG_FAULTS = Array.isArray(rawFaults) && rawFaults.length
-    ? rawFaults.map(f=>({
-        id:dgUid(),
-        category: DG_CATEGORIES.includes(f.category) ? f.category : (f.category || DG_CATEGORIES[0]),
-        severity: ['low','medium','high'].includes((f.severity||'').toLowerCase()) ? f.severity.toLowerCase() : 'medium',
-        cost:f.estimatedRepairCost || f.cost || f.repairCost || ''
-      }))
-    : [dgEmptyFault()];
-
-  DG_RATING = Number(data.prePurchaseRating || data.rating) || 0;
-
-  renderDataGenEngineRows();
-  renderDataGenFaultRows();
-  renderDataGenStars();
-  renderDataGenJSON();
-
-  errEl.textContent='Loaded successfully.';
-  errEl.style.color='#4ade80';
-  setTimeout(()=>{ errEl.textContent=''; },2500);
-}
-
-function buildDataGenView(){
-  if(!DG_ENGINES.length) DG_ENGINES=[dgEmptyEngine()];
-  if(!DG_FAULTS.length) DG_FAULTS=[dgEmptyFault()];
-  renderDataGenEngineRows();
-  renderDataGenFaultRows();
-  renderDataGenStars();
-  renderDataGenJSON();
-}
-
-function renderDataGenEngineRows(){
-  document.getElementById('dgEngineRows').innerHTML=DG_ENGINES.map(e=>`
-    <div class="datagen-row" data-id="${e.id}">
-      <input type="text" placeholder="2.0 TDI" value="${esc(e.type)}" oninput="updateDataGenEngine('${e.id}','type',this.value)">
-      <input type="text" placeholder="150 hp" value="${esc(e.power)}" oninput="updateDataGenEngine('${e.id}','power',this.value)">
-      <input type="text" placeholder="Engine code" value="${esc(e.code)}" oninput="updateDataGenEngine('${e.id}','code',this.value)">
-      <button onclick="removeDataGenEngine('${e.id}')" aria-label="Remove engine">✕</button>
-    </div>`).join('');
-}
-function addDataGenEngine(){ DG_ENGINES.push(dgEmptyEngine()); renderDataGenEngineRows(); renderDataGenJSON(); }
-function removeDataGenEngine(id){ if(DG_ENGINES.length>1){ DG_ENGINES=DG_ENGINES.filter(e=>e.id!==id); renderDataGenEngineRows(); renderDataGenJSON(); } }
-function updateDataGenEngine(id,field,value){ const e=DG_ENGINES.find(x=>x.id===id); if(e){ e[field]=value; renderDataGenJSON(); } }
-
-function renderDataGenFaultRows(){
-  document.getElementById('dgFaultRows').innerHTML=DG_FAULTS.map(f=>`
-    <div class="datagen-row" data-id="${f.id}">
-      <select onchange="updateDataGenFault('${f.id}','category',this.value)">
-        ${DG_CATEGORIES.map(c=>`<option value="${esc(c)}" ${f.category===c?'selected':''}>${esc(c)}</option>`).join('')}
-      </select>
-      <select onchange="updateDataGenFault('${f.id}','severity',this.value)" style="color:${DG_SEVERITY_COLORS[f.severity]};">
-        <option value="low" ${f.severity==='low'?'selected':''}>Low</option>
-        <option value="medium" ${f.severity==='medium'?'selected':''}>Medium</option>
-        <option value="high" ${f.severity==='high'?'selected':''}>High</option>
-      </select>
-      <input type="text" placeholder="Repair cost" value="${esc(f.cost)}" oninput="updateDataGenFault('${f.id}','cost',this.value)">
-      <button onclick="removeDataGenFault('${f.id}')" aria-label="Remove issue">✕</button>
-    </div>`).join('');
-}
-function addDataGenFault(){ DG_FAULTS.push(dgEmptyFault()); renderDataGenFaultRows(); renderDataGenJSON(); }
-function removeDataGenFault(id){ if(DG_FAULTS.length>1){ DG_FAULTS=DG_FAULTS.filter(f=>f.id!==id); renderDataGenFaultRows(); renderDataGenJSON(); } }
-function updateDataGenFault(id,field,value){ const f=DG_FAULTS.find(x=>x.id===id); if(f){ f[field]=value; renderDataGenJSON(); } }
-
-function renderDataGenStars(){
-  const active=DG_HOVER_RATING||DG_RATING;
-  document.getElementById('dgStars').innerHTML=[1,2,3,4,5].map(n=>
-    `<button onclick="setDataGenRating(${n})" onmouseenter="hoverDataGenRating(${n})" onmouseleave="hoverDataGenRating(0)" style="color:${active>=n?'#ff6b35':'#3a3f46'};" aria-label="${n} star">★</button>`
-  ).join('');
-}
-function setDataGenRating(n){ DG_RATING = (n===DG_RATING) ? 0 : n; renderDataGenStars(); renderDataGenJSON(); }
-function hoverDataGenRating(n){ DG_HOVER_RATING=n; renderDataGenStars(); }
-
-function renderDataGenJSON(){
-  const brand=(document.getElementById('dgBrand').value||'').trim();
-  const model=(document.getElementById('dgModel').value||'').trim();
-  const generation=(document.getElementById('dgGeneration').value||'').trim();
-  const years=(document.getElementById('dgYears').value||'').trim();
-  const obj={
-    brand,model,generation,
-    productionYears:years,
-    engines:DG_ENGINES.filter(e=>e.type.trim()||e.power.trim()||e.code.trim()).map(e=>({type:e.type.trim(),power:e.power.trim(),code:e.code.trim()})),
-    commonFaults:DG_FAULTS.filter(f=>f.cost.trim()).map(f=>({category:f.category,severity:f.severity,estimatedRepairCost:f.cost.trim()})),
-    prePurchaseRating:DG_RATING
-  };
-  document.getElementById('dgJsonOutput').textContent=JSON.stringify(obj,null,2);
-}
-
-function copyDataGenJSON(){
-  const text=document.getElementById('dgJsonOutput').textContent;
-  const btn=document.getElementById('dgCopyBtn');
-  const showCopied=()=>{ btn.textContent='Copied'; btn.classList.add('copied'); setTimeout(()=>{ btn.textContent='Copy to clipboard'; btn.classList.remove('copied'); },1800); };
-  navigator.clipboard.writeText(text).then(showCopied).catch(()=>{
-    // Clipboard API can be blocked by browser permissions in some
-    // contexts — fall back to the older selection-based copy method.
-    try{
-      const ta=document.createElement('textarea');
-      ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
-      document.body.appendChild(ta); ta.focus(); ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      showCopied();
-    }catch(e){ alert('Could not copy automatically — please select and copy the text manually.'); }
-  });
-}
-
-// ─────────────────────────────────────────────────────────
-// QUICK ADD VEHICLE PICKER — lets an admin open the real, existing "Add
-// Model" form from the centralized Admin Panel, without needing to be
-// currently browsing the target brand's page. openVehicleModal() and
-// saveVehicleModal() are NOT duplicated here — they're called directly,
-// unchanged, so this can never drift out of sync with the real schema.
-// The only thing this adds is temporarily setting curCat/curGroup/
-// curBrand (which findDynBrandForCurrent() reads) to the picked values,
-// then restoring them afterward so normal site navigation is unaffected.
-// ─────────────────────────────────────────────────────────
-let PICKER_SAVED_NAV_CONTEXT=null;
-
-async function openVehiclePickerModal(){
-  if(!isAdmin) return;
-  await loadDynamicData(); // ensure DYN_GROUPS/DYN_BRANDS are fresh, regardless of how this was reached
-  const catSel=document.getElementById('vpCategory');
-  catSel.innerHTML=Object.keys(CAT_LABELS).map(key=>`<option value="${esc(key)}">${esc(CAT_LABELS[key])}</option>`).join('');
-  onVpCategoryChange();
-  document.getElementById('vehiclePickerModal').classList.add('open');
-}
-function closeVehiclePickerModal(){
-  document.getElementById('vehiclePickerModal').classList.remove('open');
-}
-function onVpCategoryChange(){
-  const catKey=document.getElementById('vpCategory').value;
-  const catLabel=CAT_LABELS[catKey];
-  const groupSel=document.getElementById('vpGroup');
-  const groups=DYN_GROUPS.filter(g=>g.category===catLabel);
-  groupSel.innerHTML=groups.map(g=>`<option value="${esc(g.id)}">${esc(g.name)}</option>`).join('');
-  onVpGroupChange();
-}
-function onVpGroupChange(){
-  const groupId=document.getElementById('vpGroup').value;
-  const brandSel=document.getElementById('vpBrand');
-  const brands=DYN_BRANDS.filter(b=>b.group_id===groupId);
-  const emptyNote=document.getElementById('vpEmptyNote');
-  const continueBtn=document.getElementById('vpContinueBtn');
-  if(!brands.length){
-    brandSel.innerHTML='<option value="">No brands yet</option>';
-    emptyNote.textContent='No brands exist yet for this group — add one first via "Add Group" / "Add Brand" on the catalog pages.';
-    emptyNote.style.display='block';
-    continueBtn.disabled=true;
-  } else {
-    brandSel.innerHTML=brands.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');
-    emptyNote.style.display='none';
-    continueBtn.disabled=false;
-  }
-}
-function proceedToAddModel(){
-  const catKey=document.getElementById('vpCategory').value;
-  const catLabel=CAT_LABELS[catKey];
-  const groupId=document.getElementById('vpGroup').value;
-  const brandId=document.getElementById('vpBrand').value;
-  const group=DYN_GROUPS.find(g=>g.id===groupId);
-  const brand=DYN_BRANDS.find(b=>b.id===brandId);
-  if(!group || !brand){ alert('Please select a group and brand.'); return; }
-
-  // Save the real navigation context so it can be restored once the Add
-  // Model form closes — this tool must not leave the site thinking the
-  // admin actually navigated to that brand's page.
-  PICKER_SAVED_NAV_CONTEXT={cat:curCat,group:curGroup,brand:curBrand};
-  curCat=catKey; curGroup=group.name; curBrand=brand.name;
-
-  closeVehiclePickerModal();
-  openVehicleModal(null);
-}
-
 async function buildMarketAdminView(){
   if(!isAdmin){ document.getElementById('marketAdminContent').innerHTML='<p class="empty-note">Admin access required.</p>'; return; }
   document.getElementById('marketAdminContent').innerHTML=`<div class="spin"><i class="fas fa-circle-notch"></i><p>Loading...</p></div>`;
@@ -4786,18 +4496,18 @@ function renderMarketAdminOverview(list){
   if(!el) return;
   if(!isAdmin){ el.innerHTML='<p class="empty-note">Admin access required.</p>'; return; }
   el.innerHTML=`<div class="panel">
-    <h3><i class="fas fa-list"></i>Ogłoszenia (${list.length})</h3>
+    <h3><i class="fas fa-list"></i>Listings (${list.length})</h3>
     ${list.length?list.map(l=>{
       const flagged=listingHasOpenReport(l.id);
       return `<div class="ust ${flagged?'admin-report-row':''}">
-      <h5 style="color:var(--text-main);text-transform:none;font-weight:800;font-size:12px;">${esc(l.brand)} ${esc(l.model)} — ${formatMktPrice(l.price,l.currency)} ${marketStatusBadgeHtml(l)}${flagged?'<span class="admin-report-reason-badge">Zgłoszone</span>':''}</h5>
+      <h5 style="color:var(--text-main);text-transform:none;font-weight:800;font-size:12px;">${esc(l.brand)} ${esc(l.model)} — ${formatMktPrice(l.price,l.currency)} ${marketStatusBadgeHtml(l)}${flagged?'<span class="admin-report-reason-badge">Flagged/Reported</span>':''}</h5>
       <p>Sprzedawca: ${esc((l.profiles&&l.profiles.display_name)||'User')} &bull; ${esc([l.city,l.country].filter(Boolean).join(', '))} &bull; ID: ${esc(l.id.slice(0,8))}</p>
       <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-        <button class="wbtn" onclick="go({view:'marketlisting',id:'${esc(l.id)}'})"><i class="fas fa-eye" style="margin-right:5px;"></i>Podgląd</button>
-        <button class="wbtn" style="background:var(--err);" onclick="adminRemoveListing('${esc(l.id)}')"><i class="fas fa-trash" style="margin-right:5px;"></i>Usuń</button>
+        <button class="wbtn" onclick="go({view:'marketlisting',id:'${esc(l.id)}'})"><i class="fas fa-eye" style="margin-right:5px;"></i>Preview</button>
+        <button class="wbtn" style="background:var(--err);" onclick="adminRemoveListing('${esc(l.id)}')"><i class="fas fa-trash" style="margin-right:5px;"></i>Delete</button>
       </div>
     </div>`;
-    }).join(''):'<p style="font-size:12px;color:var(--gray);padding:6px 0;">Brak wyników.</p>'}
+    }).join(''):'<p style="font-size:12px;color:var(--gray);padding:6px 0;">No results.</p>'}
   </div>`;
 }
 
@@ -4805,39 +4515,39 @@ async function loadAdminReports(){
   const {data,error}=await supabaseClient.from('reports').select('*, profiles(display_name,email)').order('created_at',{ascending:false}).limit(200);
   ADMIN_REPORTS_CACHE=(!error && data)?data:[];
 }
-const REPORT_REASON_LABELS={spam:'Spam',fraud:'Oszustwo',incorrect_info:'Błędne informacje',other:'Inne'};
+const REPORT_REASON_LABELS={spam:'Spam',fraud:'Fraud',incorrect_info:'Incorrect Info',other:'Other'};
 function renderAdminReportsTab(list){
   const el=document.getElementById('marketAdminContent');
   if(!el) return;
   el.innerHTML=`<div class="panel">
-    <h3><i class="fas fa-flag"></i>Zgłoszenia użytkowników (${list.length})</h3>
+    <h3><i class="fas fa-flag"></i>User Reports (${list.length})</h3>
     ${list.length?list.map(r=>{
       const reporter=(r.profiles&&(r.profiles.display_name||r.profiles.email))||'Nieznany';
       const isResolved=r.status==='resolved';
       return `<div class="ust admin-report-row ${isResolved?'resolved':''}">
-      <h5 style="color:var(--text-main);text-transform:none;font-weight:800;font-size:12px;">${esc(REPORT_REASON_LABELS[r.reason]||r.reason)}<span class="admin-report-reason-badge" style="${isResolved?'background:rgba(16,185,129,.12);color:var(--ok);':''}">${isResolved?'Rozwiązane':'Otwarte'}</span></h5>
-      <p>Zgłaszający: ${esc(reporter)} &bull; Cel: ${esc(r.target_type)} #${esc(r.target_id.slice(0,8))}</p>
+      <h5 style="color:var(--text-main);text-transform:none;font-weight:800;font-size:12px;">${esc(REPORT_REASON_LABELS[r.reason]||r.reason)}<span class="admin-report-reason-badge" style="${isResolved?'background:rgba(16,185,129,.12);color:var(--ok);':''}">${isResolved?'Resolved':'Open'}</span></h5>
+      <p>Reporter: ${esc(reporter)} &bull; Target: ${esc(r.target_type)} #${esc(r.target_id.slice(0,8))}</p>
       ${r.description?`<p style="font-style:italic;">"${esc(r.description)}"</p>`:''}
       <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-        <button class="wbtn" onclick="go({view:'marketlisting',id:'${esc(r.target_id)}'})"><i class="fas fa-eye" style="margin-right:5px;"></i>Podgląd</button>
-        ${!isResolved?`<button class="wbtn" style="background:var(--ok);" onclick="resolveReport('${esc(r.id)}')"><i class="fas fa-check" style="margin-right:5px;"></i>Rozwiąż i odrzuć</button>`:''}
-        ${r.target_type==='listing'?`<button class="wbtn" style="background:var(--err);" onclick="deleteReportedListing('${esc(r.id)}','${esc(r.target_id)}')"><i class="fas fa-trash" style="margin-right:5px;"></i>Usuń zgłoszone ogłoszenie</button>`:''}
-        <button class="wbtn" style="background:var(--err);" onclick="blockReportedUser('${esc(r.id)}','${esc(r.reporter_id)}')"><i class="fas fa-ban" style="margin-right:5px;"></i>Zablokuj użytkownika</button>
+        <button class="wbtn" onclick="go({view:'marketlisting',id:'${esc(r.target_id)}'})"><i class="fas fa-eye" style="margin-right:5px;"></i>Preview</button>
+        ${!isResolved?`<button class="wbtn" style="background:var(--ok);" onclick="resolveReport('${esc(r.id)}')"><i class="fas fa-check" style="margin-right:5px;"></i>Resolve & Dismiss</button>`:''}
+        ${r.target_type==='listing'?`<button class="wbtn" style="background:var(--err);" onclick="deleteReportedListing('${esc(r.id)}','${esc(r.target_id)}')"><i class="fas fa-trash" style="margin-right:5px;"></i>Delete Reported Listing</button>`:''}
+        <button class="wbtn" style="background:var(--err);" onclick="blockReportedUser('${esc(r.id)}','${esc(r.reporter_id)}')"><i class="fas fa-ban" style="margin-right:5px;"></i>Block User</button>
       </div>
     </div>`;
-    }).join(''):'<p style="font-size:12px;color:var(--gray);padding:6px 0;">Brak zgłoszeń.</p>'}
+    }).join(''):'<p style="font-size:12px;color:var(--gray);padding:6px 0;">No reports.</p>'}
   </div>`;
 }
 async function resolveReport(id){
   const {error}=await supabaseClient.from('reports').update({status:'resolved',resolved_at:new Date().toISOString()}).eq('id',id);
-  if(error){ alert('Błąd: '+error.message); return; }
+  if(error){ alert('Error: '+error.message); return; }
   await loadAdminReports();
   applyAdminFilters();
 }
 async function deleteReportedListing(reportId,listingId){
-  if(!confirm('Trwale usunąć to ogłoszenie?')) return;
+  if(!confirm('Permanently delete this listing?')) return;
   const {error}=await supabaseClient.from('marketplace_listings').delete().eq('id',listingId);
-  if(error){ alert('Błąd: '+error.message); return; }
+  if(error){ alert('Error: '+error.message); return; }
   await resolveReport(reportId);
   await loadMarketAdminOverview();
   applyAdminFilters();
@@ -4851,11 +4561,11 @@ async function blockReportedUser(reportId,userId){
   // target_type='listing' reports, blocking the LISTING'S SELLER is
   // usually the intent; adjust which id you pass in if that's what you
   // need here.
-  if(!confirm('Zablokować tego użytkownika na 30 dni?')) return;
+  if(!confirm('Block this user for 30 days?')) return;
   const bannedUntil=new Date(Date.now()+30*86400000).toISOString();
   const {error}=await supabaseClient.from('profiles').update({banned_until:bannedUntil}).eq('id',userId);
-  if(error){ alert('Błąd: '+error.message); return; }
-  alert('Użytkownik zablokowany do '+new Date(bannedUntil).toLocaleDateString());
+  if(error){ alert('Error: '+error.message); return; }
+  alert('User blocked until '+new Date(bannedUntil).toLocaleDateString());
 }
 
 // ── Report submission (any signed-in user, on someone else's listing) ──
@@ -4872,7 +4582,7 @@ function selectReportReason(reason){
   document.querySelectorAll('.report-reason-chip').forEach(c=>c.classList.toggle('active',c.dataset.reason===reason));
 }
 async function submitReport(){
-  if(!REPORT_SELECTED_REASON){ alert('Wybierz powód zgłoszenia.'); return; }
+  if(!REPORT_SELECTED_REASON){ alert('Please select a reason for the report.'); return; }
   const description=document.getElementById('reportDescriptionInput').value.trim();
   const {error}=await supabaseClient.from('reports').insert({
     reporter_id:authUser.id,
@@ -4881,9 +4591,9 @@ async function submitReport(){
     reason:REPORT_SELECTED_REASON,
     description:description||null
   });
-  if(error){ alert('Nie udało się wysłać zgłoszenia: '+error.message); return; }
+  if(error){ alert('Could not send the report: '+error.message); return; }
   closeReportModal();
-  alert('Dziękujemy — zgłoszenie zostało wysłane do zespołu.');
+  alert('Thanks — your report has been sent to our team.');
 }
 
 // ── Support form (mailto: — genuinely works with no backend needed) ──
@@ -4896,7 +4606,7 @@ function submitSupportForm(){
   const fromEmail=document.getElementById('supportEmailInput').value.trim();
   const topic=document.getElementById('supportTopicInput').value;
   const message=document.getElementById('supportMessageInput').value.trim();
-  if(!fromEmail || !message){ alert('Podaj swój e-mail i wiadomość.'); return; }
+  if(!fromEmail || !message){ alert('Please provide your email and a message.'); return; }
   const subject=encodeURIComponent(`[Wsparcie] ${topic}`);
   const body=encodeURIComponent(`Od: ${fromEmail}\nTemat: ${topic}\n\n${message}`);
   window.location.href=`mailto:valtore.official@gmail.com?subject=${subject}&body=${body}`;
@@ -5620,7 +5330,7 @@ function renderMarketListingDetail(){
   }
   if(!isOwner && isLoggedIn()){
     actionsHtml+=`<div style="margin-top:10px;">
-      <button class="wbtn" style="background:var(--off);color:var(--text-secondary);box-shadow:none;" onclick="openReportModal('${esc(l.id)}')"><i class="fas fa-flag" style="margin-right:6px;"></i>Zgłoś ogłoszenie</button>
+      <button class="wbtn" style="background:var(--off);color:var(--text-secondary);box-shadow:none;" onclick="openReportModal('${esc(l.id)}')"><i class="fas fa-flag" style="margin-right:6px;"></i>Report Listing</button>
     </div>`;
   }
 
@@ -7365,6 +7075,13 @@ function openVehicleModal(id){
   editingVehicleId=id||null;
   const v=id?DYN_VEHICLES.find(x=>x.id===id):null;
   document.getElementById('vmTitle').textContent=v?'Edit Model':'Add Model';
+  populateVehicleModalFields(v);
+  document.getElementById('vehicleModal').classList.add('open');
+}
+// Shared by openVehicleModal (editing/blank) and the JSON import path
+// below — pulling this out means JSON import can never end up covering
+// a different set of fields than the real form does.
+function populateVehicleModalFields(v){
   document.getElementById('vmModelName').value=v?(v.model_name||''):'';
   document.getElementById('vmImageUrl').value=v?(v.image_url||''):'';
   document.getElementById('vmImageFile').value='';
@@ -7383,20 +7100,10 @@ function openVehicleModal(id){
   document.getElementById('vmTowing').value=v?(v.towing_capacity||''):'';
   document.getElementById('vmHomepageSection').value=v?(v.homepage_section||''):'';
   document.getElementById('vmHomepageBadge').value=v?(v.homepage_badge||''):'';
-  document.getElementById('vehicleModal').classList.add('open');
 }
 function closeVehicleModal(){
   document.getElementById('vehicleModal').classList.remove('open');
   editingVehicleId=null;
-  // Restore real navigation context if this modal was opened via the
-  // Quick Add picker — normal usage (opening from an actual brand page)
-  // never sets PICKER_SAVED_NAV_CONTEXT, so this is a no-op there.
-  if(PICKER_SAVED_NAV_CONTEXT){
-    curCat=PICKER_SAVED_NAV_CONTEXT.cat;
-    curGroup=PICKER_SAVED_NAV_CONTEXT.group;
-    curBrand=PICKER_SAVED_NAV_CONTEXT.brand;
-    PICKER_SAVED_NAV_CONTEXT=null;
-  }
 }
 
 async function saveVehicleModal(){
@@ -8267,15 +7974,6 @@ function render(state){
         showV('vMarketAdmin');buildMarketAdminView();
       }
       break;
-    case 'admindatagen':
-      if(!isAdmin){
-        history.replaceState({view:'market'},'');
-        currentState={view:'market'};
-        showV('vMarket');buildMarketView();
-      } else {
-        showV('vAdminDataGen');buildDataGenView();
-      }
-      break;
     case 'saved':
       if(!isLoggedIn()){
         openAuthRequiredModal('Sign in to view your saved vehicles.');
@@ -8361,6 +8059,258 @@ function openPage(p){ go({view:p}); }
 function goHome(){ curGroup=null;curBrand=null; go({view:'groups',cat:curCat}); }
 
 // ─────────────────────────────────────────────────────────
+// AI SHOPPING ASSISTANT — searches real Marketplace listings, not the
+// static encyclopedia catalog (which has no price field at all). Hard
+// filters (price range, transmission) run client-side against Supabase,
+// same as everywhere else in this app; only the shortlisted candidates
+// are sent to the backend, which does the AI ranking/explanation using
+// a securely stored server-side key — never exposed in this file.
+// ─────────────────────────────────────────────────────────
+let AI_ASSISTANT_STARTED=false;
+let AI_STEP=0;
+let AI_ANSWERS={budget:null,seats:null,features:[],usage:null,bodyStyle:null};
+
+const AI_BUDGET_OPTIONS=[{label:'Under $10k',min:0,max:10000},{label:'$10k–$25k',min:10000,max:25000},{label:'$25k+',min:25000,max:Infinity}];
+const AI_SEATS_OPTIONS=['2 seats','5 seats','7+ seats'];
+const AI_FEATURE_OPTIONS=['Automatic transmission','Low fuel consumption','Large trunk','Leather interior','AWD'];
+const AI_USAGE_OPTIONS=['Mostly city','Long highway trips','A mix of both'];
+const AI_BODYSTYLE_OPTIONS=['Sedan','SUV','Hatchback','Sports Car','Truck/Pickup'];
+
+function toggleAiAssistant(){
+  const drawer=document.getElementById('aiAssistantDrawer');
+  const opening=!drawer.classList.contains('open');
+  drawer.classList.toggle('open',opening);
+  if(opening && !AI_ASSISTANT_STARTED){
+    AI_ASSISTANT_STARTED=true;
+    aiAddBotMessage("Hi! I'm your Autoencyklopedia AI advisor. Let me help you find the perfect car! Tell me a bit about what you need:");
+    aiAskBudget();
+  }
+}
+function aiResetAssistant(){
+  AI_STEP=0;
+  AI_ANSWERS={budget:null,seats:null,features:[],usage:null,bodyStyle:null};
+  document.getElementById('aiAssistantBody').innerHTML='';
+  aiAddBotMessage("Let's start over — tell me a bit about what you need:");
+  aiAskBudget();
+}
+function aiScrollToBottom(){
+  const body=document.getElementById('aiAssistantBody');
+  body.scrollTop=body.scrollHeight;
+}
+function aiAddBotMessage(text){
+  const body=document.getElementById('aiAssistantBody');
+  const el=document.createElement('div');
+  el.className='ai-msg ai-msg-bot';
+  el.textContent=text;
+  body.appendChild(el);
+  aiScrollToBottom();
+}
+function aiAddUserMessage(text){
+  const body=document.getElementById('aiAssistantBody');
+  const el=document.createElement('div');
+  el.className='ai-msg ai-msg-user';
+  el.textContent=text;
+  body.appendChild(el);
+  aiScrollToBottom();
+}
+function aiAddQuickReplies(id,html){
+  const body=document.getElementById('aiAssistantBody');
+  const el=document.createElement('div');
+  el.className='ai-quick-replies';
+  el.id=id;
+  el.innerHTML=html;
+  body.appendChild(el);
+  aiScrollToBottom();
+}
+function aiRemoveQuickReplies(id){
+  const el=document.getElementById(id);
+  if(el) el.remove();
+}
+
+function aiAskBudget(){
+  aiAddBotMessage('What is your budget limit?');
+  aiAddQuickReplies('aiQrBudget', AI_BUDGET_OPTIONS.map((o,i)=>
+    `<button class="ai-quick-reply-btn" onclick="aiSelectBudget(${i})">${esc(o.label)}</button>`
+  ).join(''));
+}
+function aiSelectBudget(i){
+  const opt=AI_BUDGET_OPTIONS[i];
+  AI_ANSWERS.budget=opt;
+  aiRemoveQuickReplies('aiQrBudget');
+  aiAddUserMessage(opt.label);
+  aiAskSeats();
+}
+function aiAskSeats(){
+  aiAddBotMessage('How many seats or passengers do you need?');
+  aiAddQuickReplies('aiQrSeats', AI_SEATS_OPTIONS.map((label,i)=>
+    `<button class="ai-quick-reply-btn" onclick="aiSelectSeats(${i})">${esc(label)}</button>`
+  ).join(''));
+}
+function aiSelectSeats(i){
+  const label=AI_SEATS_OPTIONS[i];
+  AI_ANSWERS.seats=label;
+  aiRemoveQuickReplies('aiQrSeats');
+  aiAddUserMessage(label);
+  aiAskFeatures();
+}
+function aiAskFeatures(){
+  aiAddBotMessage('What features are must-haves for you? (pick any that apply)');
+  const chips=AI_FEATURE_OPTIONS.map((label,i)=>
+    `<button class="ai-quick-reply-btn" id="aiFeatureChip${i}" onclick="aiToggleFeature(${i})">${esc(label)}</button>`
+  ).join('');
+  aiAddQuickReplies('aiQrFeatures', chips+'<button class="ai-feature-continue-btn" onclick="aiConfirmFeatures()">Continue</button>');
+}
+function aiToggleFeature(i){
+  const label=AI_FEATURE_OPTIONS[i];
+  const idx=AI_ANSWERS.features.indexOf(label);
+  if(idx>-1) AI_ANSWERS.features.splice(idx,1); else AI_ANSWERS.features.push(label);
+  document.getElementById(`aiFeatureChip${i}`).classList.toggle('selected',idx===-1);
+}
+function aiConfirmFeatures(){
+  aiRemoveQuickReplies('aiQrFeatures');
+  aiAddUserMessage(AI_ANSWERS.features.length?AI_ANSWERS.features.join(', '):'No specific must-haves');
+  aiAskUsage();
+}
+function aiAskUsage(){
+  aiAddBotMessage('Will you drive mostly in the city, long highway trips, or a mix of both?');
+  aiAddQuickReplies('aiQrUsage', AI_USAGE_OPTIONS.map((label,i)=>
+    `<button class="ai-quick-reply-btn" onclick="aiSelectUsage(${i})">${esc(label)}</button>`
+  ).join(''));
+}
+function aiSelectUsage(i){
+  const label=AI_USAGE_OPTIONS[i];
+  AI_ANSWERS.usage=label;
+  aiRemoveQuickReplies('aiQrUsage');
+  aiAddUserMessage(label);
+  aiAskBodyStyle();
+}
+function aiAskBodyStyle(){
+  aiAddBotMessage('Any preference on body style — sedan, SUV, or something sportier?');
+  aiAddQuickReplies('aiQrBodyStyle', AI_BODYSTYLE_OPTIONS.map((label,i)=>
+    `<button class="ai-quick-reply-btn" onclick="aiSelectBodyStyle(${i})">${esc(label)}</button>`
+  ).join(''));
+}
+function aiSelectBodyStyle(i){
+  const label=AI_BODYSTYLE_OPTIONS[i];
+  AI_ANSWERS.bodyStyle=label;
+  aiRemoveQuickReplies('aiQrBodyStyle');
+  aiAddUserMessage(label);
+  if(!isVipEligible()){
+    aiAddBotMessage("Got it — I've got your preferences ready. Seeing your personalized recommendations is a PRO feature:");
+    const body=document.getElementById('aiAssistantBody');
+    const btn=document.createElement('button');
+    btn.className='ai-rec-inhouse-btn';
+    btn.style.cssText='width:auto;align-self:flex-start;border-radius:20px;padding:9px 16px;';
+    btn.innerHTML='<i class="fas fa-crown" style="margin-right:6px;"></i>Upgrade to PRO to see matches';
+    btn.onclick=()=>{ toggleAiAssistant(); openProPricingModal(); };
+    body.appendChild(btn);
+    aiScrollToBottom();
+    return;
+  }
+  aiRunSearch();
+}
+
+async function aiRunSearch(){
+  const body=document.getElementById('aiAssistantBody');
+  const typingEl=document.createElement('div');
+  typingEl.className='ai-typing';
+  typingEl.id='aiTypingIndicator';
+  typingEl.innerHTML='<span></span><span></span><span></span>';
+  body.appendChild(typingEl);
+  aiScrollToBottom();
+
+  try{
+    const resp=await fetch('/api/ai-recommendations',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({answers:AI_ANSWERS})
+    });
+    if(!resp.ok){
+      let serverError='';
+      try{ serverError=(await resp.json()).error||''; }catch(e){}
+      console.error(`AI search failed: HTTP ${resp.status}${serverError?' — '+serverError:''}`);
+      throw new Error(serverError||`AI search request failed (HTTP ${resp.status})`);
+    }
+    const result=await resp.json();
+    const recommendations=result.recommendations||[];
+    document.getElementById('aiTypingIndicator').remove();
+
+    if(!recommendations.length){
+      aiAddBotMessage("I couldn't come up with confident recommendations for that combination — try loosening a feature or two.");
+      return;
+    }
+
+    // Real lookup against the actual encyclopedia catalog for each
+    // recommendation — never assumed. Loads DYN_BRANDS/DYN_GROUPS fresh
+    // if not already available.
+    await loadDynamicData();
+    const enriched=await Promise.all(recommendations.map(r=>aiFindInDatabase(r.brand,r.model).then(match=>({...r,match}))));
+
+    aiAddBotMessage(`Based on what you're looking for, here ${enriched.length>1?'are':'is'} ${enriched.length} model${enriched.length>1?'s':''} worth considering:`);
+    aiRenderRecommendations(enriched);
+  }catch(err){
+    const typingIndicator=document.getElementById('aiTypingIndicator');
+    if(typingIndicator) typingIndicator.remove();
+    console.error('AI Car Finder error:',err);
+    aiAddBotMessage(`Something went wrong while searching (${err.message||'unknown error'}) — please try again in a moment.`);
+  }
+}
+
+// Checks whether a recommended brand+model genuinely exists in the real
+// encyclopedia catalog (vehicles/brands tables) — best-effort match on
+// brand name (exact, case-insensitive) and model name (substring match,
+// since the AI's suggested string, e.g. "A4 B8 Allroad", may not exactly
+// match how it's stored, e.g. "A4 B8 Allroad" vs "A4"). Returns null
+// (never a guess) if no confident match is found.
+async function aiFindInDatabase(brand,model){
+  const brandLower=(brand||'').trim().toLowerCase();
+  const matchedBrand=DYN_BRANDS.find(b=>b.name.toLowerCase()===brandLower);
+  if(!matchedBrand) return null;
+  const {data,error}=await supabaseClient.from('vehicles').select('id,model_name,brand_id').eq('brand_id',matchedBrand.id);
+  if(error || !data || !data.length) return null;
+  const modelLower=(model||'').trim().toLowerCase();
+  const modelFirstWord=modelLower.split(' ')[0];
+  const matchedVehicle=data.find(v=>{
+    const vLower=v.model_name.toLowerCase();
+    return vLower.includes(modelFirstWord) || modelLower.includes(vLower.split(' ')[0]);
+  });
+  if(!matchedVehicle) return null;
+  const matchedGroup=DYN_GROUPS.find(g=>g.id===matchedBrand.group_id);
+  if(!matchedGroup) return null;
+  const catKey=Object.keys(CAT_LABELS).find(k=>CAT_LABELS[k]===matchedGroup.category);
+  if(!catKey) return null;
+  return {catKey,groupName:matchedGroup.name,brandName:matchedBrand.name,modelName:matchedVehicle.model_name};
+}
+
+function aiRenderRecommendations(items){
+  const body=document.getElementById('aiAssistantBody');
+  const wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;flex-direction:column;gap:10px;';
+  wrap.innerHTML=items.map((r,i)=>{
+    const featuresHtml=(r.matchedFeatures||[]).map(f=>`<span class="ai-rec-feature-chip">${esc(f)}</span>`).join('');
+    const inDb=!!r.match;
+    const statusHtml=inDb
+      ? `<span class="ai-rec-source-tag">In Autoencyklopedia Database</span>`
+      : `<span class="ai-rec-coming-soon-tag">💡 Ideal Match — Coming Soon to Autoencyklopedia</span>`;
+    const ctaHtml=inDb
+      ? `<button class="ai-rec-inhouse-btn" onclick="toggleAiAssistant();go({view:'report',cat:'${esc(r.match.catKey)}',group:'${esc(r.match.groupName)}',brand:'${esc(r.match.brandName)}',model:'${esc(r.match.modelName)}'})">🎯 Available in Autoencyklopedia — View In-House Inspection &amp; Checklist</button>`
+      : '';
+    return `<div class="ai-rec-card">
+      <div class="ai-rec-card-body">
+        ${statusHtml}
+        <h5>${esc(r.brand)} ${esc(r.model)}${r.yearRange?` (${esc(r.yearRange)})`:''}</h5>
+        <div class="ai-rec-card-price">Estimated price: ${esc(r.priceRange||'—')}</div>
+        <div class="ai-rec-features-row">${featuresHtml}</div>
+      </div>
+      ${ctaHtml}
+    </div>`;
+  }).join('');
+  body.appendChild(wrap);
+  aiScrollToBottom();
+}
+
+
+// ─────────────────────────────────────────────────────────
 // RESPONSIVE MOBILE NAVIGATION — hamburger toggle for .cbar's off-canvas
 // slide-out state below 768px. No changes needed to any of .cbar's
 // existing button onclick handlers — this closes the menu via event
@@ -8397,7 +8347,15 @@ window.addEventListener('popstate', e=>{ render(e.state); });
 
 // ═══ INIT ═══
 (function initApp(){
-  const initial={view:'groups',cat:'cars'};
+  // Same app, same codebase, same database — if this page was loaded via
+  // the marketplace subdomain, land directly on the Marketplace view
+  // instead of the homepage, so it feels like a dedicated site without
+  // actually being a separate deployment.
+  const isMarketplaceSubdomain=window.location.hostname.startsWith('marketplace.');
+  const initial=isMarketplaceSubdomain?{view:'market'}:{view:'groups',cat:'cars'};
+  if(isMarketplaceSubdomain){
+    document.querySelectorAll('.marketplace-cta-btn').forEach(btn=>{ btn.style.display='none'; });
+  }
   history.replaceState(initial,'');
   render(initial);
   loadDynamicData().then(()=>{ if(currentState) render(currentState); });
