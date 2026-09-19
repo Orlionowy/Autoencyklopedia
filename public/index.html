@@ -124,8 +124,6 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .ctab{display:flex;align-items:center;gap:7px;padding:13px 18px;cursor:pointer;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:rgba(255,255,255,.5);border-bottom:3px solid transparent;transition:var(--t);white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;}
 
 /* ═══ RESPONSIVE NAVIGATION — hamburger on mobile, full bar on desktop ═══ */
-.marketplace-cta-btn{display:inline-flex;align-items:center;background:#0a0a0a;color:#00FFCC;border:1.5px solid #00FFCC;padding:8px 16px;border-radius:20px;font-weight:800;font-size:11px;font-family:'Inter',sans-serif;text-decoration:none;white-space:nowrap;box-shadow:0 0 12px rgba(0,255,204,.25);transition:var(--t);}
-.marketplace-cta-btn:hover{background:#00FFCC;color:#0a0a0a;box-shadow:0 0 20px rgba(0,255,204,.5);}
 .hamburger-btn{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;padding:9px;background:none;border:none;cursor:pointer;flex-shrink:0;touch-action:manipulation;position:relative;z-index:1000;}
 .hamburger-btn span{display:block;width:22px;height:2px;background:#ffffff !important;border-radius:2px;transition:transform .25s ease,opacity .25s ease;}
 .hamburger-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
@@ -149,7 +147,7 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
   /* Top bar on mobile keeps only: hamburger, logo, sign-in/avatar CTA.
      Everything else moves into the drawer (mobile-duplicate buttons
      below) so nothing gets cut off on narrow screens. */
-  #marketAdminNavBtn,#themeToggleBtn,#goProBtn,.marketplace-cta-btn{display:none !important;}
+  #marketAdminNavBtn,#themeToggleBtn,#goProBtn{display:none !important;}
   .cbar-mobile-actions{display:flex;flex-direction:column;gap:10px;padding:14px 16px;}
   .cbar-mobile-actions button{width:100%;justify-content:center;margin:0;}
 
@@ -281,6 +279,29 @@ header{background:var(--navy);padding:0 4%;display:flex;align-items:center;justi
 .ai-rec-features-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
 .ai-rec-feature-chip{font-size:10px;font-weight:700;background:var(--off);color:var(--text-secondary);padding:3px 9px;border-radius:20px;}
 .ai-rec-source-tag{display:inline-block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;background:rgba(16,185,129,.12);color:var(--ok);padding:3px 8px;border-radius:20px;margin-bottom:6px;}
+
+/* ═══ Generic small-form grid helpers ═══ */
+.datagen-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.datagen-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:600px){
+  .datagen-grid-2{grid-template-columns:1fr;}
+  .datagen-grid-3{grid-template-columns:1fr;}
+}
+
+/* ═══ 3-way rating toggle — used by the Vehicle Inspection Checklist ═══ */
+.val-checklist-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--gray3);}
+.val-checklist-item:last-child{border-bottom:none;}
+.val-checklist-item-label{font-size:12.5px;color:var(--text-main);flex:1;line-height:1.4;}
+.val-toggle-group{display:flex;border-radius:8px;overflow:hidden;border:1.5px solid var(--gray3);flex-shrink:0;}
+.val-toggle-btn{padding:7px 11px;font-size:10px;font-weight:700;cursor:pointer;background:var(--surface);color:var(--text-secondary);border:none;white-space:nowrap;transition:var(--t);font-family:'Inter',sans-serif;}
+.val-toggle-btn+.val-toggle-btn{border-left:1px solid var(--gray3);}
+.val-toggle-btn.active{color:#fff;}
+.val-toggle-btn.active.val-tone-bad{background:#ef4444;}
+.val-toggle-btn.active.val-tone-ok{background:#f59e0b;}
+.val-toggle-btn.active.val-tone-good{background:#22c55e;}
+
+/* ═══ AI Valuation results ═══ */
+.val-diagnostic-score-badge{text-align:center;padding:16px;border-radius:12px;margin-bottom:16px;}
 .ai-rec-coming-soon-tag{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.2px;background:rgba(251,191,36,.14);color:#b45309;padding:3px 9px;border-radius:20px;margin-bottom:6px;}
 .ai-rec-inhouse-btn{width:100%;background:linear-gradient(135deg,var(--sky),var(--sky-deep));color:#fff;border:none;padding:9px 10px;font-size:11px;font-weight:700;cursor:pointer;line-height:1.4;text-align:left;}
 .ai-rec-inhouse-btn:hover{filter:brightness(1.08);}
@@ -1094,7 +1115,6 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
     <button class="nav-btn" onclick="openPage('terms')"><i class="fas fa-file-contract" style="margin-right:4px;"></i>Terms</button>
   </div>
   <div class="hright">
-  <a href="https://marketplace.autoencyklopedia.pl" class="marketplace-cta-btn"><i class="fas fa-shop" style="margin-right:6px;"></i>Marketplace</a>
   <button id="marketAdminNavBtn" onclick="go({view:'marketadmin'})" style="display:none;background:var(--navy2);color:#fff;border:1px solid rgba(255,255,255,.15);padding:8px 14px;border-radius:20px;font-weight:800;font-size:11px;cursor:pointer;align-items:center;gap:6px;font-family:'Inter',sans-serif;white-space:nowrap;">
     <i class="fas fa-shield-halved"></i> Admin Panel
   </button>
@@ -1125,9 +1145,6 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
 
 <nav class="cbar">
   <div class="cbar-mobile-only cbar-mobile-actions">
-    <a href="https://marketplace.autoencyklopedia.pl" class="marketplace-cta-btn" id="marketplaceCtaBtnMobile" style="justify-content:center;">
-      <i class="fas fa-shop" style="margin-right:6px;"></i>Marketplace
-    </a>
     <button id="marketAdminNavBtnMobile" onclick="closeMobileNav();go({view:'marketadmin'})" style="display:none;background:var(--navy2);color:#fff;border:1px solid rgba(255,255,255,.15);padding:10px 14px;border-radius:20px;font-weight:800;font-size:11px;cursor:pointer;align-items:center;gap:6px;font-family:'Inter',sans-serif;">
       <i class="fas fa-shield-halved"></i> Admin Panel
     </button>
@@ -1148,7 +1165,6 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
   <button class="ctab" data-cat="saved" onclick="tryOpenSaved()"><i class="fas fa-star"></i>Saved</button>
   <button class="ctab" data-cat="chat" onclick="tryOpenChatHub()"><i class="fas fa-comments"></i>Groups &amp; Messaging</button>
   <button class="ctab" data-cat="market" onclick="tryOpenMarket()"><i class="fas fa-shop"></i>Marketplace</button>
-  <button class="ctab vip-nav-btn" data-cat="vipmarket" onclick="tryOpenVipMarket()"><i class="fas fa-crown"></i><span class="vip-nav-label">VIP Marketplace</span></button>
   <div class="cbar-mobile-divider"></div>
   <button class="ctab cbar-mobile-only" onclick="openPage('avoid')"><i class="fas fa-skull-crossbones"></i>Cars To Avoid</button>
   <button class="ctab cbar-mobile-only" onclick="openPage('checklist')"><i class="fas fa-clipboard-check"></i>Inspection Checklist</button>
@@ -1764,6 +1780,41 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
       <p style="font-size:13px;color:var(--gray);margin-bottom:20px;line-height:1.6;">Bring this checklist with you when inspecting a used vehicle in person. Your progress is saved automatically on this device, so you can close the page and pick up where you left off.</p>
 
       <div class="panel" style="margin-bottom:20px;">
+        <h3 style="margin-bottom:4px;"><i class="fas fa-wand-magic-sparkles"></i>AI Vehicle Valuation</h3>
+        <p style="font-size:12px;color:#475569;margin-bottom:14px;line-height:1.6;">Fill in the vehicle details, rate what you can below, then get your AI valuation as a PDF. Your first one is free.</p>
+
+        <div class="datagen-grid-3" style="margin-bottom:10px;">
+          <div>
+            <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:5px;">Make</label>
+            <input type="text" id="checklistVeh_make" placeholder="Audi" onchange="saveChecklistVehicleField('make')" style="width:100%;padding:9px 11px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:5px;">Model</label>
+            <input type="text" id="checklistVeh_model" placeholder="A1" onchange="saveChecklistVehicleField('model')" style="width:100%;padding:9px 11px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:5px;">Year</label>
+            <input type="number" id="checklistVeh_year" placeholder="2012" onchange="saveChecklistVehicleField('year')" style="width:100%;padding:9px 11px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;box-sizing:border-box;">
+          </div>
+        </div>
+        <div class="datagen-grid-2" style="margin-bottom:14px;">
+          <div>
+            <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:5px;">Mileage (km)</label>
+            <input type="number" id="checklistVeh_mileage" placeholder="120000" onchange="saveChecklistVehicleField('mileage')" style="width:100%;padding:9px 11px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:5px;">Claimed Price</label>
+            <input type="text" id="checklistVeh_claimedPrice" placeholder="e.g. €7,500" onchange="saveChecklistVehicleField('claimedPrice')" style="width:100%;padding:9px 11px;border:1.5px solid var(--gray3);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text-main);outline:none;box-sizing:border-box;">
+          </div>
+        </div>
+
+        <p id="valAccessNote" style="font-size:11.5px;color:var(--gray);margin-bottom:8px;"></p>
+        <div id="valPackSelector" style="display:none;margin-bottom:10px;"></div>
+        <button id="valGenerateBtn" class="wbtn" style="width:100%;justify-content:center;" onclick="handleValuationCta()">Checking access…</button>
+        <div id="valInlineResult" style="display:none;margin-top:14px;"></div>
+      </div>
+
+      <div class="panel" style="margin-bottom:20px;">
         <h3><i class="fas fa-magnifying-glass-chart"></i>VIN Check</h3>
         <p style="font-size:12px;color:#475569;margin-bottom:10px;line-height:1.6;">Before you go, note down the VIN — you'll want to confirm it matches across the dashboard, the door jamb sticker, and the registration papers.</p>
         <div class="srow">
@@ -1868,7 +1919,12 @@ html[data-theme="dark"] .theme-toggle-knob{transform:translateX(23px);background
   <div id="vMarket" class="view">
     <div style="max-width:1280px;margin:0 auto;">
       <div class="stitle"><i class="fas fa-shop"></i>Marketplace</div>
-      <p style="font-size:13px;color:var(--gray);margin-bottom:20px;line-height:1.6;">Buy and sell cars, motorcycles, and boats directly with other users. Listings go live immediately after submitting. Covered by our <a onclick="go({view:'terms'})" style="color:var(--sky);cursor:pointer;">Terms</a>.</p>
+      <p style="font-size:13px;color:var(--gray);margin-bottom:16px;line-height:1.6;">Buy and sell cars, motorcycles, and boats directly with other users. Listings go live immediately after submitting. Covered by our <a onclick="go({view:'terms'})" style="color:var(--sky);cursor:pointer;">Terms</a>.</p>
+
+      <div class="chat-tabswitch" style="max-width:320px;margin-bottom:16px;">
+        <button class="chat-tabbtn" id="marketModeBtnStandard" onclick="tryOpenMarket()">Standard</button>
+        <button class="chat-tabbtn vip-nav-btn" id="marketModeBtnVip" onclick="tryOpenVipMarket()"><i class="fas fa-crown" style="margin-right:5px;"></i>VIP</button>
+      </div>
 
       <div id="mktVipConciergeBanner" class="mkt-vip-concierge-banner" style="display:none;">
         <i class="fas fa-user-tie"></i>
@@ -4424,6 +4480,8 @@ function syncMarketModeUi(){
   document.getElementById('sellVehicleBtnStandard').style.display=isVip?'none':'flex';
   document.getElementById('sellVipVehicleBtn').style.display=(isVip&&isVipEligible())?'flex':'none';
   document.getElementById('mktVipConciergeBanner').style.display=isVip?'flex':'none';
+  document.getElementById('marketModeBtnStandard').classList.toggle('active',!isVip);
+  document.getElementById('marketModeBtnVip').classList.toggle('active',isVip);
 }
 
 function openVipPaywallModal(){
@@ -6507,18 +6565,32 @@ let checklistState={};
 function loadChecklistState(){
   try{
     const raw=localStorage.getItem(CHECKLIST_STORAGE_KEY);
-    return raw?JSON.parse(raw):{};
+    const state=raw?JSON.parse(raw):{};
+    // Migrate old boolean checkbox data (true/false) to the new 3-tier
+    // rating system — a previously-checked item becomes "Good" rather
+    // than silently losing that person's prior progress.
+    Object.keys(state).forEach(key=>{
+      if(state[key]===true) state[key]='Good';
+      if(state[key]===false) delete state[key];
+    });
+    return state;
   }catch(e){ return {}; }
 }
 function saveChecklistState(){
   try{ localStorage.setItem(CHECKLIST_STORAGE_KEY, JSON.stringify(checklistState)); }catch(e){}
 }
 
+const CHECKLIST_RATINGS=[{value:'Bad',tone:'val-tone-bad'},{value:'OK',tone:'val-tone-ok'},{value:'Good',tone:'val-tone-good'}];
+
 function buildChecklistView(){
   checklistState=loadChecklistState();
 
   const vinInput=document.getElementById('checklistVinIn');
   if(vinInput) vinInput.value=checklistState.__vin||'';
+  ['make','model','year','mileage','claimedPrice'].forEach(f=>{
+    const el=document.getElementById('checklistVeh_'+f);
+    if(el) el.value=checklistState['__veh_'+f]||'';
+  });
 
   const container=document.getElementById('checklistSections');
   container.innerHTML=CHECKLIST_SECTIONS.map(sec=>`
@@ -6526,34 +6598,51 @@ function buildChecklistView(){
       <h3><i class="fas ${sec.icon}"></i>${esc(sec.title)}</h3>
       <div class="checklist-items">
         ${sec.items.map(item=>`
-          <label class="check-item">
-            <input type="checkbox" onchange="toggleChecklistItem('${item.id}',this.checked)" ${checklistState[item.id]?'checked':''}>
-            <span>${esc(item.label)}</span>
-          </label>`).join('')}
+          <div class="val-checklist-item">
+            <span class="val-checklist-item-label">${esc(item.label)}</span>
+            <div class="val-toggle-group" id="checklistToggle_${item.id}">
+              ${CHECKLIST_RATINGS.map(r=>`<button type="button" class="val-toggle-btn ${r.tone} ${checklistState[item.id]===r.value?'active':''}" onclick="toggleChecklistItem('${item.id}','${r.value}')">${esc(r.value)}</button>`).join('')}
+            </div>
+          </div>`).join('')}
       </div>
     </div>`).join('');
 
   updateChecklistProgress();
+  if(typeof checkValuationAccess==='function') checkValuationAccess();
 }
 
-function toggleChecklistItem(id,checked){
-  checklistState[id]=checked;
+function toggleChecklistItem(id,value){
+  // Clicking the already-active rating again clears it back to unrated,
+  // rather than being permanently stuck once any rating is picked.
+  checklistState[id]=(checklistState[id]===value)?undefined:value;
+  if(checklistState[id]===undefined) delete checklistState[id];
   saveChecklistState();
+  const group=document.getElementById(`checklistToggle_${id}`);
+  Array.from(group.children).forEach(btn=>{
+    btn.classList.toggle('active', btn.textContent===checklistState[id]);
+  });
   updateChecklistProgress();
+}
+
+function saveChecklistVehicleField(field){
+  const el=document.getElementById('checklistVeh_'+field);
+  if(!el) return;
+  checklistState['__veh_'+field]=el.value.trim();
+  saveChecklistState();
 }
 
 function updateChecklistProgress(){
   const total=CHECKLIST_SECTIONS.reduce((sum,s)=>sum+s.items.length,0);
-  const checked=CHECKLIST_SECTIONS.reduce((sum,s)=>sum+s.items.filter(i=>checklistState[i.id]).length,0);
-  const pct=total?Math.round(checked/total*100):0;
+  const rated=CHECKLIST_SECTIONS.reduce((sum,s)=>sum+s.items.filter(i=>checklistState[i.id]).length,0);
+  const pct=total?Math.round(rated/total*100):0;
   const bar=document.getElementById('checklistProgressBar');
   const label=document.getElementById('checklistProgressLabel');
   if(bar) bar.style.width=pct+'%';
-  if(label) label.textContent=`${checked} / ${total} checked (${pct}%)`;
+  if(label) label.textContent=`${rated} / ${total} rated (${pct}%)`;
 }
 
 function resetChecklist(){
-  if(!confirm('Clear all checked items on this checklist? This cannot be undone.')) return;
+  if(!confirm('Clear all ratings on this checklist? This cannot be undone.')) return;
   checklistState={};
   saveChecklistState();
   buildChecklistView();
@@ -7894,7 +7983,7 @@ function render(state){
     else if(state.view==='engines' || state.view==='engReport') b.classList.toggle('active', b.dataset.cat==='engines');
     else if(state.view==='saved') b.classList.toggle('active', b.dataset.cat==='saved');
     else if(state.view==='chathub' || state.view==='chatthread') b.classList.toggle('active', b.dataset.cat==='chat');
-    else if(state.view==='market' || state.view==='marketlisting') b.classList.toggle('active', b.dataset.cat===(MARKET_VIEW_MODE==='vip'?'vipmarket':'market'));
+    else if(state.view==='market' || state.view==='marketlisting') b.classList.toggle('active', b.dataset.cat==='market');
     else b.classList.remove('active');
   });
 
@@ -8057,6 +8146,250 @@ function renderCatChrome(cat){
 
 function openPage(p){ go({view:p}); }
 function goHome(){ curGroup=null;curBrand=null; go({view:'groups',cat:curCat}); }
+
+// ─────────────────────────────────────────────────────────
+// AI VEHICLE VALUATION ENGINE — free trial + paid credits, tied to the
+// real signed-in user (see server.js/SQL comments for why, not IP or
+// anonymous session). Every request to the backend carries the user's
+// real Supabase access token so the server can verify who's actually
+// asking, rather than trusting a client-supplied id.
+// ─────────────────────────────────────────────────────────
+let VAL_ACCESS_STATE=null; // {hasAccess, creditsRemaining} from the last check
+
+async function getAuthToken(){
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  return session ? session.access_token : null;
+}
+
+// Reads the SAME checklistState/CHECKLIST_SECTIONS the Vehicle
+// Inspection Checklist itself uses — not a second, separate data
+// source. Every rated item (Bad/OK/Good) is sent as-is; unrated items
+// are simply left out rather than guessed at.
+function valBuildConditionFromChecklist(){
+  const condition={};
+  CHECKLIST_SECTIONS.forEach(sec=>sec.items.forEach(item=>{
+    if(checklistState[item.id]) condition[item.id]=checklistState[item.id];
+  }));
+  return condition;
+}
+
+const VAL_PACKS=[
+  {type:'single',label:'Single',price:'€2.99',credits:1},
+  {type:'pack_5',label:'5-Pack',price:'€9.99',credits:5},
+  {type:'pack_10',label:'10-Pack',price:'€14.99',credits:10},
+];
+
+async function checkValuationAccess(){
+  if(!isLoggedIn()) return; // access check only makes sense once signed in; the button click itself handles prompting sign-in
+  const btn=document.getElementById('valGenerateBtn');
+  const note=document.getElementById('valAccessNote');
+  const packSelector=document.getElementById('valPackSelector');
+  if(!btn) return; // guard: only present on the checklist page
+  btn.textContent='Checking access…';
+  btn.disabled=true;
+  packSelector.style.display='none';
+  try{
+    const token=await getAuthToken();
+    const resp=await fetch('/api/valuation/check-access',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}
+    });
+    const data=await resp.json();
+    if(!resp.ok) throw new Error(data.error||'Could not check access.');
+    VAL_ACCESS_STATE=data;
+    btn.disabled=false;
+    if(data.hasAccess){
+      btn.innerHTML=`<i class="fas fa-file-pdf" style="margin-right:6px;"></i>Get PDF (${data.creditsRemaining} free left)`;
+      note.textContent='';
+      btn.style.display='flex';
+    } else {
+      note.textContent="You've used your free valuation — pick a pack to continue.";
+      packSelector.style.display='block';
+      packSelector.innerHTML=VAL_PACKS.map(p=>
+        `<button class="ai-quick-reply-btn" style="margin:3px;" onclick="startValuationCheckout('${p.type}')"><strong>${esc(p.label)}</strong> — ${esc(p.price)} (${p.credits} valuation${p.credits>1?'s':''})</button>`
+      ).join('');
+      btn.style.display='none';
+    }
+  }catch(err){
+    btn.textContent='Could not check access — retry';
+    note.textContent=err.message;
+    note.style.color='#ef4444';
+  }
+}
+
+function collectValuationFormData(){
+  return {
+    brand: (checklistState.__veh_make||'').trim(),
+    model: (checklistState.__veh_model||'').trim(),
+    year: (checklistState.__veh_year||'').trim(),
+    mileageKm: (checklistState.__veh_mileage||'').trim(),
+    claimedPrice: (checklistState.__veh_claimedPrice||'').trim(),
+    condition: valBuildConditionFromChecklist()
+  };
+}
+
+async function handleValuationCta(){
+  if(!isLoggedIn()){
+    openAuthRequiredModal('Sign in to get an AI vehicle valuation — your first one is free.');
+    return;
+  }
+  if(!VAL_ACCESS_STATE || !VAL_ACCESS_STATE.hasAccess) return;
+  runValuation();
+}
+
+async function runValuation(){
+  const vehicleDetails=collectValuationFormData();
+  if(!vehicleDetails.brand || !vehicleDetails.model){
+    alert('Please fill in at least the make and model.');
+    return;
+  }
+  if(Object.keys(vehicleDetails.condition).length===0){
+    alert("You haven't rated any items on the checklist yet — rate what you can there first, so the AI has something real to base the valuation on.");
+    return;
+  }
+  const btn=document.getElementById('valGenerateBtn');
+  const originalLabel=btn.innerHTML;
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-circle-notch fa-spin" style="margin-right:6px;"></i>Generating your valuation…';
+  document.getElementById('valInlineResult').style.display='none';
+  try{
+    const token=await getAuthToken();
+    const resp=await fetch('/api/valuation/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({vehicleDetails})
+    });
+    const data=await resp.json();
+    if(!resp.ok){
+      if(data.needsPayment){
+        // Credits ran out between the access check and now (e.g. two
+        // tabs open) — refresh access state to show pack selection
+        // instead of a dead end.
+        checkValuationAccess();
+        return;
+      }
+      throw new Error(data.error||'Valuation failed.');
+    }
+    btn.innerHTML=originalLabel;
+    btn.disabled=false;
+    renderValuationResult(data.result,data.logId);
+    checkValuationAccess(); // refresh remaining-credits count on the button
+  }catch(err){
+    btn.innerHTML=originalLabel;
+    btn.disabled=false;
+    alert('Valuation failed: '+err.message);
+  }
+}
+
+function renderValuationResult(result,logId){
+  const container=document.getElementById('valInlineResult');
+  container.style.display='block';
+  const items=Array.isArray(result.itemizedRepairCosts)?result.itemizedRepairCosts:[];
+  const itemsHtml=items.length
+    ? items.map(i=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--gray3);font-size:12.5px;"><span>${esc(i.item)}</span><strong>${esc(i.estimatedCost)}</strong></div>`).join('')
+    : '<p style="font-size:12.5px;color:var(--gray);">No repair items flagged.</p>';
+  const score=result.diagnosticScore;
+  const scoreColor=score?(score.percentage>=70?'#22c55e':score.percentage>=40?'#f59e0b':'#ef4444'):'var(--sky)';
+  const scoreHtml=score?`
+    <div class="val-diagnostic-score-badge" style="background:${scoreColor}18;border:1px solid ${scoreColor}44;">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:4px;">Overall Diagnostic Score</div>
+      <div style="font-size:32px;font-weight:800;color:${scoreColor};">${score.percentage}%</div>
+      <div style="font-size:11px;color:var(--gray);margin-top:2px;">${score.good} Good · ${score.ok} OK · ${score.bad} Bad (of ${score.total} rated)</div>
+    </div>`:'';
+  container.innerHTML=`
+    ${scoreHtml}
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:4px;">Estimated Real Transaction Value</div>
+      <div style="font-size:24px;font-weight:800;color:var(--sky);">${esc(result.estimatedPriceRange||'—')}</div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:6px;">Itemized Repair Costs</div>
+      ${itemsHtml}
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:6px;">Reasoning</div>
+      <p style="font-size:13px;color:var(--text-main);line-height:1.6;">${esc(result.justification||'—')}</p>
+    </div>
+    ${logId?`<button class="wbtn" style="width:100%;justify-content:center;margin-top:14px;background:var(--ok);" onclick="downloadValuationPdf('${esc(logId)}',this)"><i class="fas fa-file-pdf" style="margin-right:6px;"></i>Download PDF Again</button>`:''}`;
+
+  // Auto-trigger the download immediately, as requested, rather than
+  // waiting for a manual click — the button above stays as a fallback,
+  // since some browsers can silently block an auto-triggered download
+  // depending on context.
+  if(logId){
+    const dummyBtn=document.createElement('button');
+    downloadValuationPdf(logId,dummyBtn);
+  }
+}
+
+// Plain <a href> links can't carry the Authorization header this
+// endpoint requires for security (verifying the report belongs to the
+// requesting user) — so this fetches the PDF as a blob and triggers the
+// download programmatically instead.
+async function downloadValuationPdf(logId,btnEl){
+  const originalLabel=btnEl.innerHTML;
+  btnEl.disabled=true;
+  btnEl.innerHTML='<i class="fas fa-circle-notch fa-spin" style="margin-right:6px;"></i>Preparing PDF…';
+  try{
+    const token=await getAuthToken();
+    const resp=await fetch(`/api/valuation/pdf/${logId}`,{
+      headers:{'Authorization':'Bearer '+token}
+    });
+    if(!resp.ok){
+      const data=await resp.json().catch(()=>({}));
+      throw new Error(data.error||'Could not generate PDF.');
+    }
+    const blob=await resp.blob();
+    const url=window.URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`valuation-${logId}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  }catch(err){
+    alert('Could not download PDF: '+err.message);
+  }finally{
+    btnEl.disabled=false;
+    btnEl.innerHTML=originalLabel;
+  }
+}
+
+async function startValuationCheckout(packType){
+  const packSelector=document.getElementById('valPackSelector');
+  packSelector.innerHTML='<p style="font-size:12px;color:var(--gray);">Redirecting to checkout…</p>';
+  try{
+    const token=await getAuthToken();
+    const resp=await fetch('/api/checkout/valuation-pass',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({pack_type:packType})
+    });
+    const data=await resp.json();
+    if(!resp.ok || !data.url) throw new Error(data.error||'Could not start checkout.');
+    window.location.href=data.url;
+  }catch(err){
+    alert('Could not start checkout: '+err.message);
+    checkValuationAccess();
+  }
+}
+
+// Handle returning from Stripe Checkout — this app has no real
+// /valuation route (it's a single-page app), so the backend redirects
+// back to the root with a query param instead, which we detect here.
+(function handleValuationCheckoutReturn(){
+  const params=new URLSearchParams(window.location.search);
+  const status=params.get('valuation');
+  if(status){
+    window.history.replaceState({}, '', window.location.pathname);
+    if(status==='success'){
+      setTimeout(()=>{
+        if(isLoggedIn()) openPage('checklist');
+      },800);
+    }
+  }
+})();
 
 // ─────────────────────────────────────────────────────────
 // AI SHOPPING ASSISTANT — searches real Marketplace listings, not the
@@ -8347,15 +8680,7 @@ window.addEventListener('popstate', e=>{ render(e.state); });
 
 // ═══ INIT ═══
 (function initApp(){
-  // Same app, same codebase, same database — if this page was loaded via
-  // the marketplace subdomain, land directly on the Marketplace view
-  // instead of the homepage, so it feels like a dedicated site without
-  // actually being a separate deployment.
-  const isMarketplaceSubdomain=window.location.hostname.startsWith('marketplace.');
-  const initial=isMarketplaceSubdomain?{view:'market'}:{view:'groups',cat:'cars'};
-  if(isMarketplaceSubdomain){
-    document.querySelectorAll('.marketplace-cta-btn').forEach(btn=>{ btn.style.display='none'; });
-  }
+  const initial={view:'groups',cat:'cars'};
   history.replaceState(initial,'');
   render(initial);
   loadDynamicData().then(()=>{ if(currentState) render(currentState); });
